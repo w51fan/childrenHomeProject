@@ -1,11 +1,16 @@
 <template>
   <div>
     <div class="swipe">
-      <mt-swipe :auto="4000">
+      <!-- <mt-swipe :auto="4000">
         <mt-swipe-item v-for="(img,index) in imgList" :key="index">
           <img :src="img" alt class="swipeImg" />
         </mt-swipe-item>
-      </mt-swipe>
+      </mt-swipe>-->
+      <van-swipe  class="my-swipe" :autoplay="3000" indicator-color="white">
+        <van-swipe-item  v-for="(img,index) in imgList"  :key="index">
+          <img :src="img" class="swipeImg" />
+        </van-swipe-item>
+      </van-swipe>
     </div>
     <div class="gap"></div>
     <div class="tabList">
@@ -43,7 +48,7 @@
         <img slot="icon" :src="nav.icon"  />
         {{nav.navName}}
       </mt-tab-item>
-    </mt-tabbar> -->
+    </mt-tabbar>-->
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
   </div>
 </template>
@@ -54,37 +59,37 @@ import bottomNav from "./bottomNav";
 
 export default {
   name: "governmentLed",
-  components:{
+  components: {
     bottomNav
   },
   data() {
     return {
-      selectedNav:'governmentLed',
+      selectedNav: "governmentLed",
       navList: [
         {
           navName: "政府主导",
-          icon:require('../assets/logo.png'),
-          path:'governmentLed'
+          icon: require("../assets/logo.png"),
+          path: "governmentLed"
         },
         {
           navName: "社会参与",
-          icon:require('../assets/logo.png'),
-          path:'socialParticipation'
+          icon: require("../assets/logo.png"),
+          path: "socialParticipation"
         },
         {
           navName: "家庭尽责",
-          icon:require('../assets/logo.png'),
-          path:'familyResponsibility'
+          icon: require("../assets/logo.png"),
+          path: "familyResponsibility"
         },
         {
           navName: "关爱指数",
-          icon:require('../assets/logo.png'),
-          path:'careIndex'
+          icon: require("../assets/logo.png"),
+          path: "careIndex"
         },
         {
           navName: "成长故事",
-          icon:require('../assets/logo.png'),
-          path:'growthStory'
+          icon: require("../assets/logo.png"),
+          path: "growthStory"
         }
       ],
       imgList: [],
@@ -92,12 +97,12 @@ export default {
       newsList: []
     };
   },
-  watch:{
-    selectedNav(val){
-      console.log(val)
+  watch: {
+    selectedNav(val) {
+      console.log(val);
       this.$router.push({
-        name:val
-      })
+        name: val
+      });
     }
   },
   mounted() {
@@ -121,12 +126,12 @@ export default {
           Id: row.Id
         }
       });
-    },
+    }
   }
 };
 </script>
 
-<style scoped>
+<style lang="less">
 .swipe {
   width: 100%;
   height: 150px;
@@ -143,10 +148,10 @@ export default {
 }
 .gap {
   width: 100%;
-  height: 10px;
+  height: 8px;
   background: #e6e6e6;
 }
-.newsList{
+.newsList {
   margin-bottom: 60px;
 }
 .tabList {

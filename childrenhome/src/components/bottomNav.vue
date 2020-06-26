@@ -1,11 +1,8 @@
 <template>
   <div>
-    <mt-tabbar v-model="selected" fixed>
-      <mt-tab-item :id="nav.path" v-for="(nav,index) in  navList" :key="index">
-        <img slot="icon" :src="nav.icon" />
-        {{nav.navName}}
-      </mt-tab-item>
-    </mt-tabbar>
+    <van-tabbar v-model="active">
+      <van-tabbar-item :name="nav.path" :icon="nav.icon" v-for="(nav,index) in  navList" :key="index">{{nav.navName}}</van-tabbar-item>
+    </van-tabbar>
   </div>
 </template>
 
@@ -15,50 +12,44 @@ export default {
   props: ["selectedNav"],
   data() {
     return {
-      selected: "governmentLed",
+      active: "governmentLed",
       navList: [
         {
           navName: "政府主导",
-          icon: require("../assets/logo.png"),
+          icon: 'wap-home',
           path: "governmentLed"
         },
         {
           navName: "社会参与",
-          icon: require("../assets/logo.png"),
+          icon: "invition",
           path: "socialParticipation"
         },
         {
           navName: "家庭尽责",
-          icon: require("../assets/logo.png"),
+          icon:"friends",
           path: "familyResponsibility"
         },
         {
           navName: "关爱指数",
-          icon: require("../assets/logo.png"),
+          icon: "fire",
           path: "careIndex"
         },
         {
           navName: "成长故事",
-          icon: require("../assets/logo.png"),
+          icon: "smile",
           path: "growthStory"
         }
       ]
     };
   },
   mounted() {
-    this.selected = this.selectedNav;
-    console.log("this.selected", this.selected);
-    //   this.$emit('update:selectedNav',this.selectedNav)
-    //   this.$router.push({
-    //     name:this.selected
-    //   })
+    this.active = this.selectedNav;
   },
   watch: {
-    selected(val) {
-      console.log(val);
+    active(val) {
       this.$emit("update:selectedNav", this.selectedNav);
       this.$router.push({
-        name: this.selected
+        name: this.active
       });
       return this.selectedNav;
     }

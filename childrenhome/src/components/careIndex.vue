@@ -1,6 +1,7 @@
 <template>
-  <div>
-    careIndex
+  <div style="width:100%;">
+    <div class="careIndexTitle">数据统计</div>
+    <div class="gap gapfive"></div>
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
   </div>
 </template>
@@ -21,5 +22,17 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.gap {
+  width: 100%;
+  height: 8px;
+  background: #e6e6e6;
+}
+.gapfive {
+  height: 2px;
+}
+.careIndexTitle{
+  text-align: left;
+  padding: 10px 20px;
+}
 </style>
