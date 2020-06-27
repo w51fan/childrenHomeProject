@@ -8,6 +8,7 @@
 
 <script>
 import bottomNav from "./bottomNav";
+import { getTotalCount } from "@/api/home";
 export default {
   name: "careIndex",
   components: {

@@ -2,7 +2,6 @@ import axios from 'axios';
 
 //新闻咨询列表
 export const getList = function (cityId, type) {
-
   return axios.request({
     url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${type}`,
     method: "get"
@@ -12,7 +11,6 @@ export const getList = function (cityId, type) {
 
 //新闻咨询详情
 export const getNewsDetail = function (Id) {
-
   return axios.request({
     url: `https://api.quanjiaxue.net/news/detail?Id=${Id}`,
     method: "get"
@@ -32,10 +30,68 @@ export const getActivityList = function ({cityId, areaId, townId, type, activity
       method: "get"
     });
   }
-  if (data.activityType) {
+  else if (data.activityType) {
     return axios.request({
       url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&areaId=${data.areaId}&townId=${data.townId}&activityType=${data.activityType}`,
       method: "get"
     });
+  }else{
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&areaId=${data.areaId}&townId=${data.townId}`,
+      method: "get"
+    });
   }
+}
+
+
+//数据统计总数
+export const getTotalCount = function (cityId) {
+
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getTotalCount?cityId=${cityId}`,
+    method: "get"
+  });
+}
+
+
+//活动详情
+export const getActivityDetail = function (activityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/detail?activityId=${activityId}`,
+    method: "get"
+  });
+}
+
+//课程列表
+export const getCourseList = function () {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/course/courseList`,
+    method: "get"
+  });
+}
+
+//课程详情
+export const getCourseDetail = function (courseId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/course/courseDetail?courseId=${courseId}`,
+    method: "get"
+  });
+}
+
+//课程详情
+export const getLessonList = function (courseId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/course/lessonList?courseId=${courseId}`,
+    method: "get"
+  });
+}
+
+
+
+//知识点列表
+export const getPointList = function (courseId,lessonId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/course/pointList?courseId=${courseId}&lessonId=${lessonId}`,
+    method: "get"
+  });
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-bottom: 60px;">
     <van-tabs v-model="selected">
       <van-tab title="最新活动">
         <div class="gap"></div>
@@ -10,6 +10,25 @@
           </van-dropdown-menu>
         </div>
         <div class="gap gapfive"></div>
+        <div v-for="(item,index) in activityList" :key="index">
+          <div class="flex space-between">
+            <div style="padding:20px;">
+              <van-icon name="underway" v-if="item.Status===1" />
+              <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+              {{item.Date}}
+            </div>
+            <div class="status will" v-if="item.Status===1">即将开始</div>
+            <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+            <div class="status finished" v-else>已结束</div>
+          </div>
+          <div class="abbreviation">{{item.Name}}...</div>
+          <div class="flex" @click="viewDetail(item)">
+            <img :src="activityImg.Url"  v-for="(activityImg,turn) in item.ActivityImage.slice(3)" :key="turn" style="width: 50px;height: 100px;padding: 15px 20px;">
+            <div>...</div>
+          </div>
+          <!-- <van-icon name="checked" />
+          <div>{{item.Date}}</div>-->
+        </div>
       </van-tab>
       <van-tab title="全部活动">
         <div class="gap"></div>
@@ -53,22 +72,35 @@ export default {
         { text: "请选择", value: 0 },
         { text: "线下活动", value: 1 },
         { text: "线上活动", value: 2 }
-      ]
+      ],
+      activityList: []
     };
   },
   mounted() {
-    // getActivityList({
-    //   cityId: "",
-    //   areaId: "",
-    //   townId: "",
-    //   activityType: ""
-    // }).then(res => {});
+    // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
+    getActivityList({
+      cityId: "2018",
+      areaId: "2021",
+      townId: "3713"
+      // activityType: ""
+    }).then(res => {
+      console.log("res", res);
+      this.activityList = res.data.activityList;
+    });
   },
   methods: {
     onValuesChange(picker, values) {
       if (values[0] > values[1]) {
         picker.setSlotValue(1, values[0]);
       }
+    },
+    viewDetail(row ){
+      this.$router.push({
+        name: "activityDetail",
+        query: {
+          Id: row.Id
+        }
+      });
     }
   }
 };
@@ -82,7 +114,40 @@ export default {
 /deep/.van-dropdown-menu__bar {
   box-shadow: none;
 }
-
+/deep/.van-icon-underway {
+  color: #ff8917;
+}
+/deep/.van-icon-checked {
+  color: #1989fa;
+}
+.gry {
+  color: #8e8a8a;
+}
+.status {
+  margin: 15px;
+  padding: 0 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 30px;
+}
+.will {
+  background: #ffac0ed6;
+  color: #6f6f6f;
+}
+.ing {
+  background: #10559e;
+  color: #fff;
+}
+.finished {
+  background: #e8e8e8;
+  color: #7d7d7d;
+}
+.flex {
+  display: flex;
+}
+.space-between {
+  justify-content: space-between;
+}
 .gap {
   width: 100%;
   height: 8px;
@@ -90,6 +155,10 @@ export default {
 }
 .gapfive {
   height: 2px;
+}
+.abbreviation{
+  text-align: left;
+  padding: 0 20px;
 }
 </style>
 
