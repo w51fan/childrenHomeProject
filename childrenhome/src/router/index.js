@@ -4,6 +4,7 @@ import home from '@/components/index'
 import newsDetail from '@/components/newsDetail'
 import activityDetail from '@/components/activityDetail'
 import courseDetail from '@/components/courseDetail'
+import childrenHomeDetail from '@/components/childrenHomeDetail'
 import lessonPage from '@/components/lessonPage'
 
 import socialParticipation from '@/components/socialParticipation'
@@ -40,6 +41,11 @@ const router = new Router({
       path: '/courseDetail',
       name: 'courseDetail',
       component: courseDetail
+    },
+    {
+      path: '/childrenHomeDetail',
+      name: 'childrenHomeDetail',
+      component: childrenHomeDetail
     },
     {
       path: '/lessonPage',

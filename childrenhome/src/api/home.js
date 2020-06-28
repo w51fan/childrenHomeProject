@@ -107,3 +107,32 @@ export const getPointList = function (courseId,lessonId) {
 }
 
 
+//儿童之家列表
+export const getChildrenHomeList = function (token) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/getChildrenHomeList?token=${token}`,
+    method: "get"
+  });
+}
+
+//成长故事列表
+/* 
+type: 1.家长说；2.志愿者说；3.美丽心灵
+activityType:1.线下活动；2线上活动
+*/
+export const getArticleList = function (cityId, type) { 
+  return axios.request({
+    url: `https://api.quanjiaxue.net/article/list?cityId=${cityId}&type=${type}`,
+    method: "get"
+  });
+}
+
+
+//成长故事详情
+export const getArticleDetail = function (Id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/article/detail?Id=${Id}`,
+    method: "get"
+  });
+}
+
