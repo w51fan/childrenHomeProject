@@ -121,7 +121,7 @@ export default {
 }
 .courseTabs {
   /deep/.van-tabs__line {
-    width: 150px !important;
+    width: 50% !important;
   }
 }
 .lessonList {

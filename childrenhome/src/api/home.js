@@ -53,6 +53,16 @@ export const getTotalCount = function (cityId) {
   });
 }
 
+//数据统计列表树状
+export const getTreeCount = function (cityId) {
+
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getTreeCount?cityId=${cityId}`,
+    method: "get"
+  });
+}
+
+
 
 //活动详情
 export const getActivityDetail = function (activityId) {
@@ -95,3 +105,5 @@ export const getPointList = function (courseId,lessonId) {
     method: "get"
   });
 }
+
+
