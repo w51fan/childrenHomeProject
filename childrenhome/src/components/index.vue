@@ -1,11 +1,6 @@
 <template>
   <div>
     <div class="swipe">
-      <!-- <mt-swipe :auto="4000">
-        <mt-swipe-item v-for="(img,index) in imgList" :key="index">
-          <img :src="img" alt class="swipeImg" />
-        </mt-swipe-item>
-      </mt-swipe>-->
       <van-swipe  class="my-swipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item  v-for="(img,index) in imgList"  :key="index">
           <img :src="img" class="swipeImg" />
@@ -43,12 +38,6 @@
         </div>
       </div>
     </div>
-    <!-- <mt-tabbar v-model="selectedNav" fixed>
-      <mt-tab-item :id="nav.path"  v-for="(nav,index) in  navList" :key="index" >
-        <img slot="icon" :src="nav.icon"  />
-        {{nav.navName}}
-      </mt-tab-item>
-    </mt-tabbar>-->
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
   </div>
 </template>
@@ -65,33 +54,6 @@ export default {
   data() {
     return {
       selectedNav: "governmentLed",
-      navList: [
-        {
-          navName: "政府主导",
-          icon: require("../assets/logo.png"),
-          path: "governmentLed"
-        },
-        {
-          navName: "社会参与",
-          icon: require("../assets/logo.png"),
-          path: "socialParticipation"
-        },
-        {
-          navName: "家庭尽责",
-          icon: require("../assets/logo.png"),
-          path: "familyResponsibility"
-        },
-        {
-          navName: "关爱指数",
-          icon: require("../assets/logo.png"),
-          path: "careIndex"
-        },
-        {
-          navName: "成长故事",
-          icon: require("../assets/logo.png"),
-          path: "growthStory"
-        }
-      ],
       imgList: [],
       tabList: [],
       newsList: []

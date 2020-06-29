@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div style="height: 200px;background: azure;">家庭教育系列课程</div>
+    <div class="familyResponsibilityHead">
+      <img src="../assets/jiatingjinze.png" alt="">
+      <div class="text">
+        <div>家庭教育系列课程</div>
+      </div>
+    </div>
     <div style="text-align: left;padding: 20px;font-weight: 600;font-size: 20px;">课程列表</div>
     <div style="margin-bottom: 60px;">
       <div v-for="(course,index) in courseList" :key="index" class="flex" style="padding: 10px 20px 20px;" @click="courseDetail(course)">
@@ -52,5 +57,18 @@ export default {
 <style lang="less"  scoped>
 .flex {
   display: flex;
+}
+.familyResponsibilityHead{
+  position: relative;
+  img{
+    width: 100%;
+  }
+  .text{
+    position: absolute;
+    bottom: 44%;
+    left: 34%;
+    color: #fff;
+    font-size: 22px;
+  }
 }
 </style>

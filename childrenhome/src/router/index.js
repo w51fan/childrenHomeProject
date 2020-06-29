@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router' 
+
+import ennterPage from '@/components/ennterPage'
 import home from '@/components/index'
 import newsDetail from '@/components/newsDetail'
 import activityDetail from '@/components/activityDetail'
@@ -20,7 +22,12 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/governmentLed',
+      redirect: '/ennterPage',
+    },
+    {
+      path: '/ennterPage',
+      name: 'ennterPage',
+      component: ennterPage
     },
     {
       path: '/governmentLed',

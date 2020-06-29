@@ -72,6 +72,24 @@ export const getActivityDetail = function (activityId) {
   });
 }
 
+
+//村列表
+export const getVillageList = function (townId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getVillageList?townId=${townId}`,
+    method: "get"
+  });
+}
+
+//乡镇列表
+export const getTownList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getTownList?cityId=${cityId}`,
+    method: "get"
+  });
+}
+
+
 //课程列表
 export const getCourseList = function () {
   return axios.request({
@@ -88,7 +106,7 @@ export const getCourseDetail = function (courseId) {
   });
 }
 
-//课程详情
+//课时列表
 export const getLessonList = function (courseId) {
   return axios.request({
     url: `https://api.quanjiaxue.net/course/lessonList?courseId=${courseId}`,
@@ -102,6 +120,14 @@ export const getLessonList = function (courseId) {
 export const getPointList = function (courseId,lessonId) {
   return axios.request({
     url: `https://api.quanjiaxue.net/course/pointList?courseId=${courseId}&lessonId=${lessonId}`,
+    method: "get"
+  });
+}
+
+//课时详情
+export const getLessonDetail = function (courseId, lessonId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/course/lessonDetail?courseId=${courseId}&lessonId=${lessonId}`,
     method: "get"
   });
 }
