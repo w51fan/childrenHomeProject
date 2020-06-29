@@ -131,9 +131,9 @@ export default {
   watch: {
     selected(val) {
       console.log("val", val);
-      this.activityList = [];
       if (val === 1) {
         this.showTips = 1;
+        this.activityList = [];
         getTownList(2018).then(res => {
           console.log("townlist", res);
           let temp = [{ text: "请选择", value: 0 }];
@@ -147,6 +147,8 @@ export default {
           this.townList = temp;
           this.selectedTown = this.townList[0].value;
         });
+      } else if (val === 0) {
+        this.getActivityList(2018, 2021, 3713, true);
       }
     }
   },
@@ -185,7 +187,7 @@ export default {
       this.getActivityList(
         this.cityId,
         this.selectedTown,
-        this.selectedVillage,
+        this.selectedVillage
       );
     },
     getActivityList(cityId, areaId, townId, isInit) {
