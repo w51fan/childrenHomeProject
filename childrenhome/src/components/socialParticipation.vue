@@ -15,7 +15,7 @@
             <div style="padding:20px;">
               <van-icon name="underway" v-if="item.Status===1" />
               <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-              {{item.Date}}
+              {{getDate(item.Date)}}
             </div>
             <div class="status will" v-if="item.Status===1">即将开始</div>
             <div class="status ing" v-else-if="item.Status===2">进行中...</div>
@@ -207,6 +207,13 @@ export default {
           this.showTips = 3;
         }
       });
+    },
+    getDate(date) {
+      let activityDate = new Date(date);
+      let year = activityDate.getFullYear();
+      let month = activityDate.getMonth() + 1;
+      let day = activityDate.getDate();
+      return `${year}年${month}月${day}日`;
     }
   }
 };

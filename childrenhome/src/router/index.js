@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router' 
 
+import loginPage from '@/components/loginPage'
+import childrenHomePage from '@/components/childrenHomePage'
 import ennterPage from '@/components/ennterPage'
 import home from '@/components/index'
 import newsDetail from '@/components/newsDetail'
@@ -23,6 +25,16 @@ const router = new Router({
     {
       path: '/',
       redirect: '/ennterPage',
+    },
+    {
+      path: '/loginPage',
+      name: 'loginPage',
+      component: loginPage
+    }, 
+    {
+      path: '/childrenHomePage',
+      name: 'childrenHomePage',
+      component: childrenHomePage
     },
     {
       path: '/ennterPage',

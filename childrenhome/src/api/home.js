@@ -162,3 +162,28 @@ export const getArticleDetail = function (Id) {
   });
 }
 
+//获取验证码
+export const getVerifyCode = function (phone) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/getVerifyCode?phone=${phone}`,
+    method: "get"
+  });
+}
+
+//用户登录
+export const login = function (phone, code) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/login?phone=${phone}&code=${code}`,
+    method: "get"
+  });
+}
+
+
+//获取登录用户信息
+export const getUserInfo = function (token) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/getUser?token=${token}`,
+    method: "get"
+  });
+}
+

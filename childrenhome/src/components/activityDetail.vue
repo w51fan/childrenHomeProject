@@ -15,14 +15,14 @@
     </div>
     <div class="activityType flex">
       <div>类型：</div>
-      <div class="activityTypeContent">{{ActivityType}} （{{activity.Date}}创建）</div>
+      <div class="activityTypeContent">{{ActivityType}} （{{getDate(this.activity.Date)}}创建）</div>
     </div>
     <div class="gap gapten"></div>
     <div>
       <div class="activityOrganizers">活动组织人员</div>
       <div>
-        <div style="width: 60px;text-align: center;font-size: 24px;margin: 0 28px;">
-          <van-icon name="manager" />
+        <div class="activityOrganizersHead">
+          <div style="color: #ffb100;">暂无头像</div>
         </div>
         <div class="status will" style="width: 60px;color: black;margin: 0 16px;">志愿者</div>
       </div>
@@ -55,13 +55,13 @@
       <div style="background: rgba(128, 128, 128, 0.1);">
         <div v-for="(record,index) in activityRecordList" :key="index">
           <div class="activityRecordUser">
-            <van-icon name="manager" />
-            {{record.User.Name}}
+            <div class="activityRecordUserHead">
+              <div style="color: #ffb100;">暂无头像</div>
+            </div>
+            <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
           </div>
           <div>
-            <div
-              style="background: rgb(255, 255, 255); margin: 0 20px; padding: 20px; text-align: left;"
-            >{{record.Content}}</div>
+            <div class="activityRecordUserContent">{{record.Content}}</div>
           </div>
         </div>
       </div>
@@ -69,9 +69,7 @@
     </div>
     <div>
       <div class="activityEvaluate">活动评价</div>
-      <div
-        style="background: rgba(128, 128, 128, 0.1);padding: 20px;color: #9c9c9c;"
-      >暂无活动评价</div>
+      <div style="background: rgba(128, 128, 128, 0.1);padding: 20px;color: #9c9c9c;">暂无活动评价</div>
     </div>
   </div>
 </template>
@@ -89,12 +87,12 @@ export default {
       imagesArray: [],
       turn: 0,
       startPosition: 0,
-      ActivityType: ""
+      ActivityType: "",
     };
   },
   mounted() {
     getActivityDetail(this.$route.query.Id).then(res => {
-      console.log(res);
+      console.log("activity", res);
       this.activity = res.data.activity;
       this.activityRecordList = res.data.activityRecordList;
       this.activityImageList = res.data.activityImageList;
@@ -116,6 +114,13 @@ export default {
       this.showImgPreview = true;
       this.startPosition = index;
     },
+    getDate(date) {
+      let activityDate = new Date(date);
+      let year = activityDate.getFullYear();
+      let month = activityDate.getMonth() + 1;
+      let day = activityDate.getDate();
+      return `${year}年${month}月${day}日`;
+    },
     onImgPreviewChange() {}
   }
 };
@@ -133,6 +138,15 @@ export default {
   font-size: 18px;
   font-weight: 600;
 }
+.activityOrganizersHead {
+  width: 30px;
+  text-align: center;
+  font-size: 12px;
+  margin: 0 35px 10px;
+  padding: 10px;
+  background: #3b4c5a;
+  border-radius: 50%;
+}
 .activityImgTitle {
   text-align: left;
   padding: 20px;
@@ -148,6 +162,21 @@ export default {
 .activityRecordUser {
   text-align: left;
   padding: 20px;
+  display: flex;
+}
+.activityRecordUserHead {
+  width: 30px;
+  text-align: center;
+  font-size: 12px;
+  padding: 8px;
+  background: #3b4c5a;
+  border-radius: 50%;
+}
+.activityRecordUserContent {
+  background: rgb(255, 255, 255);
+  margin: 0px 20px 0 70px;
+  padding: 20px;
+  text-align: left;
 }
 .activityEvaluate {
   text-align: left;
