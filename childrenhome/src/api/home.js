@@ -89,6 +89,13 @@ export const getTownList = function (cityId) {
   });
 }
 
+//乡镇列表
+export const getChildrenhomeDetail = function (villageId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/detail?villageId=${villageId}`,
+    method: "get"
+  });
+}
 
 //课程列表
 export const getCourseList = function () {
@@ -183,6 +190,12 @@ export const login = function (phone, code) {
 export const getUserInfo = function (token) {
   return axios.request({
     url: `https://api.quanjiaxue.net/manage/getUser?token=${token}`,
+  });
+}
+//切换城市列表
+export const getCityList = function (Id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getCityList`,
     method: "get"
   });
 }

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="lessonVideo">
       <video :src="lesson.Url" autoplay="false" controls></video>
       <div class="topic">主题：{{lesson.Name}}</div>
@@ -42,6 +43,13 @@ export default {
         }
       );
     });
+  },
+  methods: {
+    onClickLeft() {
+      this.$router.push({
+        name: "courseDetail"
+      });
+    }
   }
 };
 </script>
@@ -64,7 +72,7 @@ export default {
     font-size: 20px;
     font-weight: 600;
   }
-  .num{
+  .num {
     color: gray;
   }
 }
@@ -85,7 +93,7 @@ export default {
 .pointList {
   text-align: left;
   // padding: 20px;
-  .pointItemContent{
+  .pointItemContent {
     font-size: 16px;
     line-height: 35px;
     padding: 10px 20px;

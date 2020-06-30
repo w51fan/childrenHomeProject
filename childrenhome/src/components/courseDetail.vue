@@ -1,5 +1,6 @@
 <template>
   <div>
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div style="position: relative;">
       <img :src="course.Professor.ImagePhoto" style="height:250px;" />
       <div class="courseTip">
@@ -90,11 +91,16 @@ export default {
       lessonList: ""
     };
   },
+  computed: {
+    CourseId() {
+      return this.$store.state.common.CourseId;
+    }
+  },
   mounted() {
-    getCourseDetail(this.$route.query.Id).then(res => {
+    getCourseDetail(this.CourseId).then(res => {
       console.log("233", res);
       this.course = res.data.course;
-      getLessonList(this.$route.query.Id).then(lesson => {
+      getLessonList(this.CourseId).then(lesson => {
         console.log("244", lesson);
         this.lessonList = lesson.data.lessonList;
       });
@@ -102,7 +108,7 @@ export default {
   },
   methods: {
     beginLesson(lesson) {
-      console.log('lesson',lesson)
+      console.log("lesson", lesson);
       this.$router.push({
         name: "lessonPage",
         query: {
@@ -111,6 +117,11 @@ export default {
           mp3Url: lesson.Url,
           Name: lesson.Name
         }
+      });
+    },
+    onClickLeft() {
+      this.$router.push({
+        name: "familyResponsibility"
       });
     }
   }
@@ -208,12 +219,12 @@ export default {
     font-weight: 600;
     padding-bottom: 5px;
   }
-  .phone{
+  .phone {
     color: #929191;
     font-size: 16px;
     // font-weight: 600;
   }
-  .paddingBottomTen{
+  .paddingBottomTen {
     padding-bottom: 15px;
   }
 }

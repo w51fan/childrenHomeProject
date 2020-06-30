@@ -10,7 +10,7 @@ import activityDetail from '@/components/activityDetail'
 import courseDetail from '@/components/courseDetail'
 import childrenHomeDetail from '@/components/childrenHomeDetail'
 import lessonPage from '@/components/lessonPage'
-
+import changeCityPage from '@/components/changeCityPage'
 import socialParticipation from '@/components/socialParticipation'
 import familyResponsibility from '@/components/familyResponsibility'
 import careIndex from '@/components/careIndex'
@@ -24,7 +24,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/ennterPage',
+      redirect: '/changeCityPage',
     },
     {
       path: '/loginPage',
@@ -90,6 +90,11 @@ const router = new Router({
       path: '/growthStory',
       name: 'growthStory',
       component: growthStory
+    },
+    {
+      path: '/changeCityPage',
+      name: 'changeCityPage',
+      component: changeCityPage
     },
   ]
 })

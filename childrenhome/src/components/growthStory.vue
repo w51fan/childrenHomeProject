@@ -2,7 +2,7 @@
   <div>
     <!-- <div>
       <van-loading type="spinner" />
-    </div> -->
+    </div>-->
     <van-tabs v-model="selected">
       <van-tab title="家长说">
         <div class="gap"></div>
@@ -50,15 +50,20 @@ export default {
   },
   watch: {
     selected(val) {
-      this.articlelist = []
-      getArticleList(2018, val+1).then(res => {
+      this.articlelist = [];
+      getArticleList(this.cityId, val + 1).then(res => {
         console.log("getArticleList", res);
         this.articlelist = res.data.articlelist;
       });
     }
   },
+  computed: {
+    cityId() {
+      return this.$store.state.common.cityId;
+    }
+  },
   mounted() {
-    getArticleList(2018, 1).then(res => {
+    getArticleList(this.cityId, 1).then(res => {
       console.log("getArticleList", res);
       this.articlelist = res.data.articlelist;
     });

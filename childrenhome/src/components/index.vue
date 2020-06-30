@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="swipe">
-      <van-swipe  class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item  v-for="(img,index) in imgList"  :key="index">
+      <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+        <van-swipe-item v-for="(img,index) in imgList" :key="index">
           <img :src="img" class="swipeImg" />
         </van-swipe-item>
       </van-swipe>
@@ -22,7 +22,7 @@
     <div class="gap"></div>
     <div class="flex space-between newsTitle">
       <div style="padding: 10px 20px;">新闻资讯</div>
-      <div style="padding: 10px 20px;color: #989898">切换城市</div>
+      <div style="padding: 10px 20px;color: #989898" @click="changeCity">切换城市</div>
     </div>
     <div class="newsList">
       <div v-for="(news,index) in newsList" :key="index">
@@ -68,17 +68,23 @@ export default {
     }
   },
   mounted() {
-    getList(2018, 1).then(res => {
+    getList(this.cityId, 1).then(res => {
       this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
-      getList(2018, 2).then(result => {
+      getList(this.cityId, 2).then(result => {
         console.log(result);
         this.tabList = result.data.newsList.reverse();
       });
-      getList(2018, 3).then(news => {
+      getList(this.cityId, 3).then(news => {
         console.log(news);
         this.newsList = news.data.newsList;
       });
     });
+  },
+  computed: {
+    cityId() {
+      console.log('his.$store.state',this.$store.state)
+      return this.$store.state.common.cityId;
+    }
   },
   methods: {
     viewDeatil(row) {
@@ -86,6 +92,14 @@ export default {
         name: "newsDetail",
         query: {
           Id: row.Id
+        }
+      });
+    },
+    changeCity() {
+      this.$router.push({
+        name: "changeCityPage",
+        query: {
+          needComeBack: true
         }
       });
     }

@@ -89,6 +89,35 @@
       </van-tab>
       <van-tab title="儿童之家">
         <div class="gap"></div>
+        <van-collapse v-model="selectedTown" accordion>
+          <van-collapse-item
+            :title="town.text"
+            :name="index+1"
+            v-for="(town,index) in townItems"
+            :key="index"
+            style="text-align: left;"
+            @click="collapseTown"
+          >
+            <template #title>
+              <div @click="collapseTown(town)">{{town.text}}</div>
+            </template>
+            <template #default v-if="villageItems.length>0">
+              <van-collapse v-model="selectedVillage" accordion>
+                <van-collapse-item
+                  :title="village.text"
+                  :name="trun+1"
+                  v-for="(village,trun) in villageItems"
+                  :key="trun"
+                  style="text-align: left;"
+                  class="two"
+                >
+                 <template #title>
+              <div @click="collapseVillage(village)">{{town.text}}</div>
+            </template></van-collapse-item>
+              </van-collapse>
+            </template>
+          </van-collapse-item>
+        </van-collapse>
       </van-tab>
     </van-tabs>
 
@@ -118,15 +147,24 @@ export default {
       selectedTown: "",
       townList: [],
       selectedVillage: "",
+      selectedVillage: "",
       villageList: [],
       disabledTab: true,
-      cityId: 2018,
-      showTips: 1
+      showTips: 1,
+      selectedTown: "",
+      townItems: [],
+      villageItems: []
     };
   },
   mounted() {
     // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
-    this.getActivityList(2018, 2021, 3713, true);
+    // console.log('this.$route.query.cityId',this.cityId)
+    this.getActivityList(this.cityId, 2021, 3713, true);
+  },
+  computed: {
+    cityId() {
+      return this.$store.state.common.cityId;
+    }
   },
   watch: {
     selected(val) {
@@ -134,7 +172,7 @@ export default {
       if (val === 1) {
         this.showTips = 1;
         this.activityList = [];
-        getTownList(2018).then(res => {
+        getTownList(this.cityId).then(res => {
           console.log("townlist", res);
           let temp = [{ text: "请选择", value: 0 }];
           res.data.townList.forEach(element => {
@@ -148,7 +186,19 @@ export default {
           this.selectedTown = this.townList[0].value;
         });
       } else if (val === 0) {
-        this.getActivityList(2018, 2021, 3713, true);
+        this.getActivityList(this.cityId, 2021, 3713, true);
+      } else {
+        getTownList(this.cityId).then(town => {
+          console.log("townlist2", town);
+          let townTemp = [];
+          town.data.townList.forEach(ele => {
+            townTemp.push({
+              text: ele.Name,
+              TownId: ele.TownId
+            });
+          });
+          this.townItems = townTemp;
+        });
       }
     }
   },
@@ -214,6 +264,28 @@ export default {
       let month = activityDate.getMonth() + 1;
       let day = activityDate.getDate();
       return `${year}年${month}月${day}日`;
+    },
+    collapseTown(town) {
+      getVillageList(town.TownId).then(village => {
+        console.log("getVillageList", village);
+        let townTemp = [];
+        village.data.villageList.forEach(ele => {
+          townTemp.push({
+            text: ele.Name,
+            TownId: ele.VillageId
+          });
+        });
+        this.villageItems = townTemp;
+      });
+    },
+    collapseVillage(village){
+      console.log("collapseVillage", village);
+      this.$router.push({
+        name: "childrenHomeDetail",
+        query: {
+          VillageId: village.VillageId
+        }
+      });
     }
   }
 };
@@ -272,6 +344,11 @@ export default {
 .abbreviation {
   text-align: left;
   padding: 0 20px;
+}
+.two {
+  /deep/.van-cell__right-icon {
+    display: none;
+  }
 }
 </style>
 

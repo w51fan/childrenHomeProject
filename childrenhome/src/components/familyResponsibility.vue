@@ -43,6 +43,7 @@ export default {
   },
   methods:{
     courseDetail(course){
+      this.$store.commit("common/getCourseId", course.CourseId);
       this.$router.push({
         name: "courseDetail",
         query: {

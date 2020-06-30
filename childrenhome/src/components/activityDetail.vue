@@ -1,5 +1,6 @@
 <template>
   <div>
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="activityDetailTitle">{{activity.Name}}</div>
     <div class="starlist flex">
       <ul class="cleanfloat flex star">
@@ -121,7 +122,12 @@ export default {
       let day = activityDate.getDate();
       return `${year}年${month}月${day}日`;
     },
-    onImgPreviewChange() {}
+    onImgPreviewChange() {},
+    onClickLeft(){
+      this.$router.push({
+        name: "socialParticipation"
+      });
+    }
   }
 };
 </script>

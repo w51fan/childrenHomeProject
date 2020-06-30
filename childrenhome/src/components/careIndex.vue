@@ -150,10 +150,10 @@ export default {
     };
   },
   mounted() {
-    getTotalCount(2018).then(res => {
+    getTotalCount(this.cityId).then(res => {
       // console.log(res);
       this.totalCount = res.data.totalCount;
-      getTreeCount(2018).then(result => {
+      getTreeCount(this.cityId).then(result => {
         // console.log(result);
         this.areaList = result.data.areaList;
         this.areaList.forEach(item => {
@@ -214,11 +214,16 @@ export default {
       });
     });
   },
+  computed: {
+    cityId() {
+      return this.$store.state.common.cityId;
+    }
+  },
   methods: {
     onItemClick() {},
     goDetail() {
       this.$router.push({
-        name: "childrenHomeDetail",
+        name: "childrenHomeDetail"
         // query: {
         //   Id: course.CourseId
         // }
