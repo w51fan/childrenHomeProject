@@ -1,5 +1,7 @@
 <template>
-  <div>addChildren</div>
+  <div>
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
+  </div>
 </template>
 
 <script>
@@ -7,6 +9,11 @@ export default {
   name:'addChildren',
   data(){
     return{}
+  },
+  methods:{
+    onClickLeft(){
+      
+    }
   }
 }
 </script>

@@ -89,6 +89,7 @@ export default {
             duration: 2000
           });
         } else {
+          this.$store.commit("common/getToken", res.data.token);
           this.$router.push({
             name: "childrenHomePage",
             query: {

@@ -17,8 +17,8 @@
           </div>
         </div>
 
-        <div>
-          <van-cell value="账号设置" is-link  style="margin-top: 10px;"/>
+        <div @click="goSetting">
+          <van-cell value="账号设置" is-link style="margin-top: 10px;" />
         </div>
       </div>
     </div>
@@ -88,7 +88,12 @@ export default {
     });
   },
   methods: {
-    goChildrenHomeDetail() {}
+    goChildrenHomeDetail() {},
+    goSetting(){
+       this.$router.push({
+        name: "accountSetting"
+      });
+    }
   }
 };
 </script>
@@ -119,6 +124,8 @@ export default {
         line-height: 30px;
         img {
           width: 30px;
+          height: 30px;
+          margin-top: -2px;
         }
         .name {
           padding-left: 10px;
