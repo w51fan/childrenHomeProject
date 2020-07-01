@@ -1,7 +1,12 @@
 <template>
-  <div>
+  <div class="bottomNavPage">
     <van-tabbar v-model="active">
-      <van-tabbar-item :name="nav.path" :icon="nav.icon" v-for="(nav,index) in  navList" :key="index">{{nav.navName}}</van-tabbar-item>
+      <van-tabbar-item
+        :name="nav.path"
+        :icon="nav.icon"
+        v-for="(nav,index) in  navList"
+        :key="index"
+      >{{nav.navName}}</van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
@@ -16,7 +21,7 @@ export default {
       navList: [
         {
           navName: "政府主导",
-          icon: 'wap-home',
+          icon: "wap-home",
           path: "governmentLed"
         },
         {
@@ -26,7 +31,7 @@ export default {
         },
         {
           navName: "家庭尽责",
-          icon:"friends",
+          icon: "friends",
           path: "familyResponsibility"
         },
         {
@@ -57,5 +62,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.bottomNavPage {
+}
 </style>

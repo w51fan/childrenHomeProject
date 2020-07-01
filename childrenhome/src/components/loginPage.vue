@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="loginPage">
     <div>
       <van-tabs class="inputList" v-model="activeTab">
         <van-tab title="验证码登录">
@@ -142,27 +142,29 @@ export default {
 </script>
 
 <style lang="less">
-.inputList {
-  // margin-top: 60px;
-  /deep/.van-tabs__wrap {
-    padding-top: 60px;
+.loginPage {
+  .inputList {
+    // margin-top: 60px;
+    /deep/.van-tabs__wrap {
+      padding-top: 60px;
+    }
+    /deep/.van-tabs__line {
+      width: 50% !important;
+    }
+    .inputItem {
+      padding: 0 10px;
+    }
   }
-  /deep/.van-tabs__line {
-    width: 50% !important;
-  }
-  .inputItem {
-    padding: 0 10px;
-  }
-}
 
-.footer_init {
-  color: #adadad;
-  margin-top: 80px;
-  font-size: 12px;
-}
-.loginButton {
-  /deep/.van-button__text {
-    color: black !important;
+  .footer_init {
+    color: #adadad;
+    margin-top: 80px;
+    font-size: 12px;
+  }
+  .loginButton {
+    /deep/.van-button__text {
+      color: black !important;
+    }
   }
 }
 </style>

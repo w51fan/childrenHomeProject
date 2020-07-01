@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%;">
+  <div class="careIndexPage">
     <div class="careIndexTitle">数据统计</div>
     <div class="gap gapone"></div>
     <div class="flex">
@@ -107,15 +107,22 @@
         <div class="flex space-between">
           <div class="childrenMastertableHead">儿童之家</div>
           <div class="childrenMastertableHead">儿童主任</div>
-          <div class="childrenMastertableHead">评分</div>
+          <div class="childrenMastertableHead">活动数</div>
         </div>
         <div class="gap gapone"></div>
-        <van-cell class="childrenMaster" value="91分" is-link @click="goDetail">
+        <van-cell
+          class="childrenMaster"
+          :value="childrenHome.ActivityCount"
+          is-link
+          @click="goDetail(childrenHome)"
+          v-for="(childrenHome,index) in topChildrenHomeList"
+          :key="index"
+        >
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="flex space-between">
-              <div class="custom-title">立新村儿童之家</div>
-              <div>岳海燕</div>
+              <div class="custom-title">{{childrenHome.Name}}</div>
+              <div>{{childrenHome.ChildrenDirector}}</div>
             </div>
           </template>
         </van-cell>
@@ -127,7 +134,11 @@
 
 <script>
 import bottomNav from "./bottomNav";
-import { getTotalCount, getTreeCount } from "@/api/home";
+import {
+  getTotalCount,
+  getTreeCount,
+  getTopChildrenHomeList
+} from "@/api/home";
 export default {
   name: "careIndex",
   components: {
@@ -146,10 +157,13 @@ export default {
       activeNames3: "",
       areaItems: [],
       childrenItems: [],
-      childerenHomeList: []
+      childerenHomeList: [],
+      topChildrenHomeList: []
     };
   },
   mounted() {
+    if (this.$route.query.activeTab)
+      this.activeTab = this.$route.query.activeTab;
     getTotalCount(this.cityId).then(res => {
       // console.log(res);
       this.totalCount = res.data.totalCount;
@@ -219,14 +233,25 @@ export default {
       return this.$store.state.common.cityId;
     }
   },
+  watch: {
+    activeTab(val) {
+      if (val === 2) {
+        getTopChildrenHomeList(this.cityId).then(res => {
+          console.log("getTopChildrenHomeList", res);
+          this.topChildrenHomeList = res.data.topChildrenHomeList;
+        });
+      }
+    }
+  },
   methods: {
     onItemClick() {},
-    goDetail() {
+    goDetail(childrenHome) {
+      this.$store.commit("common/getVillageId", childrenHome.VillageId);
       this.$router.push({
-        name: "childrenHomeDetail"
-        // query: {
-        //   Id: course.CourseId
-        // }
+        name: "childrenHomeDetail",
+        query: {
+          currentPath: "careIndex"
+        }
       });
     }
   }
@@ -234,66 +259,69 @@ export default {
 </script>
 
 <style lang="less">
-.flex {
-  display: flex;
-}
-.space-between {
-  justify-content: space-between;
-}
-.gap {
+.careIndexPage {
   width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.gapone {
-  height: 1px;
-}
-.gaptwo {
-  height: 2px;
-}
-.gapten {
-  height: 15px;
-}
-.careIndexTitle {
-  text-align: left;
-  padding: 10px 20px;
-}
-.green {
-  color: #0cce0c;
-  font-size: 28px;
-}
-.gray {
-  color: #c1c1c1;
-  font-size: 12px;
-}
-.item {
-  padding: 20px 25px;
-}
-.careIndexTabs {
-  /deep/.van-tabs__line {
-    width: 34% !important;
+  .flex {
+    display: flex;
   }
-  /deep/.van-cell__title {
+  .space-between {
+    justify-content: space-between;
+  }
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
+  }
+  .gapone {
+    height: 1px;
+  }
+  .gaptwo {
+    height: 2px;
+  }
+  .gapten {
+    height: 15px;
+  }
+  .careIndexTitle {
     text-align: left;
+    padding: 10px 20px;
   }
-  .three {
-    /deep/.van-cell__right-icon {
-      display: none;
+  .green {
+    color: #0cce0c;
+    font-size: 28px;
+  }
+  .gray {
+    color: #c1c1c1;
+    font-size: 12px;
+  }
+  .item {
+    padding: 20px 25px;
+  }
+  .careIndexTabs {
+    /deep/.van-tabs__line {
+      width: 34% !important;
     }
-  }
-  .childrenMaster {
     /deep/.van-cell__title {
       text-align: left;
-      flex: 2;
     }
-    /deep/.van-cell__value {
-      flex: 1;
+    .three {
+      /deep/.van-cell__right-icon {
+        display: none;
+      }
     }
-  }
-  .childrenMastertableHead {
-    padding: 10px 30px;
-    font-size: 16px;
-    font-weight: 900;
+    .childrenMaster {
+      /deep/.van-cell__title {
+        text-align: left;
+        flex: 2;
+      }
+      /deep/.van-cell__value {
+        flex: 1;
+      }
+    }
+    .childrenMastertableHead {
+      padding: 10px 30px;
+      font-size: 16px;
+      font-weight: 900;
+    }
   }
 }
 </style>

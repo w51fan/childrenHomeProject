@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="courseDetailPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div style="position: relative;">
       <img :src="course.Professor.ImagePhoto" style="height:250px;" />
@@ -129,103 +129,105 @@ export default {
 </script>
 
 <style lang="less">
-.flex {
-  display: flex;
-}
-.courseTip {
-  text-align: left;
-  position: absolute;
-  color: #c7c0c0;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-}
-.description {
-  text-align: left;
-  padding: 10px 20px;
-  .title {
-    color: #8a8787;
-    font-size: 20px;
-    font-weight: bolder;
+.courseDetailPage {
+  .flex {
+    display: flex;
   }
-  .text {
-    font-size: 18px;
+  .courseTip {
+    text-align: left;
+    position: absolute;
+    color: #c7c0c0;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
   }
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.gapfive {
-  height: 10px;
-}
-.gapone {
-  height: 1px;
-}
-.timeContentTitle {
-  text-align: left;
-  padding: 20px 20px 10px;
-}
-.courseTabs {
-  /deep/.van-tabs__line {
-    width: 50% !important;
+  .description {
+    text-align: left;
+    padding: 10px 20px;
+    .title {
+      color: #8a8787;
+      font-size: 20px;
+      font-weight: bolder;
+    }
+    .text {
+      font-size: 18px;
+    }
   }
-}
-.lessonList {
-  text-align: left;
-  .lessonName {
-    margin-left: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
   }
-  .lessonItem {
-    padding: 25px 20px;
+  .gapfive {
+    height: 10px;
   }
-}
-.introduce {
-  .title {
-    font-size: 20px;
-    font-weight: bolder;
+  .gapone {
+    height: 1px;
+  }
+  .timeContentTitle {
+    text-align: left;
+    padding: 20px 20px 10px;
+  }
+  .courseTabs {
+    /deep/.van-tabs__line {
+      width: 50% !important;
+    }
+  }
+  .lessonList {
+    text-align: left;
+    .lessonName {
+      margin-left: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lessonItem {
+      padding: 25px 20px;
+    }
+  }
+  .introduce {
+    .title {
+      font-size: 20px;
+      font-weight: bolder;
+      text-align: left;
+      padding: 20px;
+    }
+    img {
+      height: 80px;
+      padding: 15px 0 0;
+    }
+    .name {
+      color: #909090;
+      font-size: 18px;
+    }
+    .Intro {
+      text-align: left;
+      padding: 20px;
+    }
+  }
+  .answerContent {
     text-align: left;
     padding: 20px;
-  }
-  img {
-    height: 80px;
-    padding: 15px 0 0;
-  }
-  .name {
-    color: #909090;
-    font-size: 18px;
-  }
-  .Intro {
-    text-align: left;
-    padding: 20px;
-  }
-}
-.answerContent {
-  text-align: left;
-  padding: 20px;
-  .category {
-    font-size: 22px;
-    font-weight: 600;
-    padding-bottom: 15px;
-  }
-  .name {
-    color: #929191;
-    font-size: 18px;
-    font-weight: 600;
-    padding-bottom: 5px;
-  }
-  .phone {
-    color: #929191;
-    font-size: 16px;
-    // font-weight: 600;
-  }
-  .paddingBottomTen {
-    padding-bottom: 15px;
+    .category {
+      font-size: 22px;
+      font-weight: 600;
+      padding-bottom: 15px;
+    }
+    .name {
+      color: #929191;
+      font-size: 18px;
+      font-weight: 600;
+      padding-bottom: 5px;
+    }
+    .phone {
+      color: #929191;
+      font-size: 16px;
+      // font-weight: 600;
+    }
+    .paddingBottomTen {
+      padding-bottom: 15px;
+    }
   }
 }
 </style>

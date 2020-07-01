@@ -1,14 +1,10 @@
 <template>
-  <div>
+  <div class="activityDetailPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="activityDetailTitle">{{activity.Name}}</div>
     <div class="starlist flex">
-      <ul class="cleanfloat flex star">
-        <li>★</li>
-        <li>★</li>
-        <li>★</li>
-        <li>★</li>
-        <li>★</li>
+      <ul class="cleanfloat flex">
+        <li v-for="(n,index) in 5" :key="index" :class="[index+1>starNum?'grayStar':'star']">★</li>
       </ul>
       <div class="status will" v-if="activity.Status===1">即将开始</div>
       <div class="status ing" v-else-if="activity.Status===2">进行中...</div>
@@ -56,13 +52,21 @@
       <div style="background: rgba(128, 128, 128, 0.1);">
         <div v-for="(record,index) in activityRecordList" :key="index">
           <div class="activityRecordUser">
-            <div class="activityRecordUserHead">
+            <!-- <div class="activityRecordUserHead">
               <div style="color: #ffb100;">暂无头像</div>
-            </div>
+            </div>-->
+            <img src="../assets/nohead.png" alt />
             <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
           </div>
           <div>
-            <div class="activityRecordUserContent">{{record.Content}}</div>
+            <div class="activityRecordUserContent">
+              <img
+                v-if="record.Content.indexOf('http')> -1"
+                :src="record.Content"
+                style="width:100%"
+              />
+              <div v-else>{{record.Content}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -89,12 +93,14 @@ export default {
       turn: 0,
       startPosition: 0,
       ActivityType: "",
+      starNum: 0
     };
   },
   mounted() {
     getActivityDetail(this.$route.query.Id).then(res => {
       console.log("activity", res);
       this.activity = res.data.activity;
+      this.starNum = res.data.activity.Score / 10;
       this.activityRecordList = res.data.activityRecordList;
       this.activityImageList = res.data.activityImageList;
       this.ActivityType =
@@ -108,6 +114,10 @@ export default {
       this.activityImageList.forEach(item => {
         this.imagesArray.push(item.Url);
       });
+      console.log(
+        "record.Content",
+        this.activityRecordList[0].Content.indexOf("http") > -1
+      );
     });
   },
   methods: {
@@ -123,9 +133,9 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     onImgPreviewChange() {},
-    onClickLeft(){
+    onClickLeft() {
       this.$router.push({
-        name: "socialParticipation"
+        name: this.$route.query.currentPath
       });
     }
   }
@@ -133,138 +143,145 @@ export default {
 </script>
 
 <style lang="less" >
-.activityDetailTitle {
-  text-align: left;
-  padding: 10px 20px 0;
-  font-size: 16px;
-}
-.activityOrganizers {
-  text-align: left;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: 600;
-}
-.activityOrganizersHead {
-  width: 30px;
-  text-align: center;
-  font-size: 12px;
-  margin: 0 35px 10px;
-  padding: 10px;
-  background: #3b4c5a;
-  border-radius: 50%;
-}
-.activityImgTitle {
-  text-align: left;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: 600;
-}
-.activityRecord {
-  text-align: left;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: 600;
-}
-.activityRecordUser {
-  text-align: left;
-  padding: 20px;
-  display: flex;
-}
-.activityRecordUserHead {
-  width: 30px;
-  text-align: center;
-  font-size: 12px;
-  padding: 8px;
-  background: #3b4c5a;
-  border-radius: 50%;
-}
-.activityRecordUserContent {
-  background: rgb(255, 255, 255);
-  margin: 0px 20px 0 70px;
-  padding: 20px;
-  text-align: left;
-}
-.activityEvaluate {
-  text-align: left;
-  padding: 20px;
-  font-size: 18px;
-  font-weight: 600;
-}
-.flex {
-  display: flex;
-}
-.wrap {
-  flex-wrap: wrap;
-}
-.starlist {
-  padding: 10px 20px;
-}
-.star {
-  color: #e0e0e0;
-  line-height: 30px;
-}
-.status {
-  margin: 0 15px;
-  padding: 0 14px;
-  border-radius: 14px;
-  font-size: 13px;
-  line-height: 30px;
-}
-.will {
-  background: #ffac0ed6;
-  color: #6f6f6f;
-}
-.ing {
-  background: #10559e;
-  color: #fff;
-}
-.finished {
-  background: #e8e8e8;
-  color: #7d7d7d;
-}
-.activityType {
-  padding: 0 20px 10px;
-  font-size: 14px;
-}
-.activityTypeContent {
-  color: #8a8a8a;
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: rgba(128, 128, 128, 0.1);
-}
+.activityDetailPage {
+  .activityDetailTitle {
+    text-align: left;
+    padding: 10px 20px 0;
+    font-size: 16px;
+  }
+  .activityOrganizers {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .activityOrganizersHead {
+    width: 30px;
+    text-align: center;
+    font-size: 12px;
+    margin: 0 35px 10px;
+    padding: 10px;
+    background: #3b4c5a;
+    border-radius: 50%;
+  }
+  .activityImgTitle {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .activityRecord {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .activityRecordUser {
+    text-align: left;
+    padding: 20px;
+    display: flex;
+  }
+  .activityRecordUserHead {
+    width: 30px;
+    text-align: center;
+    font-size: 12px;
+    padding: 8px;
+    background: #3b4c5a;
+    border-radius: 50%;
+  }
+  .activityRecordUserContent {
+    background: rgb(255, 255, 255);
+    margin: 0px 20px 0 70px;
+    padding: 20px;
+    text-align: left;
+  }
+  .activityEvaluate {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .flex {
+    display: flex;
+  }
+  .wrap {
+    flex-wrap: wrap;
+  }
+  .starlist {
+    padding: 10px 20px;
+  }
+  .grayStar {
+    color: #e0e0e0;
+    line-height: 30px;
+  }
+  .star {
+    // color: #e0e0e0;
+    color: #fbb32f;
+    line-height: 30px;
+  }
+  .status {
+    margin: 0 15px;
+    padding: 0 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 30px;
+  }
+  .will {
+    background: #ffac0ed6;
+    color: #6f6f6f;
+  }
+  .ing {
+    background: #10559e;
+    color: #fff;
+  }
+  .finished {
+    background: #e8e8e8;
+    color: #7d7d7d;
+  }
+  .activityType {
+    padding: 0 20px 10px;
+    font-size: 14px;
+  }
+  .activityTypeContent {
+    color: #8a8a8a;
+  }
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: rgba(128, 128, 128, 0.1);
+  }
 
-.gapten {
-  height: 10px;
-}
-.gaptwenty {
-  height: 20px;
-}
-.activityImageList {
-  padding: 0 20px;
-  img {
-    width: 100%;
-    height: 100%;
-    min-width: 100px;
-    max-width: 100px;
-    min-height: 120px;
-    max-height: 120px;
+  .gapten {
+    height: 10px;
   }
-  .imgItem {
-    flex: 1;
-    padding: 10px 5px;
+  .gaptwenty {
+    height: 20px;
   }
-}
-.imgPreview {
-  img {
-    width: 100%;
-    height: 80%;
-    min-width: 100%;
-    max-width: 100%;
-    min-height: 80%;
-    max-height: 80%;
-    margin-top: 40px;
+  .activityImageList {
+    padding: 0 20px;
+    img {
+      width: 100%;
+      height: 100%;
+      min-width: 100px;
+      max-width: 100px;
+      min-height: 120px;
+      max-height: 120px;
+    }
+    .imgItem {
+      flex: 1;
+      padding: 10px 5px;
+    }
+  }
+  .imgPreview {
+    img {
+      width: 100%;
+      height: 80%;
+      min-width: 100%;
+      max-width: 100%;
+      min-height: 80%;
+      max-height: 80%;
+      margin-top: 40px;
+    }
   }
 }
 </style>

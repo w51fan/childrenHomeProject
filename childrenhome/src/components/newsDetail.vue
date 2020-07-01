@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div class="newsDetailPage">
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div>{{newsTitle}}</div>
-    <div v-html="newsContent"></div>
+    <div v-html="newsContent" class="newsContent"></div>
   </div>
 </template>
 
@@ -12,18 +13,32 @@ export default {
   data() {
     return {
       newsTitle: "",
-      newsContent: ''
+      newsContent: ""
     };
   },
   mounted() {
     getNewsDetail(this.$route.query.Id).then(res => {
       console.log("res", res.data.news.Content);
-      this.newsTitle = res.data.news.Title
-      this.newsContent = res.data.news.Content
+      this.newsTitle = res.data.news.Title;
+      this.newsContent = res.data.news.Content;
     });
+  },
+  methods: {
+    onClickLeft() {
+      this.$router.push({
+        name: "governmentLed"
+      });
+    }
   }
 };
 </script>
 
-<style>
+<style lang="less">
+.newsDetailPage {
+  .newsContent {
+    img {
+      width: 100%;
+    }
+  }
+}
 </style>

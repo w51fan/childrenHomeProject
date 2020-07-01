@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="lessonPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="lessonVideo">
       <video :src="lesson.Url" autoplay="false" controls></video>
@@ -55,48 +55,50 @@ export default {
 </script>
 
 <style lang="less">
-.lessonVideo {
-  video {
-    width: 100%;
+.lessonPage {
+  .lessonVideo {
+    video {
+      width: 100%;
+    }
+    .topic {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 20px;
+    }
   }
-  .topic {
-    text-align: left;
-    font-size: 16px;
-    font-weight: 600;
+  .pointListHead {
     padding: 20px;
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .num {
+      color: gray;
+    }
   }
-}
-.pointListHead {
-  padding: 20px;
-  .title {
-    font-size: 20px;
-    font-weight: 600;
+  .flex {
+    display: flex;
   }
-  .num {
-    color: gray;
+  .space-between {
+    justify-content: space-between;
   }
-}
-.flex {
-  display: flex;
-}
-.space-between {
-  justify-content: space-between;
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.gapone {
-  height: 1px;
-}
-.pointList {
-  text-align: left;
-  // padding: 20px;
-  .pointItemContent {
-    font-size: 16px;
-    line-height: 35px;
-    padding: 10px 20px;
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
+  }
+  .gapone {
+    height: 1px;
+  }
+  .pointList {
+    text-align: left;
+    // padding: 20px;
+    .pointItemContent {
+      font-size: 16px;
+      line-height: 35px;
+      padding: 10px 20px;
+    }
   }
 }
 </style>

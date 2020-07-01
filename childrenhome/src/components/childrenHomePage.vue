@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="childrenHomePage">
     <div class="childrenHomePageHead">
       <div class="flex space-between">
         <div class="head flex">
@@ -18,7 +18,7 @@
         </div>
 
         <div>
-          <van-cell value="账号设置" is-link />
+          <van-cell value="账号设置" is-link  style="margin-top: 10px;"/>
         </div>
       </div>
     </div>
@@ -44,8 +44,8 @@
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
               <div class="flex space-between">
-                <div class="custom-title">立新村儿童之家</div>
-                <div>岳海燕</div>
+                <div class="custom-title">{{childrenHome.ChildrenCount}}人</div>
+                <div>{{childrenHome.ActivityCount}}次</div>
                 <div>
                   <ul class="cleanfloat flex star">
                     <li>★</li>
@@ -94,75 +94,77 @@ export default {
 </script>
 
 <style lang="less">
-.childrenHomePageHead {
-  padding: 20px;
-  .head {
-    img {
-      width: 50px;
-    }
-    .name {
-      text-align: left;
-      padding: 0 20px 10px;
-    }
-  }
-}
-.myChildrenHome {
-  text-align: left;
-  padding: 20px;
-  font-size: 18px;
-}
-.childrenHomeList {
-  .childrenHomeItem {
-    .childrenHomeItemName {
-      padding: 20px;
-      line-height: 30px;
+.childrenHomePage {
+  .childrenHomePageHead {
+    padding: 20px;
+    .head {
       img {
-        width: 30px;
+        width: 50px;
       }
       .name {
-        padding-left: 10px;
+        text-align: left;
+        padding: 0 20px 10px;
       }
     }
   }
-}
+  .myChildrenHome {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+  }
+  .childrenHomeList {
+    .childrenHomeItem {
+      .childrenHomeItemName {
+        padding: 20px;
+        line-height: 30px;
+        img {
+          width: 30px;
+        }
+        .name {
+          padding-left: 10px;
+        }
+      }
+    }
+  }
 
-.flex {
-  display: flex;
-}
-.space-between {
-  justify-content: space-between;
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.gapone {
-  height: 1px;
-}
-.gaptwo {
-  height: 3px;
-}
-.gapfive {
-  height: 15px;
-}
-.status {
-  margin: 0 15px;
-  border-radius: 14px;
-  font-size: 12px;
-  padding: 2px 0;
-  line-height: 20px;
-}
-.will {
-  background: #ffac0ed6;
-  color: #6f6f6f;
-}
-.childrenUserHead {
-  width: 30px;
-  text-align: center;
-  font-size: 12px;
-  padding: 8px;
-  background: #3b4c5a;
-  border-radius: 50%;
+  .flex {
+    display: flex;
+  }
+  .space-between {
+    justify-content: space-between;
+  }
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
+  }
+  .gapone {
+    height: 1px;
+  }
+  .gaptwo {
+    height: 3px;
+  }
+  .gapfive {
+    height: 15px;
+  }
+  .status {
+    margin: 0 15px;
+    border-radius: 14px;
+    font-size: 12px;
+    padding: 2px 0;
+    line-height: 20px;
+  }
+  .will {
+    background: #ffac0ed6;
+    color: #6f6f6f;
+  }
+  .childrenUserHead {
+    width: 30px;
+    text-align: center;
+    font-size: 12px;
+    padding: 8px;
+    background: #3b4c5a;
+    border-radius: 50%;
+  }
 }
 </style>

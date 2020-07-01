@@ -14,7 +14,19 @@ import changeCityPage from '@/components/changeCityPage'
 import socialParticipation from '@/components/socialParticipation'
 import familyResponsibility from '@/components/familyResponsibility'
 import careIndex from '@/components/careIndex'
+
+import addChildren from '@/components/addChildren'
 import growthStory from '@/components/growthStory'
+import addActivity from '@/components/addActivity'
+import editActivity from '@/components/editActivity'
+import socialWorkstation from '@/components/socialWorkstation'
+import socialWorkstationDetail from '@/components/socialWorkstationDetail'
+
+
+
+import accountSetting from '@/components/accountSetting'
+import offlineActivity from '@/components/offlineActivity'
+
 
 
 Vue.use(Router)
@@ -31,6 +43,7 @@ const router = new Router({
       name: 'loginPage',
       component: loginPage
     }, 
+    //儿童之家首页
     {
       path: '/childrenHomePage',
       name: 'childrenHomePage',
@@ -96,7 +109,46 @@ const router = new Router({
       name: 'changeCityPage',
       component: changeCityPage
     },
-  ]
+    {
+      path: '/accountSetting',
+      name: 'accountSetting',
+      component: accountSetting
+    },
+    //线下活动
+    {
+      path: '/offlineActivity',
+      name: 'offlineActivity',
+      component: offlineActivity
+    },
+    {
+      path: '/addActivity',
+      name: 'addActivity',
+      component: addActivity
+    },
+    //新建儿童信息
+    {
+      path: '/addChildren',
+      name: 'addChildren',
+      component: addChildren
+    },
+    //编辑活动信息
+    {
+      path: '/editActivity',
+      name: 'editActivity',
+      component: editActivity
+    },
+    //社会工作站
+    {
+      path: '/socialWorkstation',
+      name: 'socialWorkstation',
+      component: socialWorkstation
+    },
+    {
+      path: '/socialWorkstationDetail',
+      name: 'socialWorkstationDetail',
+      component: socialWorkstationDetail
+    },
+  ] 
 })
 
 const originalPush = Router.prototype.push

@@ -139,11 +139,27 @@ export const getLessonDetail = function (courseId, lessonId) {
   });
 }
 
+//儿童之家排名列表（关爱指数）
+export const getTopChildrenHomeList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getTopChildrenHomeList?cityId=${cityId}`,
+    method: "get"
+  });
+}
+
 
 //儿童之家列表
 export const getChildrenHomeList = function (token) {
   return axios.request({
     url: `https://api.quanjiaxue.net/manage/getChildrenHomeList?token=${token}`,
+    method: "get"
+  });
+}
+
+//儿童之家详情
+export const getChildrenHomeDetail = function (villageId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/detail?villageId=${villageId}`,
     method: "get"
   });
 }

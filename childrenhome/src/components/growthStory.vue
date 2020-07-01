@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="growthStoryPage">
     <!-- <div>
       <van-loading type="spinner" />
     </div>-->
@@ -73,9 +73,11 @@ export default {
 </script>
 
 <style lang="less" >
-.Content {
-  img {
-    width: 100%;
+.growthStoryPage {
+  .Content {
+    img {
+      width: 100%;
+    }
   }
 }
 </style>

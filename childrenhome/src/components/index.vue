@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="governmentLedPage">
     <div class="swipe">
       <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
         <van-swipe-item v-for="(img,index) in imgList" :key="index">
@@ -10,7 +10,7 @@
     <div class="gap"></div>
     <div class="tabList">
       <div class="tab" v-for="(tab,index) in tabList" :key="index">
-        <div class="tabItem" :class="[index===0||index===2?'right':'']">
+        <div class="tabItem" :class="[index===0||index===2?'right':'']" @click="viewDeatil(tab)">
           <img :src="tab.NewsThumbnail" alt class="tabItemImg" />
           <div>
             <div style="line-height: 40px;padding-left: 10px;font-weight: 600;">{{tab.Title}}</div>
@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     cityId() {
-      console.log('his.$store.state',this.$store.state)
+      console.log("his.$store.state", this.$store.state);
       return this.$store.state.common.cityId;
     }
   },
@@ -108,53 +108,55 @@ export default {
 </script>
 
 <style lang="less">
-.swipe {
-  width: 100%;
-  height: 150px;
-}
-.swipeImg {
-  width: 100%;
-  height: 150px;
-}
-.flex {
-  display: flex;
-}
-.space-between {
-  justify-content: space-between;
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.newsList {
-  margin-bottom: 60px;
-}
-.tabList {
-  display: flex;
-  flex-wrap: wrap;
-}
-.tabItem {
-  display: flex;
-  padding: 10px 20px;
-  /* border-bottom: 1px solid #e6e6e6; */
-}
-.right {
-  border-right: 1px solid #e6e6e6;
-}
-.tabItemImg {
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-}
-.tab {
-  width: 50%;
-  flex: 1;
-  min-width: 50%;
-  max-width: 50%;
-  border-bottom: 1px solid #e6e6e6;
-}
-.newsTitle {
-  border-bottom: 1px solid #e6e6e6;
+.governmentLedPage {
+  .swipe {
+    width: 100%;
+    height: 150px;
+  }
+  .swipeImg {
+    width: 100%;
+    height: 150px;
+  }
+  .flex {
+    display: flex;
+  }
+  .space-between {
+    justify-content: space-between;
+  }
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
+  }
+  .newsList {
+    margin-bottom: 60px;
+  }
+  .tabList {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .tabItem {
+    display: flex;
+    padding: 10px 20px;
+    /* border-bottom: 1px solid #e6e6e6; */
+  }
+  .right {
+    border-right: 1px solid #e6e6e6;
+  }
+  .tabItemImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+  }
+  .tab {
+    width: 50%;
+    flex: 1;
+    min-width: 50%;
+    max-width: 50%;
+    border-bottom: 1px solid #e6e6e6;
+  }
+  .newsTitle {
+    border-bottom: 1px solid #e6e6e6;
+  }
 }
 </style>

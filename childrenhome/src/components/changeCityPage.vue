@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="changeCityPage">
     <van-nav-bar v-if="needComeBack" left-text="返回" left-arrow @click-left="onClickLeft" />
     <div>请选择你所在的地区</div>
     <div>
@@ -49,7 +49,9 @@ export default {
 </script>
 
 <style lang="less">
-.cityItem {
-  padding: 20px 20px 0;
+.changeCityPage {
+  .cityItem {
+    padding: 20px 20px 0;
+  }
 }
 </style>

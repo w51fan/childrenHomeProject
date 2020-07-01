@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-bottom: 60px;">
+  <div class="socialParticipationPage">
     <van-tabs v-model="selected">
       <van-tab title="最新活动">
         <div class="gap"></div>
@@ -55,7 +55,7 @@
           </van-dropdown-menu>
         </div>
         <div class="gap gapfive"></div>
-        <div v-if="showTips===1">
+        <div v-if="showTips===1" style="color: #b9b9b9;padding-top: 30px;line-height: 30px;">
           <div>选择一个地区进行查询</div>
           <div>请点击上方"选择地区"进行查询</div>
         </div>
@@ -111,9 +111,10 @@
                   style="text-align: left;"
                   class="two"
                 >
-                 <template #title>
-              <div @click="collapseVillage(village)">{{town.text}}</div>
-            </template></van-collapse-item>
+                  <template #title>
+                    <div @click="collapseVillage(village)">{{village.text}}</div>
+                  </template>
+                </van-collapse-item>
               </van-collapse>
             </template>
           </van-collapse-item>
@@ -203,16 +204,12 @@ export default {
     }
   },
   methods: {
-    onValuesChange(picker, values) {
-      if (values[0] > values[1]) {
-        picker.setSlotValue(1, values[0]);
-      }
-    },
     viewDetail(row) {
       this.$router.push({
         name: "activityDetail",
         query: {
-          Id: row.Id
+          Id: row.Id,
+          currentPath: "socialParticipation"
         }
       });
     },
@@ -272,18 +269,20 @@ export default {
         village.data.villageList.forEach(ele => {
           townTemp.push({
             text: ele.Name,
-            TownId: ele.VillageId
+            VillageId: ele.VillageId
           });
         });
+        console.log("townTemp", townTemp);
         this.villageItems = townTemp;
       });
     },
-    collapseVillage(village){
+    collapseVillage(village) {
       console.log("collapseVillage", village);
+      this.$store.commit("common/getVillageId", village.VillageId);
       this.$router.push({
         name: "childrenHomeDetail",
         query: {
-          VillageId: village.VillageId
+          currentPath: 'socialParticipation'
         }
       });
     }
@@ -292,62 +291,65 @@ export default {
 </script>
 
 <style lang="less"  scoped>
-.latestActivity {
-  display: flex;
-  justify-content: center;
-}
-/deep/.van-dropdown-menu__bar {
-  box-shadow: none;
-}
-/deep/.van-icon-underway {
-  color: #ff8917;
-}
-/deep/.van-icon-checked {
-  color: #1989fa;
-}
-.gry {
-  color: #8e8a8a;
-}
-.status {
-  margin: 15px;
-  padding: 0 14px;
-  border-radius: 14px;
-  font-size: 13px;
-  line-height: 30px;
-}
-.will {
-  background: #ffac0ed6;
-  color: #6f6f6f;
-}
-.ing {
-  background: #10559e;
-  color: #fff;
-}
-.finished {
-  background: #e8e8e8;
-  color: #7d7d7d;
-}
-.flex {
-  display: flex;
-}
-.space-between {
-  justify-content: space-between;
-}
-.gap {
-  width: 100%;
-  height: 8px;
-  background: #e6e6e6;
-}
-.gapfive {
-  height: 2px;
-}
-.abbreviation {
-  text-align: left;
-  padding: 0 20px;
-}
-.two {
-  /deep/.van-cell__right-icon {
-    display: none;
+.socialParticipationPage {
+  margin-bottom: 60px;
+  .latestActivity {
+    display: flex;
+    justify-content: center;
+  }
+  /deep/.van-dropdown-menu__bar {
+    box-shadow: none;
+  }
+  /deep/.van-icon-underway {
+    color: #ff8917;
+  }
+  /deep/.van-icon-checked {
+    color: #1989fa;
+  }
+  .gry {
+    color: #8e8a8a;
+  }
+  .status {
+    margin: 15px;
+    padding: 0 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 30px;
+  }
+  .will {
+    background: #ffac0ed6;
+    color: #6f6f6f;
+  }
+  .ing {
+    background: #10559e;
+    color: #fff;
+  }
+  .finished {
+    background: #e8e8e8;
+    color: #7d7d7d;
+  }
+  .flex {
+    display: flex;
+  }
+  .space-between {
+    justify-content: space-between;
+  }
+  .gap {
+    width: 100%;
+    height: 8px;
+    background: #e6e6e6;
+  }
+  .gapfive {
+    height: 2px;
+  }
+  .abbreviation {
+    text-align: left;
+    padding: 0 20px;
+  }
+  .two {
+    /deep/.van-cell__right-icon {
+      display: none;
+    }
   }
 }
 </style>

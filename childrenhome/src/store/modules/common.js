@@ -1,7 +1,8 @@
 // initial state
 const state = {
     cityId: "",
-    CourseId:''
+    CourseId:'',
+    VillageId:'',
 }
 
 const getters = {}
@@ -14,6 +15,9 @@ const mutations = {
     },
     getCourseId(state, value) {
         state.CourseId = value;
+    },
+    getVillageId(state, value) {
+      state.VillageId = value;
     },
 }
 

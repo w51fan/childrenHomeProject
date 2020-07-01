@@ -1,19 +1,24 @@
 <template>
   <div class="ennterPage">
     <img src="http://minzheng.oss-cn-beijing.aliyuncs.com/cover.jpg" alt />
-    <van-tabs v-model="activeTab">
+    <van-tabs v-model="activeTab" class="ennterPageTabs">
       <van-tab title="系统介绍">
         <div class="introduceContent">{{introduceContent}}</div>
       </van-tab>
       <van-tab title="功能亮点">
         <div class="function">
           <div>平台功能：</div>
-          <div>（一）实时监控儿童之家工作动态</div>
-          <div>（二）社会宣传与展示</div>
+          <div style="font-size: 15px;">
+            <div>（一）实时监控儿童之家工作动态</div>
+            <div>（二）社会宣传与展示</div>
+          </div>
+
           <div>亮点：</div>
-          <div>（一）权威定制的专家课程</div>
-          <div>（二）先进的管理后台，学习进度跟踪，活动实时干预</div>
-          <div>（三）手机导入信息，简便易操</div>
+          <div style="font-size: 15px;">
+            <div>（一）权威定制的专家课程</div>
+            <div>（二）先进的管理后台，学习进度跟踪，活动实时干预</div>
+            <div>（三）手机导入信息，简便易操</div>
+          </div>
         </div>
       </van-tab>
     </van-tabs>
@@ -34,10 +39,10 @@ export default {
       // functionContent:"",
     };
   },
-  methods:{
-    go(){
+  methods: {
+    go() {
       this.$router.push({
-        name: "governmentLed",
+        name: "governmentLed"
       });
     }
   }
@@ -49,22 +54,29 @@ export default {
   img {
     width: 100%;
   }
-}
-.fix {
-  position: fixed;
-  text-align: center;
-  width: 100%;
-  bottom: 0px;
-  padding: 15px 20px;
-  background: #ffb103;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-}
-.introduceContent {
-  text-align: left;
-}
-.function{
-  text-align: left;
+  .fix {
+    position: fixed;
+    text-align: center;
+    width: 100%;
+    bottom: 0px;
+    padding: 15px 20px;
+    background: #ffb103;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .introduceContent {
+    text-align: left;
+    padding: 20px;
+  }
+  .function {
+    text-align: left;
+    padding: 20px;
+  }
+  .ennterPageTabs {
+    /deep/.van-tabs__line {
+      width: 40% !important;
+    }
+  }
 }
 </style>
