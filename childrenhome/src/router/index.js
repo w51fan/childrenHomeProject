@@ -21,7 +21,8 @@ import addActivity from '@/components/addActivity'
 import editActivity from '@/components/editActivity'
 import socialWorkstation from '@/components/socialWorkstation'
 import socialWorkstationDetail from '@/components/socialWorkstationDetail'
-
+import assistantChildrenHomeDetail from '@/components/assistantChildrenHomeDetail'
+import addLowIncomePerson from '@/components/addLowIncomePerson'
 
 
 import accountSetting from '@/components/accountSetting'
@@ -147,6 +148,16 @@ const router = new Router({
       path: '/socialWorkstationDetail',
       name: 'socialWorkstationDetail',
       component: socialWorkstationDetail
+    },
+    {
+      path: '/assistantChildrenHomeDetail',
+      name: 'assistantChildrenHomeDetail',
+      component: assistantChildrenHomeDetail
+    },
+    {
+      path: '/addLowIncomePerson',
+      name: 'addLowIncomePerson',
+      component: addLowIncomePerson
     },
   ] 
 })

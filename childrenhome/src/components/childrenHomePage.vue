@@ -122,7 +122,7 @@ export default {
     goChildrenHomeDetail(childrenHome) {
       this.$store.commit("common/getVillageId", childrenHome.VillageId);
       this.$router.push({
-        name: "childrenHomeDetail",
+        name: "assistantChildrenHomeDetail",
         query: {
           currentPath: "childrenHomePage"
         }
