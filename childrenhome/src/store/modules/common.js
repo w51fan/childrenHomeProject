@@ -3,7 +3,9 @@ const state = {
     cityId: "",
     CourseId: '',
     VillageId: '',
-    Token: ''
+    Token: '',
+    UserTpye:'',
+    User:''
 }
 
 const getters = {}
@@ -22,6 +24,12 @@ const mutations = {
     },
     getToken(state, value) {
         state.Token = value;
+    },
+    getUserTpye(state, value) {
+      state.UserTpye = value;
+    },
+    getUser(state, value) {
+      state.User = value;
     },
 }
 

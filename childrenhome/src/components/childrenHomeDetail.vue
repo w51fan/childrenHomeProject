@@ -66,7 +66,7 @@
                 <div
                   class="will"
                   style="padding: 5px 10px;border-radius: 14px;font-size: 13px;"
-                >村级管理</div>
+                >{{user.Type===4?'村级管理员':user.Type===7?'志愿者':user.Type===3?'镇级管理员':user.Type===2?'县级管理员':user.Type===1?'市级管理员':user.Type===6?'助理':'村级讲师'}}</div>
               </div>
             </div>
             <div>
@@ -210,6 +210,7 @@ export default {
   }
   .star {
     color: #fbb32f;
+    line-height: 30px;
   }
   .grayStar {
     color: #e0e0e0;

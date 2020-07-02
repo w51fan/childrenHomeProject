@@ -1,5 +1,5 @@
 <template>
-  <div class="bottomNavPage">
+  <div class="assistantBottomNavPage">
     <van-tabbar v-model="active">
       <van-tabbar-item
         :name="nav.path"
@@ -13,31 +13,31 @@
 
 <script>
 export default {
-  name: "bottomNav",
+  name: "assistantBottomNav",
   props: ["selectedNav"],
   data() {
     return {
-      active: "governmentLed",
+      active: "childrenHomePage",
       navList: [
         {
-          navName: "政府主导",
+          navName: "儿童之家",
           icon: "wap-home",
+          path: "childrenHomePage"
+        },
+        {
+          navName: "新闻动态",
+          icon: "invition",
           path: "governmentLed"
         },
         {
-          navName: "社会参与",
-          icon: "invition",
-          path: "socialParticipation"
-        },
-        {
-          navName: "家庭尽责",
+          navName: "线下活动",
           icon: "friends",
-          path: "familyResponsibility"
+          path: "offlineActivity"
         },
         {
-          navName: "关爱指数",
+          navName: "线上课程",
           icon: "fire",
-          path: "careIndex"
+          path: "familyResponsibility"
         },
         {
           navName: "成长故事",
@@ -56,7 +56,7 @@ export default {
       this.$router.push({
         name: this.active,
         query:{
-          isAssistant:false
+          isAssistant:true
         }
       });
       return this.selectedNav;
@@ -66,6 +66,6 @@ export default {
 </script>
 
 <style lang="less">
-.bottomNavPage {
+.assistantBottomNavPage {
 }
 </style>

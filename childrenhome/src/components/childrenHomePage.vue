@@ -13,7 +13,7 @@
           </div>
           <div>
             <div class="name">{{user.Name}}</div>
-            <div class="status will" style="width: 60px;margin: 0 16px;">志愿者</div>
+            <div class="status will" style="width: 60px;margin: 0 16px;">{{user.Type===4?'村级管理员':user.Type===7?'志愿者':user.Type===3?'镇级管理员':user.Type===2?'县级管理员':user.Type===1?'市级管理员':user.Type===6?'助理':'村级讲师'}}</div>
           </div>
         </div>
 
@@ -29,7 +29,12 @@
     <div class="gap gapfive"></div>
     <div class="childrenHomeList">
       <div>
-        <div v-for="(childrenHome,index) in childrenHomeList" :key="index" class="childrenHomeItem">
+        <div
+          v-for="(childrenHome,index) in childrenHomeList"
+          :key="index"
+          class="childrenHomeItem"
+          @click="goChildrenHomeDetail(childrenHome)"
+        >
           <div class="flex childrenHomeItemName">
             <img src="../assets/smile.png" alt />
             <div class="name">{{childrenHome.Name}}</div>
@@ -40,19 +45,26 @@
             <div class="childrenMastertableHead">活动次数</div>
             <div class="childrenMastertableHead">评分</div>
           </div>
-          <van-cell class="childrenMaster" @click="goChildrenHomeDetail">
+          <van-cell class="childrenMaster">
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
               <div class="flex space-between">
                 <div class="custom-title">{{childrenHome.ChildrenCount}}人</div>
                 <div>{{childrenHome.ActivityCount}}次</div>
                 <div>
-                  <ul class="cleanfloat flex star">
+                  <!-- <ul class="cleanfloat flex star">
                     <li>★</li>
                     <li>★</li>
                     <li>★</li>
                     <li>★</li>
                     <li>★</li>
+                  </ul>-->
+                  <ul class="cleanfloat flex">
+                    <li
+                      v-for="(n,index) in 5"
+                      :key="index"
+                      :class="[index+1>childrenHome.Score/10?'grayStar':'star']"
+                    >★</li>
                   </ul>
                 </div>
               </div>
@@ -62,36 +74,66 @@
         </div>
       </div>
     </div>
+    <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
   </div>
 </template>
 
 <script>
-import { getUserInfo, getChildrenHomeList } from "@/api/home";
+import { getChildrenHomeList } from "@/api/home";
+import assistantBottomNav from "./assistantBottomNav";
 export default {
   name: "childrenHomePage",
+  components: {
+    assistantBottomNav
+  },
   data() {
     return {
       token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTYxMDYzNjMsImlhdCI6MTU5MzUxNDM2MywiaWQiOjI0NjMwLCJuYW1lIjoi5LiA5biGIiwicGhvbmUiOiIxMzQzMDIwMjYyMSIsInByb2ZpbGVfcGhvdG8iOiIifQ.CcCcf1s0cQ09esbvV-IsLdu_rh0BI2yNQ0muwsqQt7U",
       user: "",
-      childrenHomeList: []
+      childrenHomeList: [],
+      selectedNav: "childrenHomePage"
     };
   },
+  // computed: {
+  //   token() {
+  //     return this.$store.state.common.token;
+  //   },
+  //   user() {
+  //     return this.$store.state.common.user;
+  //   },
+  // },
   mounted() {
-    getUserInfo(this.token).then(res => {
-      console.log("getUserInfo", res);
-      this.user = res.data.user;
-      getChildrenHomeList(this.token).then(result => {
-        console.log("getChildrenHomeList", result);
-        this.childrenHomeList = result.data.childrenHomeList;
-      });
+    this.user = this.$route.query.user
+    getChildrenHomeList(this.token).then(result => {
+      console.log("getChildrenHomeList", result);
+      this.childrenHomeList = result.data.childrenHomeList;
+
+      if (this.childrenHomeList.length > 0) {
+        this.$store.commit("common/getCityId", this.childrenHomeList[0].CityId);
+        // this.$store.commit("common/getTownId", this.childrenHomeList[0].TownId);
+        // this.$store.commit("common/getVillageId", this.childrenHomeList[0].VillageId);
+      } else {
+        this.$store.commit("common/getCityId", 2018);
+      }
     });
   },
   methods: {
-    goChildrenHomeDetail() {},
-    goSetting(){
-       this.$router.push({
-        name: "accountSetting"
+    goChildrenHomeDetail(childrenHome) {
+      this.$store.commit("common/getVillageId", childrenHome.VillageId);
+      this.$router.push({
+        name: "childrenHomeDetail",
+        query: {
+          currentPath: "childrenHomePage"
+        }
+      });
+    },
+    goSetting() {
+      this.$router.push({
+        name: "accountSetting",
+        query: {
+          currentPath: "childrenHomePage"
+        }
       });
     }
   }
@@ -131,6 +173,11 @@ export default {
           padding-left: 10px;
         }
       }
+      .childrenMaster {
+        .van-cell__title {
+          padding: 0 5px;
+        }
+      }
     }
   }
 
@@ -139,6 +186,12 @@ export default {
   }
   .space-between {
     justify-content: space-between;
+  }
+  .star {
+    color: #fbb32f;
+  }
+  .grayStar {
+    color: #e0e0e0;
   }
   .gap {
     width: 100%;

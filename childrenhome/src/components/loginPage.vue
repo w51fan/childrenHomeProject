@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { getVerifyCode, login } from "@/api/home";
+import { getVerifyCode, login, getUserInfo } from "@/api/home";
 export default {
   name: "loginPage",
   data() {
@@ -90,10 +90,25 @@ export default {
           });
         } else {
           this.$store.commit("common/getToken", res.data.token);
-          this.$router.push({
-            name: "childrenHomePage",
-            query: {
-              token: res.data.token
+          getUserInfo(res.data.token).then(res => {
+            console.log("getUserInfo", res);
+            //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
+            this.$store.commit("common/getUserTpye", res.data.user.Type);
+            this.$store.commit("common/getUser", res.data.user);
+            if (res.data.user.Type === 4) {
+              this.$router.push({
+                name: "childrenHomePage",
+                query: {
+                  user: res.data.user
+                }
+              });
+            } else if(res.data.user.Type === 12) {
+              this.$router.push({
+                name: "socialWorkstation",
+                query: {
+                  user: res.data.user
+                }
+              });
             }
           });
         }

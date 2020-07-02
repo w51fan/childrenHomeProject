@@ -38,25 +38,28 @@
         </div>
       </div>
     </div>
-    <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
+    <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <bottomNav  v-else :selectedNav.sync="selectedNav"></bottomNav>
   </div>
 </template>
 
 <script>
 import { getList } from "@/api/home";
 import bottomNav from "./bottomNav";
-
+import assistantBottomNav from "./assistantBottomNav";
 export default {
   name: "governmentLed",
   components: {
-    bottomNav
+    bottomNav,
+    assistantBottomNav
   },
   data() {
     return {
       selectedNav: "governmentLed",
       imgList: [],
       tabList: [],
-      newsList: []
+      newsList: [],
+      isAssistant: false
     };
   },
   watch: {
@@ -68,6 +71,7 @@ export default {
     }
   },
   mounted() {
+    this.isAssistant = this.$route.query.isAssistant;
     getList(this.cityId, 1).then(res => {
       this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
       getList(this.cityId, 2).then(result => {

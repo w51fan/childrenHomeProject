@@ -29,23 +29,27 @@
         </div>
       </van-tab>
     </van-tabs>
-    <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
+    <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
   </div>
 </template>
 
 <script>
 import bottomNav from "./bottomNav";
+import assistantBottomNav from "./assistantBottomNav";
 import { getArticleList } from "@/api/home";
 export default {
   name: "growthStory",
   components: {
-    bottomNav
+    bottomNav,
+    assistantBottomNav
   },
   data() {
     return {
       selected: "1",
       selectedNav: "growthStory",
-      articlelist: []
+      articlelist: [],
+      isAssistant: false
     };
   },
   watch: {
@@ -63,6 +67,7 @@ export default {
     }
   },
   mounted() {
+    this.isAssistant = this.$route.query.isAssistant;
     getArticleList(this.cityId, 1).then(res => {
       console.log("getArticleList", res);
       this.articlelist = res.data.articlelist;

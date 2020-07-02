@@ -216,3 +216,20 @@ export const getCityList = function (Id) {
   });
 }
 
+//更新用户消息
+export const updateUser = function (token, name, profilePhoto) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/updateUser?token=${token}&name=${name}&profilePhoto=${profilePhoto}`,
+    method: "get"
+  });
+}
+
+//上传图片
+export const uploadImg = function (file) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/uploadImg`,
+    data:file,
+    method: "post"
+  });
+}
+
