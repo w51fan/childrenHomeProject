@@ -4,7 +4,7 @@
       <div class="flex space-between">
         <div class="head flex">
           <div>
-            <div v-if="user.ProfilePhoto!==''">
+            <div v-if="User.ProfilePhoto!==''">
               <img src alt />
             </div>
             <div v-else>
@@ -12,8 +12,8 @@
             </div>
           </div>
           <div>
-            <div class="name">{{user.Name}}</div>
-            <div class="status will" style="width: 60px;margin: 0 16px;">{{user.Type===4?'村级管理员':user.Type===7?'志愿者':user.Type===3?'镇级管理员':user.Type===2?'县级管理员':user.Type===1?'市级管理员':user.Type===6?'助理':'村级讲师'}}</div>
+            <div class="name">{{User.Name}}</div>
+            <div class="status will" style="width: 60px;margin: 0 16px;">{{User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':'村级讲师'}}</div>
           </div>
         </div>
 
@@ -88,24 +88,26 @@ export default {
   },
   data() {
     return {
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTYxMDYzNjMsImlhdCI6MTU5MzUxNDM2MywiaWQiOjI0NjMwLCJuYW1lIjoi5LiA5biGIiwicGhvbmUiOiIxMzQzMDIwMjYyMSIsInByb2ZpbGVfcGhvdG8iOiIifQ.CcCcf1s0cQ09esbvV-IsLdu_rh0BI2yNQ0muwsqQt7U",
-      user: "",
+      // token:
+      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTYxMDYzNjMsImlhdCI6MTU5MzUxNDM2MywiaWQiOjI0NjMwLCJuYW1lIjoi5LiA5biGIiwicGhvbmUiOiIxMzQzMDIwMjYyMSIsInByb2ZpbGVfcGhvdG8iOiIifQ.CcCcf1s0cQ09esbvV-IsLdu_rh0BI2yNQ0muwsqQt7U",
+      
+      // User: "",
       childrenHomeList: [],
-      selectedNav: "childrenHomePage"
+      selectedNav: "childrenHomePage",
     };
   },
-  // computed: {
-  //   token() {
-  //     return this.$store.state.common.token;
-  //   },
-  //   user() {
-  //     return this.$store.state.common.user;
-  //   },
-  // },
+  computed: {
+    Token() {
+      return this.$store.state.common.Token;
+    },
+    User() {
+      return this.$store.state.common.User;
+    },
+  },
   mounted() {
-    this.user = this.$route.query.user
-    getChildrenHomeList(this.token).then(result => {
+    // this.User = this.$store.state.common.User
+    // this.token = this.$store.state.common.token
+    getChildrenHomeList(this.Token).then(result => {
       console.log("getChildrenHomeList", result);
       this.childrenHomeList = result.data.childrenHomeList;
 

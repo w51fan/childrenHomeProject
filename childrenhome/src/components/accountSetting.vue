@@ -4,10 +4,10 @@
     <div class="title">我的信息</div>
     <div class="gap gapone"></div>
     <div class="content">
-      <van-cell title="姓名" class="userName" >
+      <van-cell title="姓名" class="userName">
         <template #default>
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->
-          <van-field v-model="userName"  placeholder="请输入姓名" input-align="right" />
+          <van-field v-model="userName" placeholder="请输入姓名" input-align="right" />
         </template>
       </van-cell>
       <van-cell title="身份" value="村级管理员" />
@@ -16,7 +16,7 @@
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->
           <van-uploader :after-read="afterRead">
             <div class="flex">
-              <img class="head" src="../assets/nohead.png" alt />
+              <img class="head" :src="userImg" alt style="border-radius: 50%;" />
               <div class="arrow">
                 <van-icon name="arrow" />
               </div>
@@ -36,18 +36,30 @@
 </template>
 
 <script>
-import { updateUser,uploadImg } from "@/api/home";
+import { updateUser, uploadImg } from "@/api/home";
 export default {
   name: "accountSetting",
   data() {
     return {
-      userName:'123'
+      userName: "",
+      userImg: "",
+      noheadImg:require('../assets/nohead.png')
     };
   },
   computed: {
-    token() {
-      return this.$store.state.common.token;
+    Token() {
+      return this.$store.state.common.Token;
+    },
+    User() {
+      return this.$store.state.common.User;
     }
+  },
+  mounted() {
+    this.userName = this.User.Name;
+    this.userImg =
+      this.User.ProfilePhoto !== ""
+        ? this.User.ProfilePhoto
+        : this.noheadImg;
   },
   methods: {
     onClickLeft() {
@@ -73,16 +85,20 @@ export default {
     },
     save() {
       updateUser({
-        token:this.token
+        token: this.Token,
+        name:this.userName,
+        profilePhoto:this.userImg
       }).then(res => {
         console.log("updateUser", res);
       });
     },
-    afterRead(file){
-      console.log('file',file)
-      uploadImg(file.content).then(res=>{
-        console.log('uploadImg',res)
-      })
+    afterRead(file) {
+      let formData = new window.FormData();
+      formData.append("file", file.file);
+      uploadImg(formData).then(res => {
+        console.log("uploadImg", res);
+        this.userImg = res.data.url
+      });
     }
   }
 };
@@ -98,11 +114,11 @@ export default {
   }
   .content {
     text-align: left;
-    .userName{
-      .van-cell__title{
+    .userName {
+      .van-cell__title {
         line-height: 44px;
       }
-      .van-cell{
+      .van-cell {
         padding: 10px 3px;
       }
     }

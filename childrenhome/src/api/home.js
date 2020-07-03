@@ -217,9 +217,14 @@ export const getCityList = function (Id) {
 }
 
 //更新用户消息
-export const updateUser = function (token, name, profilePhoto) {
+export const updateUser = function ({token, name, profilePhoto}) {
+  const data = {
+    token,
+    name,
+    profilePhoto,
+  }
   return axios.request({
-    url: `https://api.quanjiaxue.net/manage/updateUser?token=${token}&name=${name}&profilePhoto=${profilePhoto}`,
+    url: `https://api.quanjiaxue.net/manage/updateUser?token=${data.token}&name=${data.name}&profilePhoto=${data.profilePhoto}`,
     method: "get"
   });
 }
@@ -229,7 +234,10 @@ export const uploadImg = function (file) {
   return axios.request({
     url: `https://api.quanjiaxue.net/manage/uploadImg`,
     data:file,
-    method: "post"
+    method: "post",
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 }
 
