@@ -16,7 +16,7 @@
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->
           <van-uploader :after-read="afterRead">
             <div class="flex">
-              <img class="head" :src="userImg" alt style="border-radius: 50%;" />
+              <img class="head" :src="userImg" alt />
               <div class="arrow">
                 <van-icon name="arrow" />
               </div>
@@ -32,6 +32,11 @@
     <div style="padding:0px 20px;" @click="logout">
       <van-button style="width:100%;" type="default">退出当前账户</van-button>
     </div>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -43,7 +48,8 @@ export default {
     return {
       userName: "",
       userImg: "",
-      noheadImg:require('../assets/nohead.png')
+      noheadImg: require("../assets/nohead.png"),
+      showOverlay: false
     };
   },
   computed: {
@@ -57,9 +63,7 @@ export default {
   mounted() {
     this.userName = this.User.Name;
     this.userImg =
-      this.User.ProfilePhoto !== ""
-        ? this.User.ProfilePhoto
-        : this.noheadImg;
+      this.User.ProfilePhoto !== "" ? this.User.ProfilePhoto : this.noheadImg;
   },
   methods: {
     onClickLeft() {
@@ -84,20 +88,42 @@ export default {
       }
     },
     save() {
+      this.showOverlay = true;
       updateUser({
         token: this.Token,
-        name:this.userName,
-        profilePhoto:this.userImg
+        name: this.userName,
+        profilePhoto: this.userImg
       }).then(res => {
         console.log("updateUser", res);
+        this.User.name = this.userName;
+        this.User.ProfilePhoto = this.userImg;
+        this.$store.commit("common/getUser", this.User);
+        this.$notify({
+          type: "success",
+          message: res.data.msg,
+          duration: 500
+        });
+        setTimeout(() => {
+          this.showOverlay = false;
+          this.$router.push({
+            name: "childrenHomePage"
+          });
+        }, 1000);
       });
     },
     afterRead(file) {
+      this.showOverlay = true;
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
+        this.userImg = res.data.url;
         console.log("uploadImg", res);
-        this.userImg = res.data.url
+        this.$notify({
+          type: "success",
+          message: "上传成功",
+          duration: 1000
+        });
+        this.showOverlay = false;
       });
     }
   }
@@ -126,6 +152,7 @@ export default {
   .head {
     width: 25px;
     height: 25px;
+    border-radius: 50%;
   }
   .flex {
     display: flex;

@@ -1,7 +1,7 @@
 <template>
   <div class="offlineActivityPage">
     <div style="padding:20px 40px">
-      <van-button type="warning" color="#ffac22" class="addBtn">新建活动</van-button>
+      <van-button type="warning" color="#ffac22" class="addBtn" @click="go">新建活动</van-button>
     </div>
     <div class="gap gapfive"></div>
     <div class="content">
@@ -43,7 +43,12 @@
         </van-tab>
       </van-tabs>
     </div>
-     <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -58,7 +63,8 @@ export default {
   data() {
     return {
       activeTab: 0,
-       selectedNav: "offlineActivity"
+      selectedNav: "offlineActivity",
+      showOverlay: false
     };
   },
   computed: {
@@ -68,14 +74,29 @@ export default {
   },
   mounted() {
     //{cityId, areaId, townId, type, activityType}
+    this.showOverlay = true;
     getActivityList({
       cityId: this.cityId
-    }).then(res => {
-      console.log("getActivityList", res);
-    });
+    })
+      .then(res => {
+        console.log("getActivityList", res);
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
+      });
   },
   methods: {
-    edit() {}
+    edit() {},
+    go(){
+      this.$router.push({
+        name: 'addActivity',
+        query: {
+          currentPath: 'offlineActivity'
+        }
+      });
+    }
   }
 };
 </script>

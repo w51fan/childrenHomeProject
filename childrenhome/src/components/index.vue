@@ -40,6 +40,11 @@
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <bottomNav  v-else :selectedNav.sync="selectedNav"></bottomNav>
+        <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -59,7 +64,8 @@ export default {
       imgList: [],
       tabList: [],
       newsList: [],
-      isAssistant: false
+      isAssistant: false,
+      showOverlay:false
     };
   },
   watch: {
@@ -71,18 +77,29 @@ export default {
     }
   },
   mounted() {
+    this.showOverlay = true
     this.isAssistant = this.$route.query.isAssistant;
     getList(this.cityId, 1).then(res => {
       this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
       getList(this.cityId, 2).then(result => {
         console.log(result);
         this.tabList = result.data.newsList.reverse();
+      }).catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
       });
       getList(this.cityId, 3).then(news => {
         console.log(news);
         this.newsList = news.data.newsList;
+        this.showOverlay = false
+      }).catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
       });
-    });
+    }).catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
+      });;
   },
   computed: {
     cityId() {

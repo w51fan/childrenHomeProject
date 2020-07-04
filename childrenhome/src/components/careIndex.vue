@@ -295,7 +295,7 @@ export default {
     font-size: 12px;
   }
   .item {
-    padding: 20px 25px;
+    padding: 20px;
   }
   .careIndexTabs {
     /deep/.van-tabs__line {

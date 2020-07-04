@@ -52,6 +52,11 @@
         <div>技术支持：深圳全家学教育科技有限公司</div>
         <div>copyright © 2018-2020 Quanjiaxue Tech Co.ltd</div>
       </div>
+      <van-overlay :show="showOverlay" @click="show = false">
+        <div style="margin-top: 50%;">
+          <van-loading type="spinner" />
+        </div>
+      </van-overlay>
     </div>
   </div>
 </template>
@@ -71,7 +76,8 @@ export default {
       disabledBtn: false,
       timer: null,
       count: "",
-      codeText: "发送验证码"
+      codeText: "发送验证码",
+      showOverlay: false
     };
   },
   methods: {
@@ -80,39 +86,51 @@ export default {
       this.phoneErr = "";
       if (this.code === "") return (this.codeErr = "验证码不能为空");
       this.codeErr = "";
-      login(this.tel, this.code).then(res => {
-        console.log("login", res);
-        if (res.data.code > 0) {
-          this.$notify({
-            type: "warning",
-            message: res.data.msg,
-            duration: 2000
-          });
-        } else {
-          this.$store.commit("common/getToken", res.data.token);
-          getUserInfo(res.data.token).then(res => {
-            console.log("getUserInfo", res);
-            //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
-            this.$store.commit("common/getUserTpye", res.data.user.Type);
-            this.$store.commit("common/getUser", res.data.user);
-            if (res.data.user.Type === 4) {
-              this.$router.push({
-                name: "childrenHomePage",
-                query: {
-                  user: res.data.user
+      this.showOverlay = true;
+      login(this.tel, this.code)
+        .then(res => {
+          console.log("login", res);
+          if (res.data.code > 0) {
+            this.$notify({
+              type: "warning",
+              message: res.data.msg,
+              duration: 2000
+            });
+          } else {
+            this.$store.commit("common/getToken", res.data.token);
+            getUserInfo(res.data.token)
+              .then(res => {
+                console.log("getUserInfo", res);
+                //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
+                this.$store.commit("common/getUserTpye", res.data.user.Type);
+                this.$store.commit("common/getUser", res.data.user);
+                this.showOverlay = false;
+                if (res.data.user.Type === 4) {
+                  this.$router.push({
+                    name: "childrenHomePage",
+                    query: {
+                      user: res.data.user
+                    }
+                  });
+                } else if (res.data.user.Type === 12) {
+                  this.$router.push({
+                    name: "socialWorkstation",
+                    query: {
+                      user: res.data.user
+                    }
+                  });
                 }
+              })
+              .catch(err2 => {
+                console.log("err", err2);
+                this.showOverlay = false;
               });
-            } else if(res.data.user.Type === 12) {
-              this.$router.push({
-                name: "socialWorkstation",
-                query: {
-                  user: res.data.user
-                }
-              });
-            }
-          });
-        }
-      });
+          }
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
     },
     getCode() {
       if (this.tel === "") return (this.phoneErr = "不能为空");

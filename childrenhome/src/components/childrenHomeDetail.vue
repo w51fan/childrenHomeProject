@@ -104,6 +104,11 @@
         </div>
       </div>
     </div>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -117,7 +122,8 @@ export default {
       activityList: [],
       userList: [],
       imageList: [],
-      starNum: 0
+      starNum: 0,
+      showOverlay: false
     };
   },
   computed: {
@@ -126,14 +132,21 @@ export default {
     }
   },
   mounted() {
-    getChildrenHomeDetail(this.VillageId).then(res => {
-      console.log("getChildrenHomeDetail", res);
-      this.childrenHome = res.data.childrenHome;
-      this.activityList = res.data.activitylist;
-      this.userList = res.data.userList;
-      this.imageList = res.data.imageList;
-      this.starNum = this.childrenHome.Score / 10;
-    });
+    this.showOverlay = true;
+    getChildrenHomeDetail(this.VillageId)
+      .then(res => {
+        console.log("getChildrenHomeDetail", res);
+        this.childrenHome = res.data.childrenHome;
+        this.activityList = res.data.activitylist;
+        this.userList = res.data.userList;
+        this.imageList = res.data.imageList;
+        this.starNum = this.childrenHome.Score / 10;
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
+      });
   },
   methods: {
     onClickLeft() {

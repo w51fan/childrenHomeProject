@@ -5,7 +5,11 @@
         <div class="head flex">
           <div>
             <div v-if="User.ProfilePhoto!==''">
-              <img src alt />
+              <img
+                :src="User.ProfilePhoto"
+                alt
+                style="width: 50px;height: 50px;border-radius: 50%;"
+              />
             </div>
             <div v-else>
               <img src="../assets/nohead.png" alt />
@@ -13,7 +17,10 @@
           </div>
           <div>
             <div class="name">{{User.Name}}</div>
-            <div class="status will" style="width: 60px;margin: 0 16px;">{{User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':'村级讲师'}}</div>
+            <div
+              class="status will"
+              style="width: 60px;margin: 0 16px;"
+            >{{User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':'村级讲师'}}</div>
           </div>
         </div>
 
@@ -75,6 +82,11 @@
       </div>
     </div>
     <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -90,10 +102,11 @@ export default {
     return {
       // token:
       //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTYxMDYzNjMsImlhdCI6MTU5MzUxNDM2MywiaWQiOjI0NjMwLCJuYW1lIjoi5LiA5biGIiwicGhvbmUiOiIxMzQzMDIwMjYyMSIsInByb2ZpbGVfcGhvdG8iOiIifQ.CcCcf1s0cQ09esbvV-IsLdu_rh0BI2yNQ0muwsqQt7U",
-      
+
       // User: "",
       childrenHomeList: [],
       selectedNav: "childrenHomePage",
+      showOverlay:false
     };
   },
   computed: {
@@ -102,11 +115,12 @@ export default {
     },
     User() {
       return this.$store.state.common.User;
-    },
+    }
   },
   mounted() {
     // this.User = this.$store.state.common.User
     // this.token = this.$store.state.common.token
+    this.showOverlay = true
     getChildrenHomeList(this.Token).then(result => {
       console.log("getChildrenHomeList", result);
       this.childrenHomeList = result.data.childrenHomeList;
@@ -118,6 +132,10 @@ export default {
       } else {
         this.$store.commit("common/getCityId", 2018);
       }
+      this.showOverlay = false
+    }).catch(err=>{
+      console.log('err',err)
+      this.showOverlay = false
     });
   },
   methods: {

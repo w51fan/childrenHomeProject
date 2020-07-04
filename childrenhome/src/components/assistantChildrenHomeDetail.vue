@@ -7,10 +7,10 @@
     </div>
     <div class="gap gapfive"></div>
     <div class="myChildrenHome">
-      <div v-if="imageList.length>0">
+      <!-- <div v-if="imageList!==[]">
         <img src alt />
-      </div>
-      <div class="myChildrenHometips">儿童之家形象照</div>
+      </div>-->
+      <div class="myChildrenHometips">点击更换形象照</div>
     </div>
     <div class="gap gapfive"></div>
     <div class="childrenHomeList">
@@ -40,6 +40,9 @@
               </ul>
             </div>
           </div>
+          <div
+            class="position"
+          >位置：{{childrenHome.ProvinceName.Name}} >{{childrenHome.CityeName.Name}} >{{childrenHome.AreaName.Name}} >{{childrenHome.TownName.Name}} >{{childrenHome.VillageName.Name}}</div>
         </template>
       </van-cell>
     </div>
@@ -47,7 +50,7 @@
     <div style="padding: 20px;">
       <div class="flex space-between">
         <div style="text-align: left;font-size: 18px;font-weight: 600;">儿童之家成员</div>
-        <div style="color: #2c518a;">新建成员</div>
+        <div style="color: #2c518a;" @click="addChildren">新建成员</div>
       </div>
     </div>
     <div style="padding: 20px;">
@@ -111,6 +114,11 @@
         </div>
       </div>
     </div>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -125,7 +133,8 @@ export default {
       userList: [],
       imageList: [],
       starNum: 0,
-      showAddChildren: false
+      showAddChildren: false,
+      showOverlay: false
     };
   },
   computed: {
@@ -134,16 +143,24 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query.currentPath === "childrenHomePage")
+    this.showOverlay = true;
+    if (this.$route.query.currentPath === "childrenHomePage") {
       this.showAddChildren = true;
-    getChildrenHomeDetail(this.VillageId).then(res => {
-      console.log("getChildrenHomeDetail", res);
-      this.childrenHome = res.data.childrenHome;
-      this.activityList = res.data.activitylist;
-      this.userList = res.data.userList;
-      this.imageList = res.data.imageList;
-      this.starNum = this.childrenHome.Score / 10;
-    });
+    }
+    getChildrenHomeDetail(this.VillageId)
+      .then(res => {
+        console.log("getChildrenHomeDetail", res);
+        this.childrenHome = res.data.childrenHome;
+        this.activityList = res.data.activitylist ? res.data.activitylist : [];
+        this.userList = res.data.userList;
+        this.imageList = res.data.imageList;
+        this.starNum = this.childrenHome.Score / 10;
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
+      });
   },
   methods: {
     onClickLeft() {
@@ -166,6 +183,14 @@ export default {
         name: "activityDetail",
         query: {
           Id: row.Id,
+          currentPath: "assistantChildrenHomeDetail"
+        }
+      });
+    },
+    addChildren() {
+      this.$router.push({
+        name: "addChildren",
+        query: {
           currentPath: "assistantChildrenHomeDetail"
         }
       });
@@ -203,6 +228,11 @@ export default {
     .childrenMastertableHead {
       font-size: 16px;
       font-weight: 600;
+    }
+    .position {
+      font-size: 12px;
+      color: #b9b8b8;
+      padding: 30px 0;
     }
   }
   .childrenMaster {

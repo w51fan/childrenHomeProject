@@ -241,3 +241,10 @@ export const uploadImg = function (file) {
   });
 }
 
+//获取登录用户信息
+export const addActivity = function (token,name,type,childrenHomeId,date) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&name=${type}&name=${childrenHomeId}&name=${date}`,
+  });
+}
+
