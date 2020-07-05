@@ -4,12 +4,12 @@
     <div class="title">我的信息</div>
     <div class="gap gapone"></div>
     <div class="content">
-      <van-cell title="姓名" class="userName">
+      <!-- <van-cell title="姓名" class="userName">
         <template #default>
-          <!-- <img class="head" src="../assets/nohead.png" alt /> -->
           <van-field v-model="userName" placeholder="请输入姓名" input-align="right" />
         </template>
-      </van-cell>
+      </van-cell> -->
+      <van-field v-model="activityName" label="姓名" placeholder="请输入姓名 " size="large" input-align="right" />
       <van-cell title="身份" value="村级管理员" />
       <van-cell title="头像">
         <template #default>
