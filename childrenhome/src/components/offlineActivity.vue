@@ -103,6 +103,7 @@ export default {
 
 <style lang="less">
 .offlineActivityPage {
+  margin-bottom: 60px;
   .flex {
     display: flex;
   }

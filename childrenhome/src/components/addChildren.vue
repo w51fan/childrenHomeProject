@@ -2,7 +2,7 @@
   <div class="addChildrenPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="gap gapone"></div>
-    <van-form>
+    <van-form ref="addChildrenForm" validate-first @failed="onFailed">
       <div class="title">儿童信息</div>
       <div class="addChildrenTable">
         <van-field
@@ -11,13 +11,20 @@
           placeholder="请输入姓名 "
           size="large"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请填写姓名' }]"
         />
         <van-field
           v-model="childrenGender"
           label="性别"
-          placeholder="请输入性别 "
+          placeholder="请选择"
           size="large"
           input-align="right"
+          name="validator"
+          @click="showPick(8)"
+          required
+          :rules="[{ required: true, message: '请选择性别' }]"
         />
         <van-cell title="头像" input-align="right" readonly>
           <template slot="default">
@@ -58,6 +65,9 @@
           placeholder="请输入身份证号码 "
           size="large"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请输入身份证号码' }]"
         />
         <van-field
           v-model="childrenAddress"
@@ -179,6 +189,9 @@
           placeholder="监护人姓名 "
           size="large"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请输入监护人姓名' }]"
         />
         <van-field
           v-model="telOfGuardian"
@@ -186,16 +199,22 @@
           placeholder="监护人手机号 "
           size="large"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请输入监护人手机号' }]"
         />
         <van-field
           readonly
           clickable
           label="身份"
-          :value="identity"
+          :value="identityOfGuardian"
           placeholder="请选择"
           size="large"
-          @click="showPick(8)"
+          @click="showPick(9)"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请选择身份' }]"
         />
       </div>
     </van-form>
@@ -269,6 +288,14 @@
           <van-button type="primary" @click="onConfirmAssistanceAndAssistance">确定</van-button>
         </div>
       </div>
+      <div v-else-if="currentPick===8">
+        <van-picker
+          show-toolbar
+          :columns="genderList"
+          @cancel="showPicker = false"
+          @confirm="onConfirmGenderList"
+        />
+      </div>
       <div v-else>
         <van-picker
           show-toolbar
@@ -287,46 +314,74 @@
 </template>
 
 <script>
+import { addChildren, getNationList, uploadImg } from "@/api/home";
 export default {
   name: "addChildren",
   data() {
     return {
       showOverlay: false,
       showPicker: false,
-      childrenImg: "",
+      currentPick: "",
+      childrenImg: "", //非必填
       childrenName: "",
       childrenGender: "",
-      childrenType: "",
-      childrenNation: "",
+      childrenType: "", //非必填
+      childrenNation: "", //非必填
       childrenId: "",
-      childrenAddress: "",
-      childrenHealthy: "",
-      isBoardingSchool: "",
-      childrenClass: "",
-      familyEconomicSituation: "",
-      familyFinancialResources: "",
-      assistanceAndAssistance: "",
-      fatherName: "",
-      fatherWorkPlace: "",
-      fatherTel: "",
-      motherName: "",
-      motherWorkPlace: "",
-      motherTel: "",
+      childrenAddress: "", //非必填
+      childrenHealthy: "", //非必填
+      isBoardingSchool: "", //非必填
+      childrenClass: "", //非必填
+      familyEconomicSituation: "", //非必填
+      familyFinancialResources: "", //非必填
+      assistanceAndAssistance: "", //非必填
+      fatherName: "", //非必填
+      fatherWorkPlace: "", //非必填
+      fatherTel: "", //非必填
+      motherName: "", //非必填
+      motherWorkPlace: "", //非必填
+      motherTel: "", //非必填
       nameOfGuardian: "",
       telOfGuardian: "",
-      identity: "",
+      identityOfGuardian: "",
       childrenTypeList: ["困境儿童", "留守儿童"],
       childrenNationList: [],
+      // childrenNationIDList: [],
       childrenHealthyList: ["健康", "患病", "残疾"],
       isBoardingSchoolList: ["是", "否"],
       familyEconomicSituationList: ["富裕", "一般", "贫困"],
-      identityList: ["父母", "亲属", "指定监护人"]
+      identityList: ["父母", "亲属", "指定监护人"],
+      genderList: ["男", "女"]
     };
+  },
+  computed: {
+    Token() {
+      return this.$store.state.common.Token;
+    },
+    ChildrenHomeId() {
+      return this.$store.state.common.ChildrenHomeId;
+    }
+  },
+  mounted() {
+    this.showOverlay = true;
+    getNationList()
+      .then(res => {
+        console.log("getNationList", res);
+        res.data.nationList.forEach(element => {
+          this.childrenNationList.push(element.Name);
+          // this.childrenNationIDList[element.Name] = element.Id;
+        });
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("getNationList", err);
+        this.showOverlay = false;
+      });
   },
   methods: {
     onClickLeft() {
       this.$router.push({
-        name: 'childrenHomeDetail'
+        name: "childrenHomeDetail"
       });
     },
     showPick(index) {
@@ -337,7 +392,7 @@ export default {
       this.childrenType = value;
       this.showPicker = false;
     },
-    onConfirmChildrenHealthy(value) {
+    onConfirmchildrenNationList(value) {
       this.childrenNation = value;
       this.showPicker = false;
     },
@@ -354,7 +409,7 @@ export default {
       this.showPicker = false;
     },
     onConfirmIdentity(value) {
-      this.identity = value;
+      this.identityOfGuardian = value;
       this.showPicker = false;
     },
     onConfirmFamilyFinancialResources(value) {
@@ -365,7 +420,90 @@ export default {
       this.assistanceAndAssistance = value;
       this.showPicker = false;
     },
-    save() {}
+    onConfirmGenderList(value) {
+      this.childrenGender = value;
+      this.showPicker = false;
+    },
+    afterRead(file) {
+      this.showOverlay = true;
+      let formData = new window.FormData();
+      formData.append("file", file.file);
+      uploadImg(formData).then(res => {
+        this.childrenImg = res.data.url;
+        console.log("uploadImg", res);
+        this.$notify({
+          type: "success",
+          message: "上传成功",
+          duration: 1000
+        });
+        this.showOverlay = false;
+      });
+    },
+    onFailed(errorInfo) {
+      console.log("failed", errorInfo);
+    },
+    save() {
+      this.showOverlay = true;
+      let $this = this;
+      console.log(
+        'this.$refs["addChildrenForm"]',
+        this.$refs["addChildrenForm"]
+      );
+      this.$refs["addChildrenForm"]
+        .validateAll()
+        .then(() => {
+          addChildren({
+            token: this.Token,
+            childrenHomeId: this.ChildrenHomeId,
+            name: this.childrenName,
+            sex: this.childrenGender,
+            photo: this.childrenImg,
+            childrenType: this.childrenType,
+            nation: this.childrenNation,
+            idNumber: this.childrenId,
+            childrenAddress: this.childrenAddress,
+            health: this.childrenHealthy,
+            shcoolLodging: this.isBoardingSchool,
+            schoolInfo: this.childrenClass,
+            economicSituation: this.familyEconomicSituation,
+            economicResource: this.familyFinancialResources,
+            rescueSituation: this.assistanceAndAssistance,
+            fatherName: this.fatherName,
+            fatherWorkAddress: this.fatherWorkPlace,
+            fatherPhone: this.fatherTel,
+            motherName: this.motherName,
+            motherWorkAddress: this.motherWorkPlace,
+            motherPhone: this.motherWorkPlace,
+            guardianName: this.nameOfGuardian,
+            guardianPhone: this.telOfGuardian,
+            relation: this.identityOfGuardian
+          })
+            .then(res => {
+              console.log("addChildren", res);
+              $this.showOverlay = false;
+              if (res.data.code > 0) {
+                this.$notify({
+                  type: "warning",
+                  message: res.data.msg,
+                  duration: 500
+                });
+              } else {
+                this.$router.push({
+                  name: "childrenHomeDetail"
+                });
+              }
+            })
+            .catch(err => {
+              console.log("addChildren", err);
+              $this.showOverlay = false;
+            });
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    }
   }
 };
 </script>
@@ -410,6 +548,9 @@ export default {
       text-align: left;
       font-size: 16px;
       width: 130px;
+    }
+    .van-field__error-message {
+      text-align: right;
     }
     .pick {
       .van-cell__title {

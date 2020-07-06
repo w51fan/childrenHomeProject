@@ -162,6 +162,7 @@ export default {
 
 <style lang="less">
 .childrenHomePage {
+  margin-bottom: 60px;
   .childrenHomePageHead {
     padding: 20px;
     .head {

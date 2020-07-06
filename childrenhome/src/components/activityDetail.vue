@@ -12,17 +12,22 @@
     </div>
     <div class="activityType flex">
       <div>类型：</div>
-      <div class="activityTypeContent">{{ActivityType}} （{{getDate(this.activity.Date)}}创建）</div>
+      <div class="activityTypeContent">{{ActivityType}} （{{getDate(activity.Date)}}创建）</div>
     </div>
     <div class="gap gapten"></div>
     <div>
       <div class="activityOrganizers">活动组织人员</div>
       <div>
         <div class="activityOrganizersHead">
-          <div style="color: #ffb100;">暂无头像</div>
+          <img class="head" src="../assets/nohead.png" alt />
+          <div style="padding-left: 10%;">{{activity.User.Name}}</div>
+          <div
+            class="status will"
+            style="width: 80px;color: black;margin:0;"
+          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
         </div>
-        <div class="status will" style="width: 60px;color: black;margin: 0 16px;">志愿者</div>
       </div>
+
       <div></div>
       <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div>
 
@@ -49,6 +54,12 @@
     </div>
     <div>
       <div class="activityRecord">活动记录</div>
+      <div class="activityRecordInput" style="padding:20px;">
+        <van-field v-model="value" type="textarea" placeholder="请输入活动记录" input-align="left" />
+        <div style="text-align: right;padding: 20px 20px 0;">
+          <van-button type="default" size="small">提交记录</van-button>
+        </div>
+      </div>
       <div style="background: rgba(128, 128, 128, 0.1);">
         <div v-for="(record,index) in activityRecordList" :key="index">
           <div class="activityRecordUser">
@@ -156,13 +167,18 @@ export default {
     font-weight: 600;
   }
   .activityOrganizersHead {
-    width: 30px;
-    text-align: center;
+    // width: 30px;
+    text-align: left;
     font-size: 12px;
-    margin: 0 35px 10px;
-    padding: 10px;
-    background: #3b4c5a;
-    border-radius: 50%;
+    margin: 0 20px 10px;
+    // padding: 10px;
+    // background: #3b4c5a;
+    // border-radius: 50%;
+    .head {
+      width: 50px;
+      height: 50px;
+      padding-left: 7%;
+    }
   }
   .activityImgTitle {
     text-align: left;
@@ -225,6 +241,7 @@ export default {
     border-radius: 14px;
     font-size: 13px;
     line-height: 30px;
+    text-align: center;
   }
   .will {
     background: #ffac0ed6;
@@ -281,6 +298,14 @@ export default {
       min-height: 80%;
       max-height: 80%;
       margin-top: 40px;
+    }
+  }
+  .activityRecordInput {
+    .van-cell {
+      padding: 0;
+    }
+    .van-field__body {
+      border: 1px solid #efefef;
     }
   }
 }

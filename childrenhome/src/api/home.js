@@ -208,10 +208,18 @@ export const getUserInfo = function (token) {
     url: `https://api.quanjiaxue.net/manage/getUser?token=${token}`,
   });
 }
-//切换城市列表
-export const getCityList = function (Id) {
+//获取城市列表
+export const getCityList = function () {
   return axios.request({
     url: `https://api.quanjiaxue.net/childrenhome/getCityList`,
+    method: "get"
+  });
+}
+
+//获取民族列表
+export const getNationList = function () {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/children/getNation`,
     method: "get"
   });
 }
@@ -241,10 +249,54 @@ export const uploadImg = function (file) {
   });
 }
 
-//获取登录用户信息
+//添加活动
 export const addActivity = function (token,name,type,childrenHomeId,date) {
   return axios.request({
-    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&name=${type}&name=${childrenHomeId}&name=${date}`,
+    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}`,
+    method: "get"
   });
 }
 
+//添加儿童
+// token,
+// childrenHomeId,
+// name,
+// sex,
+// photo, //非必填
+// childrenType, //非必填
+// nation, //非必填
+// idNumber,
+// childrenAddress, //非必填
+// health, //非必填
+// shcoolLodging, //非必填
+// schoolInfo, //非必填
+// economicSituation, //非必填
+// economicResource, //非必填
+// rescueSituation, //非必填
+// fatherName, //非必填
+// fatherWorkAddress, //非必填
+// fatherPhone, //非必填
+// motherName, //非必填
+// motherWorkAddress, //非必填
+// motherPhone, //非必填
+// guardianName,
+// guardianPhone,
+// relation
+export const addChildren = function (data) {
+  
+  return axios.request({
+    // url: `https://api.quanjiaxue.net/children/add?token=${data.token}&childrenHomeId=${data.childrenHomeId}&name=${data.name}&sex=${data.sex}&name=${data.date}&idNumber=${data.idNumber}$guardianName=&{dataguardianName}&guardianPhone=${data.guardianPhone}&relation=${data.relation}`,
+    url: `https://api.quanjiaxue.net/children/add`,
+    data: data,
+    method: "post"
+  });
+}
+
+
+//删除儿童
+export const deleteChildren = function (token, id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/children/delete?token=${token}&id=${id}`,
+    method: "get"
+  });
+}

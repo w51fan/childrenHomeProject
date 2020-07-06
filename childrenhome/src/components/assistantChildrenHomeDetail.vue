@@ -5,14 +5,19 @@
     <div class="childrenHomePageHead">
       <div class="flex space-between"></div>
     </div>
-    <div class="gap gapfive"></div>
+    <!-- <div class="gap gapfive"></div> -->
     <div class="myChildrenHome">
-      <!-- <div v-if="imageList!==[]">
-        <img src alt />
-      </div>-->
-      <div class="myChildrenHometips">点击更换形象照</div>
+      <div v-if="ChildrenHomeImg!==''" style="position: absolute;">
+        <img :src="ChildrenHomeImg" alt />
+      </div>
+      <van-uploader class="uploaderImg" :after-read="afterRead">
+        <template slot="default">
+          <div class="myChildrenHometips">点击更换形象照</div>
+        </template>
+      </van-uploader>
+      <!-- <div class="myChildrenHometips">点击更换形象照</div> -->
     </div>
-    <div class="gap gapfive"></div>
+    <!-- <div class="gap gapfive"></div> -->
     <div class="childrenHomeList">
       <div class="flex childrenHomeItemName">
         <van-icon name="wap-home" color="#24b369" />
@@ -53,6 +58,28 @@
         <div style="color: #2c518a;" @click="addChildren">新建成员</div>
       </div>
     </div>
+    <div class="flex space-between" style="padding:20px 20px 10px;">
+      <div class="childrenHomeMemberHead">儿童</div>
+      <div class="childrenHomeMemberHead">监护人</div>
+      <div class="childrenHomeMemberHead">操作</div>
+    </div>
+    <div>
+      <van-cell class="childrenHomeMember">
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template #title>
+          <div class="flex space-between">
+            <div class="childHead">
+              <img src="../assets/nohead.png" class="head" alt />
+              <div class="name">测试</div>
+            </div>
+            <div class="guardianName">测试1</div>
+            <div class="operation">
+              <van-icon name="ellipsis" @click="showMore" />
+            </div>
+          </div>
+        </template>
+      </van-cell>
+    </div>
     <div style="padding: 20px;">
       <div class="flex space-between">
         <div style="font-size: 18px;font-weight: 600;">管理员信息</div>
@@ -89,28 +116,30 @@
     <div>
       <div class="flex space-between" style="padding: 20px;">
         <div style="font-size: 18px;font-weight: 600;">儿童之家活动</div>
-        <div style="color:gray;">{{activityList.length}}场</div>
+        <div style="color:gray;">{{activityTotal}}场</div>
       </div>
-      <div v-for="(item,index) in activityList" :key="index">
-        <div class="flex space-between">
-          <div style="padding:20px;">
-            <van-icon name="underway" v-if="item.Status===1" />
-            <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-            {{getDate(item.Date)}}
+      <div v-if="activityTotal>0">
+        <div v-for="(item,index) in activityList" :key="index">
+          <div class="flex space-between">
+            <div style="padding:20px;">
+              <van-icon name="underway" v-if="item.Status===1" />
+              <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+              {{getDate(item.Date)}}
+            </div>
+            <div class="status will" v-if="item.Status===1">即将开始</div>
+            <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+            <div class="status finished" v-else>已结束</div>
           </div>
-          <div class="status will" v-if="item.Status===1">即将开始</div>
-          <div class="status ing" v-else-if="item.Status===2">进行中...</div>
-          <div class="status finished" v-else>已结束</div>
-        </div>
-        <div class="abbreviation">{{item.Name}}</div>
-        <div class="flex" @click="viewDetail(item)">
-          <img
-            :src="activityImg.Url"
-            v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
-            :key="turn"
-            style="width: 80px;height: 100px;padding: 15px 20px;"
-          />
-          <div>...</div>
+          <div class="abbreviation">{{item.Name}}</div>
+          <div class="flex" @click="viewDetail(item)">
+            <img
+              :src="activityImg.Url"
+              v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
+              :key="turn"
+              style="width: 80px;height: 100px;padding: 15px 20px;"
+            />
+            <div>...</div>
+          </div>
         </div>
       </div>
     </div>
@@ -119,11 +148,32 @@
         <van-loading type="spinner" />
       </div>
     </van-overlay>
+    <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
+      <div class="operationDialogList">
+        <div class="item">
+          <div class="itemContent" @click="edit">编辑信息-测试</div>
+        </div>
+        <div class="item" @click="deleteConfirm()">
+          <div class="itemContent">删除信息-测试</div>
+        </div>
+        <div class="item">
+          <div class="itemContent">联系监护人手机-测试1</div>
+        </div>
+      </div>
+    </van-dialog>
+    <van-dialog
+      v-model="showDeleteConfirm"
+      :show-cancel-button="true"
+      :showConfirmButton="true"
+      @confirm="deleteChild"
+    >
+      <div style="padding:20px;">是否删除测试儿童信息</div>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { getChildrenHomeDetail } from "@/api/home";
+import { getChildrenHomeDetail, uploadImg, deleteChildren } from "@/api/home";
 export default {
   name: "assistantChildrenHomeDetail",
   data() {
@@ -133,8 +183,12 @@ export default {
       userList: [],
       imageList: [],
       starNum: 0,
+      activityTotal: "",
+      ChildrenHomeImg: "",
       showAddChildren: false,
-      showOverlay: false
+      showOverlay: false,
+      showDialog: false,
+      showDeleteConfirm: false
     };
   },
   computed: {
@@ -150,10 +204,14 @@ export default {
     getChildrenHomeDetail(this.VillageId)
       .then(res => {
         console.log("getChildrenHomeDetail", res);
+        this.$store.commit("common/getChildrenHomeId", res.data.childrenHome.Id);
         this.childrenHome = res.data.childrenHome;
-        this.activityList = res.data.activitylist ? res.data.activitylist : [];
+        this.activityTotal = res.data.activityTotal;
+        if (this.activityTotal > 0) this.activityList = res.data.activitylist;
+
         this.userList = res.data.userList;
         this.imageList = res.data.imageList;
+        if(this.imageList.length>0)this.ChildrenHomeImg = this.imageList[0].URL
         this.starNum = this.childrenHome.Score / 10;
         this.showOverlay = false;
       })
@@ -187,6 +245,32 @@ export default {
         }
       });
     },
+    edit() {
+      this.$router.push({
+        name: "addChildren",
+        query: {
+          currentPath: "assistantChildrenHomeDetail"
+        }
+      });
+    },
+    showMore() {
+      this.showDialog = true;
+    },
+    afterRead(file) {
+      this.showOverlay = true;
+      let formData = new window.FormData();
+      formData.append("file", file.file);
+      uploadImg(formData).then(res => {
+        this.ChildrenHomeImg = res.data.url;
+        console.log("uploadImg", res);
+        this.$notify({
+          type: "success",
+          message: "上传成功",
+          duration: 1000
+        });
+        this.showOverlay = false;
+      });
+    },
     addChildren() {
       this.$router.push({
         name: "addChildren",
@@ -194,6 +278,13 @@ export default {
           currentPath: "assistantChildrenHomeDetail"
         }
       });
+    },
+    deleteConfirm() {
+      this.showDialog = false;
+      this.showDeleteConfirm = true;
+    },
+    deleteChild(value) {
+      console.log(value);
     }
   }
 };
@@ -202,21 +293,36 @@ export default {
 <style lang="less">
 .assistantChildrenHomeDetailPage {
   .myChildrenHome {
-    height: 160px;
+    height: 200px;
     background: #e6e6e6;
     position: relative;
-    .myChildrenHometips {
-      position: absolute;
-      right: 30px;
-      bottom: 20px;
-      background: #808080ad;
-      padding: 5px 20px;
-      border-radius: 30px;
-      font-size: 12px;
-      color: #fff;
-      font-weight: 100;
+    img {
+      height: 200px;
+      object-fit: fill;
+      width: 100%;
+    }
+    .van-uploader {
+      /deep/.myChildrenHometips {
+        position: absolute;
+        right: -200px;
+        bottom: -130px;
+        width: 85px;
+        background: #808080ad;
+        padding: 5px 20px;
+        border-radius: 30px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 100;
+      }
+      /deep/.van-uploader__input {
+        right: -200px;
+        bottom: -130px;
+        width: 125px;
+        height: 26px;
+      }
     }
   }
+
   .childrenHomeItemName {
     padding: 20px;
     line-height: 21px;
@@ -237,6 +343,26 @@ export default {
   }
   .childrenMaster {
     padding: 10px 20px;
+  }
+  .childrenHomeMember {
+    .childHead {
+      display: flex;
+      margin-left: 1%;
+      .head {
+        width: 20px;
+        height: 20px;
+        padding-right: 5px;
+      }
+      .name {
+        line-height: 20px;
+      }
+    }
+    .guardianName {
+      margin-left: -7%;
+    }
+    .operation {
+      padding: 0 10px;
+    }
   }
   .abbreviation {
     text-align: left;
@@ -289,6 +415,14 @@ export default {
   .finished {
     background: #e8e8e8;
     color: #7d7d7d;
+  }
+  .operationDialogList {
+    .item {
+      border-bottom: 1px solid #efefef;
+      .itemContent {
+        padding: 20px;
+      }
+    }
   }
 }
 </style>

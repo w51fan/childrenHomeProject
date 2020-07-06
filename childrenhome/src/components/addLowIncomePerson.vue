@@ -1,5 +1,6 @@
 <template>
   <div class="addLowIncomePersonPage">
+    <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
     <div class="title">基本信息</div>
     <van-cell-group class="addLowIncomePersonInputTable">
       <van-field v-model="value" label="户主" placeholder="请输入户主" size="large" />
@@ -52,6 +53,11 @@ export default {
     };
   },
   methods: {
+    onClickLeft(){
+      this.$router.push({
+        name: "socialWorkstationDetail"
+      });
+    },
     formatter(type, val) {
       if (type === "year") {
         return `${val}年`;
@@ -86,9 +92,9 @@ export default {
       .van-cell__title {
         text-align: left;
         font-size: 16px;
-        width:120px;
+        width: 120px;
       }
-      .van-cell__value{
+      .van-cell__value {
         text-align: left;
       }
     }

@@ -5,7 +5,8 @@ const state = {
     VillageId: '',
     Token: '',
     UserTpye:'',
-    User:''
+    User:'',
+    ChildrenHomeId: ''
 }
 
 const getters = {}
@@ -27,9 +28,12 @@ const mutations = {
     },
     getUserTpye(state, value) {
       state.UserTpye = value;
-    },
+    }, 
     getUser(state, value) {
       state.User = value;
+    },
+    getChildrenHomeId(state, value) {
+      state.ChildrenHomeId = value;
     },
 }
 
