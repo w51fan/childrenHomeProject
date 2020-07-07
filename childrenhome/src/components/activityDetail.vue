@@ -19,16 +19,14 @@
       <div class="activityOrganizers">活动组织人员</div>
       <div>
         <div class="activityOrganizersHead">
-          <img class="head" src="../assets/nohead.png" alt />
-          <div style="padding-left: 10%;">{{activity.User.Name}}</div>
+          <img class="head" :src="ProfilePhoto" alt />
+          <div style="padding-left: 10%;padding-bottom: 10px;">{{activity.User.Name}}</div>
           <div
             class="status will"
             style="width: 80px;color: black;margin:0;"
           >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
         </div>
       </div>
-
-      <div></div>
       <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div>
 
       <div class="activityImageList">
@@ -54,19 +52,24 @@
     </div>
     <div>
       <div class="activityRecord">活动记录</div>
-      <div class="activityRecordInput" style="padding:20px;">
-        <van-field v-model="value" type="textarea" placeholder="请输入活动记录" input-align="left" />
+      <div class="activityRecordInput" style="padding:20px;" v-if="showSubmitButton">
+        <van-field
+          v-model="recordContent"
+          type="textarea"
+          placeholder="请输入活动记录"
+          input-align="left"
+          maxlength="500"
+          autosize
+          show-word-limit
+        />
         <div style="text-align: right;padding: 20px 20px 0;">
-          <van-button type="default" size="small">提交记录</van-button>
+          <van-button type="default" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
         </div>
       </div>
       <div style="background: rgba(128, 128, 128, 0.1);">
         <div v-for="(record,index) in activityRecordList" :key="index">
           <div class="activityRecordUser">
-            <!-- <div class="activityRecordUserHead">
-              <div style="color: #ffb100;">暂无头像</div>
-            </div>-->
-            <img src="../assets/nohead.png" alt />
+            <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
             <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
           </div>
           <div>
@@ -87,11 +90,24 @@
       <div class="activityEvaluate">活动评价</div>
       <div style="background: rgba(128, 128, 128, 0.1);padding: 20px;color: #9c9c9c;">暂无活动评价</div>
     </div>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
+    <van-dialog
+      v-model="showSubmitConfirm"
+      :show-cancel-button="true"
+      :showConfirmButton="true"
+      @confirm="submitRelease"
+    >
+      <div style="padding:20px;text-align: left;">您是否提交活动记录，提交后如果需要修改，您可以再次提交后替换您之前的活动记录。</div>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { getActivityDetail } from "@/api/home";
+import { getActivityDetail, release } from "@/api/home";
 export default {
   name: "activityDetail",
   data() {
@@ -104,34 +120,59 @@ export default {
       turn: 0,
       startPosition: 0,
       ActivityType: "",
-      starNum: 0
+      starNum: 0,
+      recordContent: "",
+      ProfilePhoto: require("../assets/nohead.png"),
+      showSubmitButton: false,
+      showSubmitConfirm: false,
+      showOverlay: false
     };
   },
+  computed: {
+    Token() {
+      return this.$store.state.common.Token;
+    }
+  },
   mounted() {
-    getActivityDetail(this.$route.query.Id).then(res => {
-      console.log("activity", res);
-      this.activity = res.data.activity;
-      this.starNum = res.data.activity.Score / 10;
-      this.activityRecordList = res.data.activityRecordList;
-      this.activityImageList = res.data.activityImageList;
-      this.ActivityType =
-        this.activity.ActivityType === 1
-          ? "家庭教育"
-          : this.activity.ActivityType === 2
-          ? "儿童团辅"
-          : this.activity.ActivityType === 3
-          ? "家庭亲子"
-          : "安全护卫";
-      this.activityImageList.forEach(item => {
-        this.imagesArray.push(item.Url);
-      });
-      console.log(
-        "record.Content",
-        this.activityRecordList[0].Content.indexOf("http") > -1
-      );
-    });
+    this.init();
   },
   methods: {
+    init() {
+      this.showOverlay = true;
+      if (this.$route.query.currentPath === "assistantChildrenHomeDetail")
+        this.showSubmitButton = true;
+      getActivityDetail(this.$route.query.Id)
+        .then(res => {
+          console.log("activity", res);
+          this.activity = res.data.activity;
+          if (res.data.activity.User.ProfilePhoto !== "")
+            this.ProfilePhoto = res.data.activity.User.ProfilePhoto;
+
+          this.starNum = res.data.activity.Score / 10;
+          this.activityRecordList = res.data.activityRecordList;
+          this.activityImageList = res.data.activityImageList;
+          this.ActivityType =
+            this.activity.ActivityType === 1
+              ? "家庭教育"
+              : this.activity.ActivityType === 2
+              ? "儿童团辅"
+              : this.activity.ActivityType === 3
+              ? "家庭亲子"
+              : "安全护卫";
+          this.activityImageList.forEach(item => {
+            this.imagesArray.push(item.Url);
+          });
+          console.log(
+            "record.Content",
+            this.activityRecordList[0].Content.indexOf("http") > -1
+          );
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    },
     showPreview(index) {
       this.showImgPreview = true;
       this.startPosition = index;
@@ -148,6 +189,36 @@ export default {
       this.$router.push({
         name: this.$route.query.currentPath
       });
+    },
+    showSubmitConfirmfun() {
+      if (this.recordContent.length < 20) {
+        this.$toast("请输入20-500字");
+        return;
+      }
+      this.showSubmitConfirm = true;
+    },
+    submitRelease() {
+      this.showOverlay = true;
+      release(this.Token, this.activity.Id, this.recordContent)
+        .then(res => {
+          console.log("release", res);
+
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 2000
+            });
+            this.showOverlay = false;
+          } else {
+            this.recordContent = "";
+            this.init();
+          }
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
     }
   }
 };
@@ -167,13 +238,9 @@ export default {
     font-weight: 600;
   }
   .activityOrganizersHead {
-    // width: 30px;
     text-align: left;
     font-size: 12px;
     margin: 0 20px 10px;
-    // padding: 10px;
-    // background: #3b4c5a;
-    // border-radius: 50%;
     .head {
       width: 50px;
       height: 50px;
@@ -210,6 +277,7 @@ export default {
     margin: 0px 20px 0 70px;
     padding: 20px;
     text-align: left;
+    word-break: break-word;
   }
   .activityEvaluate {
     text-align: left;

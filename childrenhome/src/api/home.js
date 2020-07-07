@@ -300,3 +300,20 @@ export const deleteChildren = function (token, id) {
     method: "get"
   });
 }
+
+
+//发布活动
+export const release = function (token, id, content) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/release?token=${token}&id=${id}&content=${content}`,
+    method: "post"
+  });
+}
+
+
+//获取儿童详情
+export const getChildrenDetail = function (childrenId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/children/detail?childrenId=${childrenId}`,
+  });
+}

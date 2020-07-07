@@ -23,7 +23,7 @@ import socialWorkstation from '@/components/socialWorkstation'
 import socialWorkstationDetail from '@/components/socialWorkstationDetail'
 import assistantChildrenHomeDetail from '@/components/assistantChildrenHomeDetail'
 import addLowIncomePerson from '@/components/addLowIncomePerson'
-
+import unfinishedActivity from '@/components/unfinishedActivity'
 
 import accountSetting from '@/components/accountSetting'
 import offlineActivity from '@/components/offlineActivity'
@@ -158,6 +158,12 @@ const router = new Router({
       path: '/addLowIncomePerson',
       name: 'addLowIncomePerson',
       component: addLowIncomePerson
+    },
+    //线下未完成活动
+    {
+      path: '/unfinishedActivity',
+      name: 'unfinishedActivity',
+      component: unfinishedActivity
     },
   ] 
 })

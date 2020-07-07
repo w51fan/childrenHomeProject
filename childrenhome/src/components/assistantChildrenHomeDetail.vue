@@ -64,17 +64,22 @@
       <div class="childrenHomeMemberHead">操作</div>
     </div>
     <div>
-      <van-cell class="childrenHomeMember">
+      <van-cell
+        class="childrenHomeMember"
+        v-for="(child,index) in childrenList"
+        :key="index"
+        style="border-bottom: 1px solid #efefef;"
+      >
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="flex space-between">
             <div class="childHead">
               <img src="../assets/nohead.png" class="head" alt />
-              <div class="name">测试</div>
+              <div class="name">{{child.Name}}</div>
             </div>
             <div class="guardianName">测试1</div>
             <div class="operation">
-              <van-icon name="ellipsis" @click="showMore" />
+              <van-icon name="ellipsis" @click="showMore(child)" />
             </div>
           </div>
         </template>
@@ -153,7 +158,7 @@
         <div class="item">
           <div class="itemContent" @click="edit">编辑信息-测试</div>
         </div>
-        <div class="item" @click="deleteConfirm()">
+        <div class="item" @click="deleteConfirm">
           <div class="itemContent">删除信息-测试</div>
         </div>
         <div class="item">
@@ -179,6 +184,7 @@ export default {
   data() {
     return {
       childrenHome: [],
+      childrenList: [],
       activityList: [],
       userList: [],
       imageList: [],
@@ -188,46 +194,71 @@ export default {
       showAddChildren: false,
       showOverlay: false,
       showDialog: false,
-      showDeleteConfirm: false
+      showDeleteConfirm: false,
+      currentChildId: ""
     };
   },
   computed: {
     VillageId() {
       return this.$store.state.common.VillageId;
+    },
+    Token() {
+      return this.$store.state.common.Token;
+    },
+    PreCurrentPath() {
+      return this.$store.state.common.PreCurrentPath;
     }
   },
   mounted() {
-    this.showOverlay = true;
-    if (this.$route.query.currentPath === "childrenHomePage") {
-      this.showAddChildren = true;
-    }
-    getChildrenHomeDetail(this.VillageId)
-      .then(res => {
-        console.log("getChildrenHomeDetail", res);
-        this.$store.commit("common/getChildrenHomeId", res.data.childrenHome.Id);
-        this.childrenHome = res.data.childrenHome;
-        this.activityTotal = res.data.activityTotal;
-        if (this.activityTotal > 0) this.activityList = res.data.activitylist;
-
-        this.userList = res.data.userList;
-        this.imageList = res.data.imageList;
-        if(this.imageList.length>0)this.ChildrenHomeImg = this.imageList[0].URL
-        this.starNum = this.childrenHome.Score / 10;
-        this.showOverlay = false;
-      })
-      .catch(err => {
-        console.log("err", err);
-        this.showOverlay = false;
-      });
+    // this.$store.commit("common/getNeedPreCurrentPath", true);
+    this.init();
   },
   methods: {
+    init() {
+      this.showOverlay = true;
+      if (this.$route.query.currentPath === "childrenHomePage") {
+        this.showAddChildren = true;
+      }
+      getChildrenHomeDetail(this.VillageId)
+        .then(res => {
+          console.log("getChildrenHomeDetail", res);
+          this.$store.commit(
+            "common/getChildrenHomeId",
+            res.data.childrenHome.Id
+          );
+          this.childrenHome = res.data.childrenHome;
+          this.activityTotal = res.data.activityTotal;
+          if (this.activityTotal > 0) this.activityList = res.data.activitylist;
+          if (res.data.childrenHome.ChildrenCount > 0)
+            this.childrenList = res.data.childrenList;
+          this.userList = res.data.userList;
+          this.imageList = res.data.imageList;
+          if (this.imageList.length > 0)
+            this.ChildrenHomeImg = this.imageList[0].URL;
+          this.starNum = this.childrenHome.Score / 10;
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    },
     onClickLeft() {
-      this.$router.push({
-        name: this.$route.query.currentPath,
-        query: {
-          activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
-        }
-      });
+      if (this.$route.query.currentPath) {
+        this.$router.push({
+          name: this.$route.query.currentPath,
+          query: {
+            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
+          }
+        });
+      } else {
+        this.$router.push({
+          name: this.PreCurrentPath,
+          query: {
+            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
+          }
+        });
+      }
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -237,24 +268,45 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
-      this.$router.push({
-        name: "activityDetail",
-        query: {
-          Id: row.Id,
-          currentPath: "assistantChildrenHomeDetail"
-        }
-      });
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
+      if (row.Status === 2) {
+        this.$router.push({
+          name: "addActivity",
+          query: {
+            Id: row.Id,
+            currentPath: "assistantChildrenHomeDetail"
+          }
+        });
+      } else {
+        this.$router.push({
+          // name: "activityDetail",
+          name: "unfinishedActivity",
+          query: {
+            Id: row.Id,
+            currentPath: "assistantChildrenHomeDetail"
+          }
+        });
+      }
     },
     edit() {
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
       this.$router.push({
         name: "addChildren",
         query: {
+          childrenId: this.currentChildId,
           currentPath: "assistantChildrenHomeDetail"
         }
       });
     },
-    showMore() {
+    showMore(child) {
       this.showDialog = true;
+      this.currentChildId = child.Id;
     },
     afterRead(file) {
       this.showOverlay = true;
@@ -272,6 +324,10 @@ export default {
       });
     },
     addChildren() {
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
       this.$router.push({
         name: "addChildren",
         query: {
@@ -283,8 +339,31 @@ export default {
       this.showDialog = false;
       this.showDeleteConfirm = true;
     },
-    deleteChild(value) {
-      console.log(value);
+    deleteChild() {
+      this.showOverlay = true;
+      deleteChildren(this.Token, this.currentChildId)
+        .then(res => {
+          console.log("deleteChildren", res);
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 1000
+            });
+            this.showOverlay = false;
+          } else {
+            this.$notify({
+              type: "success",
+              message: res.data.msg,
+              duration: 1000
+            });
+            this.init();
+          }
+        })
+        .catch(err => {
+          console.log("deleteChildren", err);
+          this.showOverlay = false;
+        });
     }
   }
 };

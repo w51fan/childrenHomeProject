@@ -6,7 +6,8 @@ const state = {
     Token: '',
     UserTpye:'',
     User:'',
-    ChildrenHomeId: ''
+    ChildrenHomeId: '',
+    PreCurrentPath:'',
 }
 
 const getters = {}
@@ -34,6 +35,9 @@ const mutations = {
     },
     getChildrenHomeId(state, value) {
       state.ChildrenHomeId = value;
+    }, 
+    getPreCurrentPath(state, value) {
+      state.PreCurrentPath = value;
     },
 }
 

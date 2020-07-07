@@ -106,7 +106,7 @@ export default {
       // User: "",
       childrenHomeList: [],
       selectedNav: "childrenHomePage",
-      showOverlay:false
+      showOverlay: false
     };
   },
   computed: {
@@ -120,23 +120,28 @@ export default {
   mounted() {
     // this.User = this.$store.state.common.User
     // this.token = this.$store.state.common.token
-    this.showOverlay = true
-    getChildrenHomeList(this.Token).then(result => {
-      console.log("getChildrenHomeList", result);
-      this.childrenHomeList = result.data.childrenHomeList;
+    this.showOverlay = true;
+    getChildrenHomeList(this.Token)
+      .then(result => {
+        console.log("getChildrenHomeList", result);
+        this.childrenHomeList = result.data.childrenHomeList;
 
-      if (this.childrenHomeList.length > 0) {
-        this.$store.commit("common/getCityId", this.childrenHomeList[0].CityId);
-        // this.$store.commit("common/getTownId", this.childrenHomeList[0].TownId);
-        // this.$store.commit("common/getVillageId", this.childrenHomeList[0].VillageId);
-      } else {
-        this.$store.commit("common/getCityId", 2018);
-      }
-      this.showOverlay = false
-    }).catch(err=>{
-      console.log('err',err)
-      this.showOverlay = false
-    });
+        if (this.childrenHomeList.length > 0) {
+          this.$store.commit(
+            "common/getCityId",
+            this.childrenHomeList[0].CityId
+          );
+          // this.$store.commit("common/getTownId", this.childrenHomeList[0].TownId);
+          // this.$store.commit("common/getVillageId", this.childrenHomeList[0].VillageId);
+        } else {
+          this.$store.commit("common/getCityId", 2018);
+        }
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("err", err);
+        this.showOverlay = false;
+      });
   },
   methods: {
     goChildrenHomeDetail(childrenHome) {

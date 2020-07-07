@@ -314,7 +314,12 @@
 </template>
 
 <script>
-import { addChildren, getNationList, uploadImg } from "@/api/home";
+import {
+  addChildren,
+  getNationList,
+  uploadImg,
+  getChildrenDetail
+} from "@/api/home";
 export default {
   name: "addChildren",
   data() {
@@ -371,6 +376,34 @@ export default {
           this.childrenNationList.push(element.Name);
           // this.childrenNationIDList[element.Name] = element.Id;
         });
+        if (this.$route.query.childrenId) {
+          getChildrenDetail(this.$route.query.childrenId).then(result => {
+            console.log("getChildrenDetail", result);
+            this.childrenName=result.data.children.Name
+            this.childrenGender=result.data.children.Sex
+            this.childrenImg=result.data.children.Photo
+            this.childrenType=result.data.children.ChildrenType
+            this.childrenNation=result.data.children.Nation
+            this.childrenId=result.data.children.IdNumber
+            this.childrenAddress=result.data.children.ChildrenAddress
+            this.childrenHealthy=result.data.children.Health
+            this.isBoardingSchool=result.data.children.ShcoolLodging
+            this.childrenClass=result.data.children.SchoolInfo
+            this.familyEconomicSituation=result.data.children.EconomicSituation
+            this.familyFinancialResources=result.data.children.EconomicResource
+            this.assistanceAndAssistance=result.data.children.RescueSituation
+            this.fatherName=result.data.children.FatherName
+            this.fatherWorkPlace=result.data.children.FatherWorkAddress
+            this.fatherTel=result.data.children.FatherPhone
+            this.motherName=result.data.children.MotherName
+            this.motherWorkPlace=result.data.children.MotherWorkAddress
+            this.motherTel=result.data.children.MotherPhone
+            // guardianName: this.nameOfGuardian=result.data.children.
+            // guardianPhone: this.telOfGuardian=result.data.children.
+            this.identityOfGuardian=result.data.children.Relation
+            this.showOverlay = false;
+          });
+        }
         this.showOverlay = false;
       })
       .catch(err => {
@@ -381,7 +414,7 @@ export default {
   methods: {
     onClickLeft() {
       this.$router.push({
-        name: "childrenHomeDetail"
+        name: "assistantChildrenHomeDetail"
       });
     },
     showPick(index) {
@@ -473,7 +506,7 @@ export default {
             fatherPhone: this.fatherTel,
             motherName: this.motherName,
             motherWorkAddress: this.motherWorkPlace,
-            motherPhone: this.motherWorkPlace,
+            motherPhone: this.motherTel,
             guardianName: this.nameOfGuardian,
             guardianPhone: this.telOfGuardian,
             relation: this.identityOfGuardian
@@ -481,10 +514,10 @@ export default {
             .then(res => {
               console.log("addChildren", res);
               $this.showOverlay = false;
-              if (res.data.code > 0) {
+              if (res.data.code > 1) {
                 this.$notify({
                   type: "warning",
-                  message: res.data.msg,
+                  message: res.data.error,
                   duration: 500
                 });
               } else {
