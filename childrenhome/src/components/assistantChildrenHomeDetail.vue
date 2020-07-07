@@ -244,6 +244,7 @@ export default {
         });
     },
     onClickLeft() {
+      console.log('this.$route.query.currentPath',this.$route.query.currentPath,this.PreCurrentPath)
       if (this.$route.query.currentPath) {
         this.$router.push({
           name: this.$route.query.currentPath,

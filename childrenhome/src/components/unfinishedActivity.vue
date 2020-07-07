@@ -44,13 +44,58 @@
         </van-uploader>-->
       </div>
     </div>
-     <div class="activityImgTitle">签到图片（{{signImgFileList.length}}/1）</div>
-     <div style="text-align: left;padding: 0 20px;">
-        <van-uploader :after-read="afterSignRead" v-model="signImgFileList" :max-count="1" />
-        <!-- <van-uploader>
+    <div class="activityImgTitle">签到图片（{{signImgFileList.length}}/1）</div>
+    <div style="text-align: left;padding: 0 20px;">
+      <van-uploader :after-read="afterSignRead" v-model="signImgFileList" :max-count="1" />
+      <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
-        </van-uploader>-->
+      </van-uploader>-->
+    </div>
+    <div>
+      <div class="activityRecord">活动记录</div>
+      <div class="activityRecordInput" style="padding:20px;">
+        <van-field
+          v-model="recordContent"
+          type="textarea"
+          rows="5"
+          placeholder="请输入活动记录"
+          input-align="left"
+          maxlength="500"
+          show-word-limit
+        />
+        <div style="text-align: right;padding: 10px 20px 0;">
+          <van-button type="default" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
+        </div>
       </div>
+      <div style="background: rgba(128, 128, 128, 0.1);">
+        <!-- <div v-for="(record,index) in activityRecordList" :key="index">
+          <div class="activityRecordUser">
+            <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+            <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
+          </div>
+          <div>
+            <div class="activityRecordUserContent">
+              <img
+                v-if="record.Content.indexOf('http')> -1"
+                :src="record.Content"
+                style="width:100%"
+              />
+              <div v-else>{{record.Content}}</div>
+            </div>
+          </div>
+        </div>-->
+      </div>
+      <div class="noRecords">
+        <div class="text">暂无活动记录</div>
+      </div>
+    </div>
+    <div>
+      <div class="activityRecord">活动评价</div>
+      <div class="noRecords">
+        <div class="text">暂无活动评价</div>
+      </div>
+    </div>
+    <van-button type="warning" style="width:100%;">完成并公布此活动</van-button>
     <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
@@ -70,9 +115,10 @@ export default {
       //   // 如果图片 URL 中不包含类型信息，可以添加 isImage 标记来声明
       //   { url: 'https://cloud-image', isImage: true },
       imgFileList: [],
-      signImgFileList:[],
+      signImgFileList: [],
       starNum: 0,
       showOverlay: false,
+      recordContent: "",
       ProfilePhoto: require("../assets/nohead.png"),
       activity: {
         Name: "22",
@@ -92,11 +138,6 @@ export default {
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
-        if (this.imgFileList.length > 0) {
-          this.imgFileList[this.imgFileList.length].url = res.data.url;
-        } else {
-          this.imgFileList[this.imgFileList.length + 1].url = res.data.url;
-        }
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -105,19 +146,11 @@ export default {
         this.showOverlay = false;
       });
     },
-    afterSignRead(file){
+    afterSignRead(file) {
       this.showOverlay = true;
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
-        // if (this.signImgFileList.length > 0) {
-        //   this.signImgFileList[this.imgFileList.length].url = res.data.url;
-        // } else {
-        //   this.signImgFileList[this.imgFileList.length + 1].url = res.data.url;
-        // }
-        console.log('this.imgFileList.length + 1',this.imgFileList.length + 1)
-        if(res.data.url)this.signImgFileList[this.imgFileList.length + 1].url = res.data.url;
-        
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -154,6 +187,12 @@ export default {
     }
   }
   .activityImgTitle {
+    text-align: left;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .activityRecord {
     text-align: left;
     padding: 20px;
     font-size: 18px;
@@ -209,6 +248,22 @@ export default {
 
   .gapten {
     height: 10px;
+  }
+  .activityRecordInput {
+    .van-cell {
+      padding: 0;
+    }
+    .van-field__body {
+      border: 1px solid #efefef;
+    }
+  }
+  .noRecords {
+    background: rgba(128, 128, 128, 0.1);
+    height: 80px;
+    .text {
+      padding-top: 30px;
+      color: #969696;
+    }
   }
 }
 </style>

@@ -4,15 +4,19 @@
       <div class="flex space-between">
         <div class="head flex">
           <div>
-            <div v-if="user.ProfilePhoto!==''">
-              <img src alt />
+            <div v-if="User.ProfilePhoto!==''">
+              <img
+                :src="User.ProfilePhoto"
+                alt
+                style="width: 50px;height: 50px;border-radius: 50%;"
+              />
             </div>
             <div v-else>
               <img src="../assets/nohead.png" alt />
             </div>
           </div>
           <div>
-            <div class="name">{{user.Name}}</div>
+            <div class="name">{{User.Name}}</div>
             <div class="status will" style="width: 120px;margin: 0 16px;">社区工作服务管理员</div>
           </div>
         </div>
@@ -90,22 +94,24 @@ export default {
     return {
       token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTYxMDYzNjMsImlhdCI6MTU5MzUxNDM2MywiaWQiOjI0NjMwLCJuYW1lIjoi5LiA5biGIiwicGhvbmUiOiIxMzQzMDIwMjYyMSIsInByb2ZpbGVfcGhvdG8iOiIifQ.CcCcf1s0cQ09esbvV-IsLdu_rh0BI2yNQ0muwsqQt7U",
-      user: "",
       childrenHomeList: [],
       selectedNav: "socialWorkstation"
     };
   },
-  // computed: {
-  //   token() {
-  //     return this.$store.state.common.token;
-  //   }
-  // },
+  computed: {
+    Token() {
+      return this.$store.state.common.Token;
+    },
+    User() {
+      return this.$store.state.common.User;
+    }
+  },
   mounted() {
     getUserInfo(this.token).then(res => {
       console.log("getUserInfo", res);
       //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
-      this.$store.commit("common/getUserTpye", res.data.user.Type);
-      this.user = res.data.user;
+      this.$store.commit("common/getUserTpye", res.data.User.Type);
+      this.User = res.data.User;
       getChildrenHomeList(this.token).then(result => {
         console.log("getChildrenHomeList", result);
         this.childrenHomeList = result.data.childrenHomeList;
@@ -147,6 +153,7 @@ export default {
 
 <style lang="less">
 .socialWorkstationPage {
+  margin-bottom: 60px;
   .childrenHomePageHead {
     padding: 20px;
     .head {
