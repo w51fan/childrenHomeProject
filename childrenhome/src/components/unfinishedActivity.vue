@@ -95,7 +95,7 @@
         <div class="text">暂无活动评价</div>
       </div>
     </div>
-    <van-button type="warning" style="width:100%;">完成并公布此活动</van-button>
+    <van-button type="warning" style="width:100%;" @click="submitRelease">完成并公布此活动</van-button>
     <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { uploadImg } from "@/api/home";
+import { uploadImg, release } from "@/api/home";
 export default {
   name: "unfinishedActivity",
   data() {
@@ -123,7 +123,8 @@ export default {
       activity: {
         Name: "22",
         Status: 2
-      }
+      },
+      urls: ""
     };
   },
   mounted() {},
@@ -138,6 +139,8 @@ export default {
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
+        this.urls =
+          this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -151,6 +154,8 @@ export default {
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
+        this.urls =
+          this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -158,6 +163,30 @@ export default {
         });
         this.showOverlay = false;
       });
+    },
+    submitRelease() {
+      this.showOverlay = true;
+
+      release(this.Token, this.activity.Id, this.recordContent, this.urls)
+        .then(res => {
+          console.log("release", res);
+
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 2000
+            });
+            this.showOverlay = false;
+          } else {
+            this.recordContent = "";
+            this.init();
+          }
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
     }
   }
 };

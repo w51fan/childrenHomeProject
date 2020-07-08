@@ -68,7 +68,7 @@ export default {
   methods: {
     onClickLeft() {
       this.$router.push({
-        name: "childrenHomePage"
+        name: this.$route.query.currentPath
       });
     },
     logout() {

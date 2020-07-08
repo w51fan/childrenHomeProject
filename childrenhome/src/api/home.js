@@ -303,11 +303,19 @@ export const deleteChildren = function (token, id) {
 
 
 //发布活动
-export const release = function (token, id, content) {
-  return axios.request({
-    url: `https://api.quanjiaxue.net/activity/release?token=${token}&id=${id}&content=${content}`,
-    method: "post"
-  });
+export const release = function (token, id, content, urls, signInImage) {
+  if (urls && signInImage) {
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/release?token=${token}&id=${id}&content=${content}&urls=${urls}&signInImage=${signInImage}`,
+      method: "post"
+    });
+  }else{
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/release?token=${token}&id=${id}&content=${content}`,
+      method: "post"
+    });
+  }
+  
 }
 
 
@@ -315,5 +323,26 @@ export const release = function (token, id, content) {
 export const getChildrenDetail = function (childrenId) {
   return axios.request({
     url: `https://api.quanjiaxue.net/children/detail?childrenId=${childrenId}`,
+  });
+}
+
+//获取社会救助服务站列表
+export const getSocialStationList = function (token) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/manage/getSocialStationList?token=${token}`,
+  });
+}
+
+//获取社会救助服务站详情
+export const getSocialstationDetail = function (id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/socialstation/detail?id=${id}`,
+  });
+}
+
+//获取登录用户关联的儿童之家的活动列表 status活动状态，1：未完成活动，3：已完成活动
+export const getActivityListByUserId = function (token, status) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/getActivityListByUserId?token=${token}&status=${status}`,
   });
 }

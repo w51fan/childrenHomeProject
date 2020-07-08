@@ -7,7 +7,20 @@
     <div class="content">
       <van-tabs v-model="activeTab" class="offlineActivityTabs">
         <van-tab title="未完成活动">
-          <div class="unfinishedItem">
+          <div v-for="(activity,index) in activityList" :key="index">
+            <div class="unfinishedItem">
+            <div class="title flex space-between">
+              <div class="flex">
+                <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                <div style="padding-left:5px;">{{activity.date}}</div>
+              </div>
+              <div class="status ing">进行中...</div>
+            </div>
+            <div class="content">{{activity.ChildrenHome.Name}} 即将举办 微课活动</div>
+          </div>
+          <div class="gap gapone"></div>
+          </div>
+          <!-- <div class="unfinishedItem">
             <div class="title flex space-between">
               <div class="flex">
                 <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
@@ -17,7 +30,7 @@
             </div>
             <div class="content">全家雪村演示儿童之家</div>
           </div>
-          <div class="gap gapone"></div>
+          <div class="gap gapone"></div> -->
         </van-tab>
         <van-tab title="已完成活动">
           <div class="finishedItem">
@@ -54,7 +67,7 @@
 
 <script>
 import assistantBottomNav from "./assistantBottomNav";
-import { getActivityList } from "@/api/home";
+import { getActivityList,getActivityListByUserId } from "@/api/home";
 export default {
   name: "offlineActivity",
   components: {
@@ -64,22 +77,22 @@ export default {
     return {
       activeTab: 0,
       selectedNav: "offlineActivity",
-      showOverlay: false
+      showOverlay: false,
+      activityList:[],
     };
   },
   computed: {
-    cityId() {
-      return this.$store.state.common.cityId;
-    }
+    Token() {
+      return this.$store.state.common.Token;
+    },
   },
   mounted() {
     //{cityId, areaId, townId, type, activityType}
     this.showOverlay = true;
-    getActivityList({
-      cityId: this.cityId
-    })
+    getActivityListByUserId(this.Token,1)
       .then(res => {
-        console.log("getActivityList", res);
+        console.log("getActivityListByUserId", res);
+        this.activityList = res.data.activityList
         this.showOverlay = false;
       })
       .catch(err => {

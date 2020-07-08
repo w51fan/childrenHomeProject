@@ -244,7 +244,11 @@ export default {
         });
     },
     onClickLeft() {
-      console.log('this.$route.query.currentPath',this.$route.query.currentPath,this.PreCurrentPath)
+      console.log(
+        "this.$route.query.currentPath",
+        this.$route.query.currentPath,
+        this.PreCurrentPath
+      );
       if (this.$route.query.currentPath) {
         this.$router.push({
           name: this.$route.query.currentPath,
@@ -275,7 +279,7 @@ export default {
       );
       if (row.Status === 2) {
         this.$router.push({
-          name: "addActivity",
+          name: "unfinishedActivity",
           query: {
             Id: row.Id,
             currentPath: "assistantChildrenHomeDetail"
@@ -283,8 +287,7 @@ export default {
         });
       } else {
         this.$router.push({
-          // name: "activityDetail",
-          name: "unfinishedActivity",
+          name: "activityDetail",
           query: {
             Id: row.Id,
             currentPath: "assistantChildrenHomeDetail"
