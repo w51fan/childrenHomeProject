@@ -19,8 +19,13 @@ export default {
     return {
       active: "childrenHomePage",
       navList: [
+        // {
+        //   navName: "儿童之家",
+        //   icon: "wap-home",
+        //   path: "childrenHomePage"
+        // },
         {
-          navName: "儿童之家",
+          navName: "服务站",
           icon: "wap-home",
           path: "childrenHomePage"
         },

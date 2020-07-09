@@ -107,8 +107,8 @@ export default {
                 this.showOverlay = false;
                 if (res.data.user.Type === 4) {
                   this.$router.push({
-                    name: "childrenHomePage",
-                    // name: "socialWorkstation",
+                    // name: "childrenHomePage",
+                    name: "socialWorkstation",
                     query: {
                       user: res.data.user
                     }

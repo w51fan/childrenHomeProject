@@ -10,12 +10,19 @@
       <van-field v-model="value" label="低保类型 " placeholder="请输入低保类型" size="large" />
       <van-field v-model="value" label="家庭月中收入 " placeholder="请输入家庭月中收入" size="large" />
       <van-field v-model="value" label="联系方式 " placeholder="请输入联系方式" size="large" />
-      <!-- <van-field v-model="value" label="保障起始年月 " placeholder="请输入保障起始年月" size="large" /> -->
-      <van-cell title="保障起始年月" is-link value="请选择保障起始年月" class="pick">
+      <!-- <van-cell title="保障起始年月" is-link value="请选择保障起始年月" class="pick">
         <template #default>
           <div @click="showPick">保障起始年月</div>
         </template>
-      </van-cell>
+      </van-cell>-->
+      <van-field
+        readonly
+        clickable
+        label="保障起始年月"
+        :value="activityDate"
+        placeholder="请选择保障起始年月"
+        @click="showPick(1)"
+      />
       <van-field
         v-model="value"
         type="textarea"
@@ -28,14 +35,14 @@
     <div style="padding:20px;">
       <van-button type="primary" style="width:100%;">新增</van-button>
     </div>
-    <van-popup v-model="show" position="bottom" :style="{ height: '50%' }">
+    <van-popup v-model="showPicker" position="bottom" :style="{ height: '50%' }">
       <van-datetime-picker
-        v-model="currentDate"
-        type="year-month"
-        title="选择年月"
+        v-model="activityDate"
+        type="date"
+        title="选择年月日"
         :min-date="minDate"
         :max-date="maxDate"
-        :formatter="formatter"
+        @confirm="onConfirmDate"
       />
     </van-popup>
   </div>
@@ -48,12 +55,12 @@ export default {
     return {
       minDate: new Date(2020, 0, 1),
       maxDate: new Date(2025, 10, 1),
-      currentDate: new Date(),
-      show: false
+      activityDate: this.getDate(new Date()),
+      showPicker: false
     };
   },
   methods: {
-    onClickLeft(){
+    onClickLeft() {
       this.$router.push({
         name: "socialWorkstationDetail"
       });
@@ -67,7 +74,18 @@ export default {
       return val;
     },
     showPick() {
-      this.show = !this.show;
+      this.showPicker = true;
+    },
+    getDate(date) {
+      let activityDate = new Date(date);
+      let year = activityDate.getFullYear();
+      let month = activityDate.getMonth() + 1;
+      let day = activityDate.getDate();
+      return `${year}-${month}-${day}`;
+    },
+    onConfirmDate(value) {
+      this.showPicker = false;
+      this.activityDate = this.getDate(value);
     }
   }
 };

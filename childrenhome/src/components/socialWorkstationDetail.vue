@@ -284,7 +284,7 @@ export default {
         this.$route.query.currentPath
       );
       this.$router.push({
-        name: "addChildren",
+        name: "addLowIncomePerson",
         query: {
           childrenId: this.currentChildId,
           currentPath: "assistantChildrenHomeDetail"
@@ -316,7 +316,7 @@ export default {
         this.$route.query.currentPath
       );
       this.$router.push({
-        name: "addChildren",
+        name: "addLowIncomePerson",
         query: {
           currentPath: "assistantChildrenHomeDetail"
         }

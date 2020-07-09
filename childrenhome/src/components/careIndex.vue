@@ -66,6 +66,7 @@
                     :name="num+1"
                     v-for="(three,num) in child.children"
                     :key="num"
+                    disabled
                   ></van-collapse-item>
                 </van-collapse>
               </van-collapse-item>
@@ -95,6 +96,7 @@
                     :name="num+1"
                     v-for="(three,num) in child.children"
                     :key="num"
+                    disabled
                   ></van-collapse-item>
                 </van-collapse>
               </van-collapse-item>
