@@ -10,30 +10,33 @@
           </van-dropdown-menu>
         </div>
         <div class="gap gapfive"></div>
-        <div v-for="(item,index) in activityList" :key="index">
-          <div class="flex space-between">
-            <div style="padding:20px;">
-              <van-icon name="underway" v-if="item.Status===1" />
-              <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-              {{getDate(item.Date)}}
+        <div v-if="activityList.length>0">
+          <div v-for="(item,index) in activityList" :key="index">
+            <div class="flex space-between">
+              <div style="padding:20px;">
+                <van-icon name="underway" v-if="item.Status===1" />
+                <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+                {{getDate(item.Date)}}
+              </div>
+              <div class="status will" v-if="item.Status===1">即将开始</div>
+              <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+              <div class="status finished" v-else>已结束</div>
             </div>
-            <div class="status will" v-if="item.Status===1">即将开始</div>
-            <div class="status ing" v-else-if="item.Status===2">进行中...</div>
-            <div class="status finished" v-else>已结束</div>
+            <div class="abbreviation">{{item.Name}}...</div>
+            <div class="flex" @click="viewDetail(item)">
+              <img
+                :src="activityImg.Url"
+                v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
+                :key="turn"
+                style="width: 50px;height: 100px;padding: 15px 20px;"
+              />
+              <div>...</div>
+            </div>
+            <!-- <van-icon name="checked" />
+            <div>{{item.Date}}</div>-->
           </div>
-          <div class="abbreviation">{{item.Name}}...</div>
-          <div class="flex" @click="viewDetail(item)">
-            <img
-              :src="activityImg.Url"
-              v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
-              :key="turn"
-              style="width: 50px;height: 100px;padding: 15px 20px;"
-            />
-            <div>...</div>
-          </div>
-          <!-- <van-icon name="checked" />
-          <div>{{item.Date}}</div>-->
         </div>
+        <div v-else style="color: #b9b9b9;padding-top: 30px;line-height: 30px;">没有最新活动数据</div>
       </van-tab>
       <van-tab title="全部活动">
         <div class="gap"></div>
@@ -76,7 +79,7 @@
             <div class="flex" @click="viewDetail(item)">
               <img
                 :src="activityImg.Url"
-                v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
+                v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
                 :key="turn"
                 style="width: 50px;height: 100px;padding: 15px 20px;"
               />
@@ -123,6 +126,11 @@
     </van-tabs>
 
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -154,13 +162,15 @@ export default {
       showTips: 1,
       selectedTown: "",
       townItems: [],
-      villageItems: []
+      villageItems: [],
+      showOverlay: false
     };
   },
   mounted() {
     // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
     // console.log('this.$route.query.cityId',this.cityId)
-    this.getActivityList(this.cityId, 2021, 3713, true);
+    this.showOverlay = true;
+    this.getActivityList(this.cityId, 2021, 3713, false);
   },
   computed: {
     cityId() {
@@ -243,17 +253,23 @@ export default {
         areaId: areaId,
         townId: townId
         // activityType: ""
-      }).then(res => {
-        console.log("res", res);
+      })
+        .then(res => {
+          console.log("res", res);
 
-        this.activityList = res.data.activityList;
+          this.activityList = res.data.activityList;
 
-        if (!isInit && this.activityList.length == 0) {
-          this.showTips = 2;
-        } else if (!isInit && this.activityList.length > 0) {
-          this.showTips = 3;
-        }
-      });
+          if (!isInit && this.activityList.length == 0) {
+            this.showTips = 2;
+          } else if (!isInit && this.activityList.length > 0) {
+            this.showTips = 3;
+          }
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("getTotalCount", err);
+          this.showOverlay = false;
+        });
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -282,7 +298,7 @@ export default {
       this.$router.push({
         name: "childrenHomeDetail",
         query: {
-          currentPath: 'socialParticipation'
+          currentPath: "socialParticipation"
         }
       });
     }

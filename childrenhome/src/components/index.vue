@@ -31,9 +31,9 @@
             :src="news.NewsThumbnail"
             style="width:100px;min-width:100px;max-width:100px;height:60px;"
           />
-          <div style="text-align: left">
+          <div style="text-align: left;padding: 0 10px;position: relative;">
             <div>{{news.Title}}</div>
-            <div>{{news.CreateTime}}</div>
+            <div style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;">{{news.CreateTime}}</div>
           </div>
         </div>
       </div>

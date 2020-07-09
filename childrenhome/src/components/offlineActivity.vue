@@ -8,51 +8,39 @@
       <van-tabs v-model="activeTab" class="offlineActivityTabs">
         <van-tab title="未完成活动">
           <div v-for="(activity,index) in activityList" :key="index">
-            <div class="unfinishedItem">
-            <div class="title flex space-between">
-              <div class="flex">
-                <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
-                <div style="padding-left:5px;">{{activity.date}}</div>
+            <div class="unfinishedItem" @click="goUnfinishedActivity(activity)">
+              <div class="title flex space-between">
+                <div class="flex">
+                  <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                  <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+                </div>
+                <div class="status ing">进行中...</div>
               </div>
-              <div class="status ing">进行中...</div>
+              <div
+                class="content"
+              >{{activity.ChildrenHome.Name}} 即将举办 {{activityTypeIDArray[activity.Type]}}</div>
             </div>
-            <div class="content">{{activity.ChildrenHome.Name}} 即将举办 微课活动</div>
+            <div class="gap gapone"></div>
           </div>
-          <div class="gap gapone"></div>
-          </div>
-          <!-- <div class="unfinishedItem">
-            <div class="title flex space-between">
-              <div class="flex">
-                <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
-                <div style="padding-left:5px;">2020年8月9日</div>
-              </div>
-              <div class="status ing">进行中...</div>
-            </div>
-            <div class="content">全家雪村演示儿童之家</div>
-          </div>
-          <div class="gap gapone"></div> -->
         </van-tab>
         <van-tab title="已完成活动">
           <div class="finishedItem">
-            <div class="title flex space-between">
-              <div class="flex">
-                <van-icon name="checked" color="gray" style="font-size: 20px;" />
-                <div style="padding-left:5px;">2020年8月9日</div>
+            <div v-for="(activity,index) in activityList" :key="index">
+            <div class="unfinishedItem" @click="goActivityDetail(activity)">
+              <div class="title flex space-between">
+                <div class="flex">
+                  <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                  <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+                </div>
+                <div class="status finished">已结束</div>
               </div>
-              <div class="status finished">已结束</div>
+              <div
+                class="content"
+              >{{activity.ChildrenHome.Name}} 举办了 {{activityTypeIDArray[activity.Type]}}</div>
             </div>
-            <div class="content">全家雪村演示儿童之家</div>
-            <!-- <div class="flex" @click="viewDetail(item)">
-              <img
-                :src="activityImg.Url"
-                v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
-                :key="turn"
-                style="width: 50px;height: 100px;padding: 15px 20px;"
-              />
-              <div>...</div>
-            </div>-->
+            <div class="gap gapone"></div>
+            </div>
           </div>
-          <div class="gap gapone"></div>
         </van-tab>
       </van-tabs>
     </div>
@@ -67,7 +55,7 @@
 
 <script>
 import assistantBottomNav from "./assistantBottomNav";
-import { getActivityList,getActivityListByUserId } from "@/api/home";
+import { getActivityList, getActivityListByUserId } from "@/api/home";
 export default {
   name: "offlineActivity",
   components: {
@@ -78,37 +66,85 @@ export default {
       activeTab: 0,
       selectedNav: "offlineActivity",
       showOverlay: false,
-      activityList:[],
+      activityList: [],
+      activityTypeIDArray: {
+        1: "家庭教育",
+        2: "儿童团辅",
+        3: "家庭亲子",
+        4: "安全护卫",
+        5: "微课"
+      }
     };
   },
   computed: {
     Token() {
       return this.$store.state.common.Token;
-    },
+    }
+  },
+  watch:{
+    activeTab(val){
+      console.log(val)
+      if(val ===1){
+        this.init(3)
+      }else{
+        this.init(1)
+      }
+    }
   },
   mounted() {
+    //1未完成活动，3已完成活动
     //{cityId, areaId, townId, type, activityType}
     this.showOverlay = true;
-    getActivityListByUserId(this.Token,1)
+    this.init(1)
+  },
+  methods: {
+    init(type){
+      getActivityListByUserId(this.Token, type)
       .then(res => {
         console.log("getActivityListByUserId", res);
-        this.activityList = res.data.activityList
+        this.activityList = res.data.activityList;
         this.showOverlay = false;
       })
       .catch(err => {
         console.log("err", err);
         this.showOverlay = false;
       });
-  },
-  methods: {
+    },
     edit() {},
-    go(){
+    go() {
       this.$router.push({
-        name: 'addActivity',
+        name: "addActivity",
         query: {
-          currentPath: 'offlineActivity'
+          currentPath: "offlineActivity",
+          activityType: 1
         }
       });
+    },
+    goUnfinishedActivity(activity) {
+      this.$router.push({
+        name: "unfinishedActivity",
+        query: {
+          currentPath: "offlineActivity",
+          activityId: activity.Id
+        }
+      });
+    },
+    goActivityDetail(activity) {
+      this.$router.push({
+        name: "activityDetail",
+        query: {
+          currentPath: "offlineActivity",
+          activityId: activity.Id,
+          showSubmitButton:true,
+        }
+      });
+    },
+    getDate(date) {
+      let activityDate = new Date(date);
+      let year = activityDate.getFullYear();
+      let month = activityDate.getMonth() + 1;
+      let day = activityDate.getDate();
+      return `${year}-${month}-${day}`;
     }
   }
 };
@@ -167,7 +203,7 @@ export default {
       }
     }
     .finishedItem {
-      padding: 20px;
+      // padding: 20px;
       .title {
         i {
           font-size: 20px;

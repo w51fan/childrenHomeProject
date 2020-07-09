@@ -139,7 +139,7 @@
           <div class="flex" @click="viewDetail(item)">
             <img
               :src="activityImg.Url"
-              v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
+              v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
             />
@@ -172,7 +172,7 @@
       :showConfirmButton="true"
       @confirm="deleteChild"
     >
-      <div style="padding:20px;">是否删除测试儿童信息</div>
+      <div style="padding:20px;">是否删除-测试-儿童信息</div>
     </van-dialog>
   </div>
 </template>
@@ -244,11 +244,11 @@ export default {
         });
     },
     onClickLeft() {
-      console.log(
-        "this.$route.query.currentPath",
-        this.$route.query.currentPath,
-        this.PreCurrentPath
-      );
+      // console.log(
+      //   "this.$route.query.currentPath",
+      //   this.$route.query.currentPath,
+      //   this.PreCurrentPath
+      // );
       if (this.$route.query.currentPath) {
         this.$router.push({
           name: this.$route.query.currentPath,
@@ -281,7 +281,7 @@ export default {
         this.$router.push({
           name: "unfinishedActivity",
           query: {
-            Id: row.Id,
+            activityId: row.Id,
             currentPath: "assistantChildrenHomeDetail"
           }
         });
@@ -289,7 +289,8 @@ export default {
         this.$router.push({
           name: "activityDetail",
           query: {
-            Id: row.Id,
+            activityId: row.Id,
+            showSubmitButton:true,
             currentPath: "assistantChildrenHomeDetail"
           }
         });

@@ -54,7 +54,7 @@
     <div style="padding: 20px;">
       <div class="flex space-between">
         <div style="text-align: left;font-size: 18px;font-weight: 600;">低保对象人员</div>
-        <!-- <div style="color: #2c518a;" @click="addChildren">新建成员</div> -->
+        <div style="color: #2c518a;" @click="addSubsistence">新建成员</div>
       </div>
     </div>
     <div class="flex space-between" style="padding:20px 20px 10px;">
@@ -65,7 +65,7 @@
     <div>
       <van-cell
         class="childrenHomeMember"
-        v-for="(child,index) in childrenList"
+        v-for="(child,index) in subsistenceList"
         :key="index"
         style="border-bottom: 1px solid #efefef;"
       >
@@ -138,7 +138,7 @@
           <div class="flex" @click="viewDetail(item)">
             <!-- <img
               :src="activityImg.Url"
-              v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
+              v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
             /> -->
@@ -152,7 +152,7 @@
         <van-loading type="spinner" />
       </div>
     </van-overlay>
-    <!-- <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
+    <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
       <div class="operationDialogList">
         <div class="item">
           <div class="itemContent" @click="edit">编辑信息-测试</div>
@@ -160,30 +160,31 @@
         <div class="item" @click="deleteConfirm">
           <div class="itemContent">删除信息-测试</div>
         </div>
-        <div class="item">
+        <!-- <div class="item">
           <div class="itemContent">联系监护人手机-测试1</div>
-        </div>
+        </div> -->
       </div>
-    </van-dialog> -->
-    <!-- <van-dialog
+    </van-dialog>
+    <van-dialog
       v-model="showDeleteConfirm"
       :show-cancel-button="true"
       :showConfirmButton="true"
-      @confirm="deleteChild"
+      @confirm="deleteSubsistence"
     >
-      <div style="padding:20px;">是否删除测试儿童信息</div>
-    </van-dialog> -->
+      <div style="padding:20px;">是否删除-测试-低保对象信息</div>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { getSocialstationDetail, uploadImg } from "@/api/home";
+import { getSocialstationDetail, uploadImg,deleteSubsistence } from "@/api/home";
 export default {
   name: "socialWorkstationDetail",
   data() {
     return {
       socialStation: {},
-      childrenList: [],
+      subsistenceList:[],
+      subsistenceList: [],
       activityList: [],
       userList: [],
       imageList: [],
@@ -225,10 +226,11 @@ export default {
             res.data.socialStation.Id
           );
           this.socialStation = res.data.socialStation;
+          this.subsistenceList = res.data.subsistenceList
           this.activityTotal = res.data.activityTotal;
           if (this.activityTotal > 0) this.activityList = res.data.activitylist;
           if (res.data.socialStation.SubsistenceCount > 0)
-            this.childrenList = res.data.childrenList;
+            this.subsistenceList = res.data.subsistenceList
           this.userList = res.data.userList;
           // this.imageList = res.data.imageList;
           // if (this.imageList.length > 0)
@@ -242,26 +244,9 @@ export default {
         });
     },
     onClickLeft() {
-      console.log(
-        "this.$route.query.currentPath",
-        this.$route.query.currentPath,
-        this.PreCurrentPath
-      );
-      if (this.$route.query.currentPath) {
         this.$router.push({
           name: this.$route.query.currentPath,
-          query: {
-            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
-          }
         });
-      } else {
-        this.$router.push({
-          name: this.PreCurrentPath,
-          query: {
-            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
-          }
-        });
-      }
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -293,23 +278,23 @@ export default {
         });
       }
     },
-    // edit() {
-    //   this.$store.commit(
-    //     "common/getPreCurrentPath",
-    //     this.$route.query.currentPath
-    //   );
-    //   this.$router.push({
-    //     name: "addChildren",
-    //     query: {
-    //       childrenId: this.currentChildId,
-    //       currentPath: "assistantChildrenHomeDetail"
-    //     }
-    //   });
-    // },
-    // showMore(child) {
-    //   this.showDialog = true;
-    //   this.currentChildId = child.Id;
-    // },
+    edit() {
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
+      this.$router.push({
+        name: "addChildren",
+        query: {
+          childrenId: this.currentChildId,
+          currentPath: "assistantChildrenHomeDetail"
+        }
+      });
+    },
+    showMore(child) {
+      this.showDialog = true;
+      this.currentChildId = child.Id;
+    },
     afterRead(file) {
       this.showOverlay = true;
       let formData = new window.FormData();
@@ -324,49 +309,49 @@ export default {
         });
         this.showOverlay = false;
       });
+    },
+    addSubsistence() {
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
+      this.$router.push({
+        name: "addChildren",
+        query: {
+          currentPath: "assistantChildrenHomeDetail"
+        }
+      });
+    },
+    deleteConfirm() {
+      this.showDialog = false;
+      this.showDeleteConfirm = true;
+    },
+    deleteSubsistence() {
+      this.showOverlay = true;
+      deleteSubsistence(this.Token, this.currentChildId)
+        .then(res => {
+          console.log("deleteChildren", res);
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 1000
+            });
+            this.showOverlay = false;
+          } else {
+            this.$notify({
+              type: "success",
+              message: res.data.msg,
+              duration: 1000
+            });
+            this.init();
+          }
+        })
+        .catch(err => {
+          console.log("deleteChildren", err);
+          this.showOverlay = false;
+        });
     }
-    // addChildren() {
-    //   this.$store.commit(
-    //     "common/getPreCurrentPath",
-    //     this.$route.query.currentPath
-    //   );
-    //   this.$router.push({
-    //     name: "addChildren",
-    //     query: {
-    //       currentPath: "assistantChildrenHomeDetail"
-    //     }
-    //   });
-    // },
-    // deleteConfirm() {
-    //   this.showDialog = false;
-    //   this.showDeleteConfirm = true;
-    // },
-    // deleteChild() {
-    //   this.showOverlay = true;
-    //   deleteChildren(this.Token, this.currentChildId)
-    //     .then(res => {
-    //       console.log("deleteChildren", res);
-    //       if (res.data.code > 1) {
-    //         this.$notify({
-    //           type: "warning",
-    //           message: res.data.error,
-    //           duration: 1000
-    //         });
-    //         this.showOverlay = false;
-    //       } else {
-    //         this.$notify({
-    //           type: "success",
-    //           message: res.data.msg,
-    //           duration: 1000
-    //         });
-    //         this.init();
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log("deleteChildren", err);
-    //       this.showOverlay = false;
-    //     });
-    // }
   }
 };
 </script>

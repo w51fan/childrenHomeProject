@@ -1,8 +1,8 @@
 <template>
   <div class="unfinishedActivityPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
-    <!-- <div class="activityDetailTitle">{{activity.Name}}</div> -->
-    <div class="activityDetailTitle">ceshi</div>
+    <div class="activityDetailTitle">{{activity.Name}}</div>
+    <!-- <div class="activityDetailTitle">ceshi</div> -->
     <div class="starlist flex">
       <ul class="cleanfloat flex">
         <li v-for="(n,index) in 5" :key="index" :class="[index+1>starNum?'grayStar':'star']">★</li>
@@ -13,8 +13,10 @@
     </div>
     <div class="activityType flex">
       <div>类型：</div>
-      <!-- <div class="activityTypeContent">{{ActivityType}} （{{getDate(activity.Date)}}创建）</div> -->
-      <div class="activityTypeContent">家庭教育 （2020年7月7日创建）</div>
+      <div
+        class="activityTypeContent"
+      >{{activityTypeIDArray[activity.Type]}} （{{getDate(activity.Date)}}创建）</div>
+      <!-- <div class="activityTypeContent">家庭教育 （2020年7月7日创建）</div> -->
     </div>
     <div class="gap gapten"></div>
     <div>
@@ -22,13 +24,11 @@
       <div>
         <div class="activityOrganizersHead">
           <img class="head" :src="ProfilePhoto" alt />
-          <!-- <div style="padding-left: 10%;padding-bottom: 10px;">{{activity.User.Name}}</div> -->
-          <div style="padding-left: 10%;padding-bottom: 10px;">测试</div>
-          <!-- <div
+          <div style="padding-left: 10%;padding-bottom: 10px;">{{activity.User.Name}}</div>
+          <div
             class="status will"
             style="width: 80px;color: black;margin:0;"
-          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>-->
-          <div class="status will" style="width: 80px;color: black;margin:0;">志愿者</div>
+          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
         </div>
       </div>
       <!-- <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div> -->
@@ -67,31 +67,34 @@
           <van-button type="default" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
         </div>
       </div>
-      <div style="background: rgba(128, 128, 128, 0.1);">
-        <!-- <div v-for="(record,index) in activityRecordList" :key="index">
-          <div class="activityRecordUser">
-            <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
-            <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
-          </div>
-          <div>
-            <div class="activityRecordUserContent">
-              <img
-                v-if="record.Content.indexOf('http')> -1"
-                :src="record.Content"
-                style="width:100%"
-              />
-              <div v-else>{{record.Content}}</div>
+      <div class="bgColor">
+        <div v-if="activityRecordList.length>0">
+          <div v-for="(record,index) in activityRecordList" :key="index">
+            <div class="activityRecordUser">
+              <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+              <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
+            </div>
+            <div>
+              <div class="activityRecordUserContent">
+                <img
+                  v-if="record.Content.indexOf('http')> -1"
+                  :src="record.Content"
+                  style="width:100%"
+                />
+                <div v-else>{{record.Content}}</div>
+              </div>
             </div>
           </div>
-        </div>-->
-      </div>
-      <div class="noRecords">
-        <div class="text">暂无活动记录</div>
+        </div>
+        <div class="noRecords" v-else>
+          <div class="text">暂无活动记录</div>
+        </div>
+        <div class="gap gaptwenty"></div>
       </div>
     </div>
     <div>
       <div class="activityRecord">活动评价</div>
-      <div class="noRecords">
+      <div class="noRecords bgColor">
         <div class="text">暂无活动评价</div>
       </div>
     </div>
@@ -101,11 +104,19 @@
         <van-loading type="spinner" />
       </div>
     </van-overlay>
+    <van-dialog
+      v-model="showSubmitConfirm"
+      :show-cancel-button="true"
+      :showConfirmButton="true"
+      @confirm="submitReleaseRecord"
+    >
+      <div style="padding:20px;text-align: left;">您是否提交活动记录，提交后如果需要修改，您可以再次提交后替换您之前的活动记录。</div>
+    </van-dialog>
   </div>
 </template>
 
 <script>
-import { uploadImg, release } from "@/api/home";
+import { uploadImg, release, getActivityDetail } from "@/api/home";
 export default {
   name: "unfinishedActivity",
   data() {
@@ -115,20 +126,44 @@ export default {
       //   // 如果图片 URL 中不包含类型信息，可以添加 isImage 标记来声明
       //   { url: 'https://cloud-image', isImage: true },
       imgFileList: [],
+      activityImageList: [],
       signImgFileList: [],
+      activityRecordList: [],
       starNum: 0,
       showOverlay: false,
+      showSubmitConfirm: false,
       recordContent: "",
       ProfilePhoto: require("../assets/nohead.png"),
-      activity: {
-        Name: "22",
-        Status: 2
-      },
-      urls: ""
+      activity: "",
+      urls: "",
+      signInImage: "",
+      activityTypeIDArray: {
+        1: "家庭教育",
+        2: "儿童团辅",
+        3: "家庭亲子",
+        4: "安全护卫",
+        5: "微课"
+      }
     };
   },
-  mounted() {},
+  computed: {
+    Token() {
+      return this.$store.state.common.Token;
+    }
+  },
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+      this.showOverlay = true;
+      getActivityDetail(this.$route.query.activityId).then(res => {
+        console.log("getActivityDetail", res);
+        this.activity = res.data.activity;
+        this.activityRecordList = res.data.activityRecordList;
+        this.showOverlay = false;
+      });
+    },
     onClickLeft() {
       this.$router.push({
         name: this.$route.query.currentPath
@@ -141,6 +176,7 @@ export default {
       uploadImg(formData).then(res => {
         this.urls =
           this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
+        console.log('this.urls',this.urls)
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -154,8 +190,7 @@ export default {
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
-        this.urls =
-          this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
+        this.signInImage = res.data.url;
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -164,10 +199,23 @@ export default {
         this.showOverlay = false;
       });
     },
-    submitRelease() {
+    getDate(date) {
+      let activityDate = new Date(date);
+      let year = activityDate.getFullYear();
+      let month = activityDate.getMonth() + 1;
+      let day = activityDate.getDate();
+      return `${year}-${month}-${day}`;
+    },
+    showSubmitConfirmfun() {
+      if (this.recordContent.length < 20) {
+        this.$toast("请输入20-500字");
+        return;
+      }
+      this.showSubmitConfirm = true;
+    },
+    submitReleaseRecord() {
       this.showOverlay = true;
-
-      release(this.Token, this.activity.Id, this.recordContent, this.urls)
+      release(this.Token, this.activity.Id, this.recordContent)
         .then(res => {
           console.log("release", res);
 
@@ -181,6 +229,49 @@ export default {
           } else {
             this.recordContent = "";
             this.init();
+          }
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    },
+    submitRelease() {
+      if ((this.urls === "")) {
+        this.$toast("活动图片未上传，请先上传活动图片。");
+        return;
+      }
+      if (this.imgFileList.length < 6) {
+        this.$toast("活动图片数量不足，请继续上传。");
+        return;
+      }
+      if (this.signInImage === "") {
+        this.$toast("签到图片未上传，请先上传签到图片。");
+        return;
+      }
+      this.showOverlay = true;
+      release(
+        this.Token,
+        this.activity.Id,
+        this.recordContent,
+        this.urls,
+        this.signInImage
+      )
+        .then(res => {
+          console.log("release", res);
+
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 2000
+            });
+            this.showOverlay = false;
+          } else {
+            this.recordContent = "";
+            this.$router.push({
+              name: "offlineActivity"
+            });
           }
         })
         .catch(err => {
@@ -227,6 +318,18 @@ export default {
     font-size: 18px;
     font-weight: 600;
   }
+  .activityRecordUser {
+    text-align: left;
+    padding: 20px;
+    display: flex;
+  }
+  .activityRecordUserContent {
+    background: rgb(255, 255, 255);
+    margin: 0px 20px 0 70px;
+    padding: 20px;
+    text-align: left;
+    word-break: break-word;
+  }
   .flex {
     display: flex;
   }
@@ -272,11 +375,14 @@ export default {
   .gap {
     width: 100%;
     height: 8px;
-    background: rgba(128, 128, 128, 0.1);
+    // background: rgba(128, 128, 128, 0.1);
   }
 
   .gapten {
     height: 10px;
+  }
+  .gaptwenty {
+    height: 20px;
   }
   .activityRecordInput {
     .van-cell {
@@ -286,8 +392,11 @@ export default {
       border: 1px solid #efefef;
     }
   }
-  .noRecords {
+  .bgColor{
     background: rgba(128, 128, 128, 0.1);
+  }
+  .noRecords {
+    
     height: 80px;
     .text {
       padding-top: 30px;

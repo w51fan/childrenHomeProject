@@ -250,9 +250,9 @@ export const uploadImg = function (file) {
 }
 
 //添加活动
-export const addActivity = function (token,name,type,childrenHomeId,date) {
+export const addActivity = function (token, name, type, childrenHomeId, date, activityType) {
   return axios.request({
-    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}`,
+    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}&activityType=${activityType}`,
     method: "get"
   });
 }
@@ -323,6 +323,7 @@ export const release = function (token, id, content, urls, signInImage) {
 export const getChildrenDetail = function (childrenId) {
   return axios.request({
     url: `https://api.quanjiaxue.net/children/detail?childrenId=${childrenId}`,
+    method: "get"
   });
 }
 
@@ -330,6 +331,7 @@ export const getChildrenDetail = function (childrenId) {
 export const getSocialStationList = function (token) {
   return axios.request({
     url: `https://api.quanjiaxue.net/manage/getSocialStationList?token=${token}`,
+    method: "get"
   });
 }
 
@@ -337,6 +339,7 @@ export const getSocialStationList = function (token) {
 export const getSocialstationDetail = function (id) {
   return axios.request({
     url: `https://api.quanjiaxue.net/socialstation/detail?id=${id}`,
+    method: "get"
   });
 }
 
@@ -344,5 +347,82 @@ export const getSocialstationDetail = function (id) {
 export const getActivityListByUserId = function (token, status) {
   return axios.request({
     url: `https://api.quanjiaxue.net/activity/getActivityListByUserId?token=${token}&status=${status}`,
+    method: "get"
   });
 }
+
+//根据社会救助服务站ID取得低保列表
+export const getSubsistenceList = function (token, socialStationId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/subsistence/list?token=${token}&socialStationId=${socialStationId}`,
+    method: "get"
+  });
+}
+
+//获取低保详情
+export const getSubsistenceDetail = function (id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/subsistence/detail?id=${id}`,
+    method: "get"
+  });
+}
+
+//添加低保对象
+// token,
+// socialStationId,
+// name,
+// sex,
+// photo, //非必填
+// childrenType, //非必填
+// nation, //非必填
+// idNumber,
+// address, //非必填
+// subsistenceType, //非必填
+// shcoolLodging, //非必填
+// income, //非必填
+// contact, //非必填
+// beginDate, //非必填
+// reason, //非必填
+export const addSubsistence = function (data) {
+
+  return axios.request({
+    url: `https://api.quanjiaxue.net/subsistence/addd`,
+    data: data,
+    method: "post"
+  });
+}
+
+
+//删除低保
+export const deleteSubsistence = function (token, id) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/subsistence/delete?token=${token}&id=${id}`,
+    method: "get"
+  });
+}
+
+//编辑低保对象
+// token,
+// socialStationId,
+// name,
+// sex,
+// photo, //非必填
+// childrenType, //非必填
+// nation, //非必填
+// idNumber,
+// address, //非必填
+// subsistenceType, //非必填
+// shcoolLodging, //非必填
+// income, //非必填
+// contact, //非必填
+// beginDate, //非必填
+// reason, //非必填
+export const editSubsistence = function (data) {
+
+  return axios.request({
+    url: `https://api.quanjiaxue.net/subsistence/edit`,
+    data: data,
+    method: "post"
+  });
+}
+

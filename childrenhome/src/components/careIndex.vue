@@ -129,6 +129,11 @@
       </van-tab>
     </van-tabs>
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -159,75 +164,89 @@ export default {
       areaItems: [],
       childrenItems: [],
       childerenHomeList: [],
-      topChildrenHomeList: []
+      topChildrenHomeList: [],
+      showOverlay: false
     };
   },
   mounted() {
+    this.showOverlay = true;
     if (this.$route.query.activeTab)
       this.activeTab = this.$route.query.activeTab;
-    getTotalCount(this.cityId).then(res => {
-      // console.log(res);
-      this.totalCount = res.data.totalCount;
-      getTreeCount(this.cityId).then(result => {
-        // console.log(result);
-        this.areaList = result.data.areaList;
-        this.areaList.forEach(item => {
-          let areaTemp = {
-            text:
-              item.ActivityCount > 0
-                ? `${item.Name}   (${item.ActivityCount}场)`
-                : item.Name,
-            children: []
-          };
-          let childrenTemp = {
-            text:
-              item.ChildrenCount > 0
-                ? `${item.Name}   (${item.ChildrenCount}人)`
-                : item.Name,
-            children: []
-          };
-          if (item.Area.length > 0) {
-            item.Area.forEach(areaItem => {
-              let activityChildren = [];
-              let childrenChildren = [];
-              if (areaItem.Area.length > 0) {
-                areaItem.Area.forEach(threeItem => {
-                  activityChildren.push({
+    getTotalCount(this.cityId)
+      .then(res => {
+        console.log('getTotalCount',res)
+        this.totalCount = res.data.totalCount;
+        getTreeCount(this.cityId)
+          .then(result => {
+            console.log('getTreeCount',result)
+            this.areaList = result.data.areaList;
+            this.areaList.forEach(item => {
+              let areaTemp = {
+                text:
+                  item.ActivityCount > 0
+                    ? `${item.Name}   (${item.ActivityCount}场)`
+                    : item.Name,
+                children: []
+              };
+              let childrenTemp = {
+                text:
+                  item.ChildrenCount > 0
+                    ? `${item.Name}   (${item.ChildrenCount}人)`
+                    : item.Name,
+                children: []
+              };
+              if (item.Area.length > 0) {
+                item.Area.forEach(areaItem => {
+                  let activityChildren = [];
+                  let childrenChildren = [];
+                  if (areaItem.Area.length > 0) {
+                    areaItem.Area.forEach(threeItem => {
+                      activityChildren.push({
+                        text:
+                          threeItem.ActivityCount > 0
+                            ? `${threeItem.Name}   (${threeItem.ActivityCount}场)`
+                            : threeItem.Name
+                      });
+                      childrenChildren.push({
+                        text:
+                          threeItem.ChildrenCount > 0
+                            ? `${threeItem.Name}   (${threeItem.ChildrenCount}人)`
+                            : threeItem.Name
+                      });
+                    });
+                  }
+                  areaTemp.children.push({
                     text:
-                      threeItem.ActivityCount > 0
-                        ? `${threeItem.Name}   (${threeItem.ActivityCount}场)`
-                        : threeItem.Name
+                      areaItem.ActivityCount > 0
+                        ? `${areaItem.Name}   (${areaItem.ActivityCount}场)`
+                        : areaItem.Name,
+                    children: activityChildren
                   });
-                  childrenChildren.push({
+                  childrenTemp.children.push({
                     text:
-                      threeItem.ChildrenCount > 0
-                        ? `${threeItem.Name}   (${threeItem.ChildrenCount}人)`
-                        : threeItem.Name
+                      areaItem.ChildrenCount > 0
+                        ? `${areaItem.Name}   (${areaItem.ChildrenCount}人)`
+                        : areaItem.Name,
+                    children: childrenChildren
                   });
                 });
               }
-              areaTemp.children.push({
-                text:
-                  areaItem.ActivityCount > 0
-                    ? `${areaItem.Name}   (${areaItem.ActivityCount}场)`
-                    : areaItem.Name,
-                children: activityChildren
-              });
-              childrenTemp.children.push({
-                text:
-                  areaItem.ChildrenCount > 0
-                    ? `${areaItem.Name}   (${areaItem.ChildrenCount}人)`
-                    : areaItem.Name,
-                children: childrenChildren
-              });
+              this.areaItems.push(areaTemp);
+              this.childrenItems.push(childrenTemp);
+              console.log("this.areaItems", this.areaItems);
+              console.log("this.childrenItems", this.childrenItems);
             });
-          }
-          this.areaItems.push(areaTemp);
-          this.childrenItems.push(childrenTemp);
-        });
-        // console.log("this.areaItems", this.areaItems);
+            this.showOverlay = false;
+          })
+          .catch(err2 => {
+            console.log("getTreeCount", err2);
+            this.showOverlay = false;
+          });
+      })
+      .catch(err => {
+        console.log("getTotalCount", err);
+        this.showOverlay = false;
       });
-    });
   },
   computed: {
     cityId() {
@@ -237,15 +256,19 @@ export default {
   watch: {
     activeTab(val) {
       if (val === 2) {
+        this.showOverlay = true;
         getTopChildrenHomeList(this.cityId).then(res => {
           console.log("getTopChildrenHomeList", res);
           this.topChildrenHomeList = res.data.topChildrenHomeList;
-        });
+          this.showOverlay = false;
+        }).catch(err => {
+        console.log("getTotalCount", err);
+        this.showOverlay = false;
+      });;
       }
     }
   },
   methods: {
-    onItemClick() {},
     goDetail(childrenHome) {
       this.$store.commit("common/getVillageId", childrenHome.VillageId);
       this.$router.push({

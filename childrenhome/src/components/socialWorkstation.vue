@@ -103,7 +103,6 @@ export default {
       console.log("getUserInfo", res);
       //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
       // this.$store.commit("common/getUserTpye", res.data.User.Type);
-      this.User = res.data.User;
       getSocialStationList(this.Token).then(result => {
         console.log("getSocialStationList", result);
         // this.socialStationList = result.data.socialStationList;

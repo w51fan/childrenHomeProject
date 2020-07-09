@@ -97,7 +97,7 @@
           <div class="flex" @click="viewDetail(item)">
             <img
               :src="activityImg.Url"
-              v-for="(activityImg,turn) in item.ActivityImage.slice(3)"
+              v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
             />
@@ -132,6 +132,9 @@ export default {
   computed: {
     VillageId() {
       return this.$store.state.common.VillageId;
+    },
+    PreCurrentPath() {
+      return this.$store.state.common.PreCurrentPath;
     }
   },
   mounted() {
@@ -155,12 +158,21 @@ export default {
   },
   methods: {
     onClickLeft() {
-      this.$router.push({
-        name: this.$route.query.currentPath,
-        query: {
-          activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
-        }
-      });
+      if (this.$route.query.currentPath) {
+        this.$router.push({
+          name: this.$route.query.currentPath,
+          query: {
+            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
+          }
+        });
+      } else {
+        this.$router.push({
+          name: this.PreCurrentPath,
+          query: {
+            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
+          }
+        });
+      }
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -170,6 +182,10 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
+      this.$store.commit(
+        "common/getPreCurrentPath",
+        this.$route.query.currentPath
+      );
       this.$router.push({
         name: "activityDetail",
         query: {

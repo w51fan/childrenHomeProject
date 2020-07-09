@@ -31,6 +31,11 @@
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -49,13 +54,19 @@ export default {
       selected: "1",
       selectedNav: "familyResponsibility",
       courseList: [],
-      isAssistant: false
+      isAssistant: false,
+      showOverlay:false
     };
   },
   mounted() {
+    this.showOverlay = true
     this.isAssistant = this.$route.query.isAssistant;
     getCourseList().then(res => {
       this.courseList = res.data.courseList;
+      this.showOverlay = false
+    }).catch(err=>{
+      console.log('getCourseList',err)
+      this.showOverlay = false
     });
   },
   methods: {

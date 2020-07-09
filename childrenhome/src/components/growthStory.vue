@@ -31,6 +31,11 @@
     </van-tabs>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -49,7 +54,8 @@ export default {
       selected: "1",
       selectedNav: "growthStory",
       articlelist: [],
-      isAssistant: false
+      isAssistant: false,
+      showOverlay: false
     };
   },
   watch: {
@@ -67,11 +73,18 @@ export default {
     }
   },
   mounted() {
+    this.showOverlay = true;
     this.isAssistant = this.$route.query.isAssistant;
-    getArticleList(this.cityId, 1).then(res => {
-      console.log("getArticleList", res);
-      this.articlelist = res.data.articlelist;
-    });
+    getArticleList(this.cityId, 1)
+      .then(res => {
+        console.log("getArticleList", res);
+        this.articlelist = res.data.articlelist;
+        this.showOverlay = false;
+      })
+      .catch(err => {
+        console.log("getTotalCount", err);
+        this.showOverlay = false;
+      });
   },
   methods: {}
 };

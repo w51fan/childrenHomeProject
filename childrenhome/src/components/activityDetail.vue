@@ -27,7 +27,7 @@
           >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
         </div>
       </div>
-      <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div>
+      <div class="activityImgTitle">活动图片（{{activityImageList.length}}/6）</div>
 
       <div class="activityImageList">
         <div class="flex wrap">
@@ -49,6 +49,27 @@
           <template v-slot:turn>{{ turn }}/{{activityImageList.length}}</template>
         </van-image-preview>
       </div>
+      <div class="activityImgTitle">签到图片（{{signInImageList.length}}/1）</div>
+      <div class="activityImageList">
+        <div class="flex wrap">
+          <img
+            :src="img.Url"
+            v-for="(img,index) in signInImageList"
+            :key="index"
+            class="imgItem"
+            @click="showPreview(index)"
+          />
+        </div>
+        <van-image-preview
+          class="imgPreview"
+          v-model="showImgPreview"
+          :images="signImagesArray"
+          @change="onImgPreviewChange"
+          :startPosition="startPosition"
+        >
+          <template v-slot:turn>{{ turn }}/{{signInImageList.length}}</template>
+        </van-image-preview>
+      </div>
     </div>
     <div>
       <div class="activityRecord">活动记录</div>
@@ -67,21 +88,26 @@
         </div>
       </div>
       <div style="background: rgba(128, 128, 128, 0.1);">
-        <div v-for="(record,index) in activityRecordList" :key="index">
-          <div class="activityRecordUser">
-            <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
-            <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
-          </div>
-          <div>
-            <div class="activityRecordUserContent">
-              <img
-                v-if="record.Content.indexOf('http')> -1"
-                :src="record.Content"
-                style="width:100%"
-              />
-              <div v-else>{{record.Content}}</div>
+        <div v-if="activityRecordList.length>0">
+          <div v-for="(record,index) in activityRecordList" :key="index">
+            <div class="activityRecordUser">
+              <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+              <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
+            </div>
+            <div>
+              <div class="activityRecordUserContent">
+                <img
+                  v-if="record.Content.indexOf('http')> -1"
+                  :src="record.Content"
+                  style="width:100%"
+                />
+                <div v-else>{{record.Content}}</div>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="noRecords" v-else>
+          <div class="text">暂无活动记录</div>
         </div>
       </div>
       <div class="gap gaptwenty"></div>
@@ -115,8 +141,10 @@ export default {
       activity: {},
       activityRecordList: [],
       activityImageList: [],
+      signInImageList:[],
       showImgPreview: false,
       imagesArray: [],
+      signImagesArray:[],
       turn: 0,
       startPosition: 0,
       ActivityType: "",
@@ -139,9 +167,9 @@ export default {
   methods: {
     init() {
       this.showOverlay = true;
-      if (this.$route.query.currentPath === "assistantChildrenHomeDetail")
+      if (this.$route.query.showSubmitButton)
         this.showSubmitButton = true;
-      getActivityDetail(this.$route.query.Id)
+      getActivityDetail(this.$route.query.activityId)
         .then(res => {
           console.log("activity", res);
           this.activity = res.data.activity;
@@ -150,7 +178,8 @@ export default {
 
           this.starNum = res.data.activity.Score / 10;
           this.activityRecordList = res.data.activityRecordList;
-          this.activityImageList = res.data.activityImageList;
+          this.activityImageList = res.data.activityImageList.slice(0,6);
+          this.signInImageList = res.data.signInImageList.slice(0,1)
           this.ActivityType =
             this.activity.ActivityType === 1
               ? "家庭教育"
@@ -162,10 +191,11 @@ export default {
           this.activityImageList.forEach(item => {
             this.imagesArray.push(item.Url);
           });
-          console.log(
-            "record.Content",
-            this.activityRecordList[0].Content.indexOf("http") > -1
-          );
+          this.signImagesArray.push(this.signInImageList[0].Url)
+          // console.log(
+          //   "record.Content",
+          //   this.activityRecordList[0].Content.indexOf("http") > -1
+          // );
           this.showOverlay = false;
         })
         .catch(err => {
@@ -374,6 +404,13 @@ export default {
     }
     .van-field__body {
       border: 1px solid #efefef;
+    }
+  }
+  .noRecords {
+    height: 80px;
+    .text {
+      padding-top: 30px;
+      color: #969696;
     }
   }
 }

@@ -96,7 +96,14 @@ export default {
         "家庭亲子",
         "安全护卫",
         "微课"
-      ]
+      ],
+      activityTypeIDArray: {
+        "家庭教育":1,
+        "儿童团辅":2,
+        "家庭亲子":3,
+        "安全护卫":4,
+        "微课":5
+      }
     };
   },
   computed: {
@@ -148,16 +155,18 @@ export default {
       let year = activityDate.getFullYear();
       let month = activityDate.getMonth() + 1;
       let day = activityDate.getDate();
-      return `${year}年${month}月${day}日`;
+      return `${year}-${month}-${day}`;
     },
     add() {
       this.showOverlay = true;
+      // console.log('this.activityTypeIDArray[this.activityType]',this.activityTypeIDArray[this.activityType])
       addActivity(
         this.Token,
         this.activityName,
-        this.activityType,
+        this.activityTypeIDArray[this.activityType],
         this.childrenHomeIDListArray[this.activityHome],
-        this.activityDate
+        this.activityDate,
+        this.$route.query.activityType
       )
         .then(res => {
           console.log("addActivity", res);
