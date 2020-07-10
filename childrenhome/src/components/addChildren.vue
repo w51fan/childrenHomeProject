@@ -379,28 +379,30 @@ export default {
         if (this.$route.query.childrenId) {
           getChildrenDetail(this.$route.query.childrenId).then(result => {
             console.log("getChildrenDetail", result);
-            this.childrenName=result.data.children.Name
-            this.childrenGender=result.data.children.Sex
-            this.childrenImg=result.data.children.Photo
-            this.childrenType=result.data.children.ChildrenType
-            this.childrenNation=result.data.children.Nation
-            this.childrenId=result.data.children.IdNumber
-            this.childrenAddress=result.data.children.ChildrenAddress
-            this.childrenHealthy=result.data.children.Health
-            this.isBoardingSchool=result.data.children.ShcoolLodging
-            this.childrenClass=result.data.children.SchoolInfo
-            this.familyEconomicSituation=result.data.children.EconomicSituation
-            this.familyFinancialResources=result.data.children.EconomicResource
-            this.assistanceAndAssistance=result.data.children.RescueSituation
-            this.fatherName=result.data.children.FatherName
-            this.fatherWorkPlace=result.data.children.FatherWorkAddress
-            this.fatherTel=result.data.children.FatherPhone
-            this.motherName=result.data.children.MotherName
-            this.motherWorkPlace=result.data.children.MotherWorkAddress
-            this.motherTel=result.data.children.MotherPhone
+            this.childrenName = result.data.children.Name;
+            this.childrenGender = result.data.children.Sex;
+            this.childrenImg = result.data.children.Photo;
+            this.childrenType = result.data.children.ChildrenType;
+            this.childrenNation = result.data.children.Nation;
+            this.childrenId = result.data.children.IdNumber;
+            this.childrenAddress = result.data.children.ChildrenAddress;
+            this.childrenHealthy = result.data.children.Health;
+            this.isBoardingSchool = result.data.children.ShcoolLodging;
+            this.childrenClass = result.data.children.SchoolInfo;
+            this.familyEconomicSituation =
+              result.data.children.EconomicSituation;
+            this.familyFinancialResources =
+              result.data.children.EconomicResource;
+            this.assistanceAndAssistance = result.data.children.RescueSituation;
+            this.fatherName = result.data.children.FatherName;
+            this.fatherWorkPlace = result.data.children.FatherWorkAddress;
+            this.fatherTel = result.data.children.FatherPhone;
+            this.motherName = result.data.children.MotherName;
+            this.motherWorkPlace = result.data.children.MotherWorkAddress;
+            this.motherTel = result.data.children.MotherPhone;
             // guardianName: this.nameOfGuardian=result.data.children.
             // guardianPhone: this.telOfGuardian=result.data.children.
-            this.identityOfGuardian=result.data.children.Relation
+            this.identityOfGuardian = result.data.children.Relation;
             this.showOverlay = false;
           });
         }
@@ -478,10 +480,10 @@ export default {
     save() {
       this.showOverlay = true;
       let $this = this;
-      console.log(
-        'this.$refs["addChildrenForm"]',
-        this.$refs["addChildrenForm"]
-      );
+      // console.log(
+      //   'this.$refs["addChildrenForm"]',
+      //   this.$refs["addChildrenForm"]
+      // );
       this.$refs["addChildrenForm"]
         .validateAll()
         .then(() => {
@@ -521,9 +523,17 @@ export default {
                   duration: 500
                 });
               } else {
-                this.$router.push({
-                  name: "childrenHomeDetail"
+                this.$notify({
+                  type: "success",
+                  message: res.data.msg,
+                  duration: 500
                 });
+                setTimeout(() => {
+                  this.showOverlay = false;
+                  this.$router.push({
+                    name: "childrenHomeDetail"
+                  });
+                }, 1000);
               }
             })
             .catch(err => {

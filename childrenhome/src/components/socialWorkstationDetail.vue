@@ -46,7 +46,7 @@
           </div>
           <div
             class="position"
-          >位置：{{socialStation.ProvinceName.Name}} >{{socialStation.CityeName.Name}} >{{socialStation.AreaName.Name}} >{{socialStation.TownName.Name}} >{{socialStation.VillageName.Name}}</div>     
+          >位置：{{socialStation.ProvinceName.Name}} >{{socialStation.CityeName.Name}} >{{socialStation.AreaName.Name}} >{{socialStation.TownName.Name}} >{{socialStation.VillageName.Name}}</div>
         </template>
       </van-cell>
     </div>
@@ -111,7 +111,7 @@
               </div>
             </div>
             <div>
-              <van-button type="default">拨打电话</van-button>
+              <van-button type="default" @click="callConfirm(user.Phone)">拨打电话</van-button>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@
               v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
-            /> -->
+            />-->
             <div>...</div>
           </div>
         </div>
@@ -162,7 +162,7 @@
         </div>
         <!-- <div class="item">
           <div class="itemContent">联系监护人手机-测试1</div>
-        </div> -->
+        </div>-->
       </div>
     </van-dialog>
     <van-dialog
@@ -173,17 +173,31 @@
     >
       <div style="padding:20px;">是否删除-测试-低保对象信息</div>
     </van-dialog>
+    <van-popup v-model="showPicker" position="bottom" round>
+      <div style="padding:20px;color: #a0a0a0;font-size: 14px;">{{currentParentUserTel}}</div>
+      <div class="gap gapone"></div>
+      <div class="call" style="padding:20px;">
+        <a :href="`tel:${currentParentUserTel}`"></a>
+        呼叫
+      </div>
+      <div class="gap gapfive"></div>
+      <div class="cancel" style="padding:20px;">取消</div>
+    </van-popup>
   </div>
 </template>
 
 <script>
-import { getSocialstationDetail, uploadImg,deleteSubsistence } from "@/api/home";
+import {
+  getSocialstationDetail,
+  uploadImg,
+  deleteSubsistence
+} from "@/api/home";
 export default {
   name: "socialWorkstationDetail",
   data() {
     return {
       socialStation: {},
-      subsistenceList:[],
+      subsistenceList: [],
       subsistenceList: [],
       activityList: [],
       userList: [],
@@ -195,7 +209,9 @@ export default {
       showOverlay: false,
       showDialog: false,
       showDeleteConfirm: false,
-      currentChildId: ""
+      showPicker:false,
+      currentChildId: "",
+      currentParentUserTel: ""
     };
   },
   computed: {
@@ -222,15 +238,15 @@ export default {
         .then(res => {
           console.log("getSocialstationDetail", res);
           this.$store.commit(
-            "common/getChildrenHomeId",
+            "common/getSocialStationId",
             res.data.socialStation.Id
           );
           this.socialStation = res.data.socialStation;
-          this.subsistenceList = res.data.subsistenceList
+          this.subsistenceList = res.data.subsistenceList;
           this.activityTotal = res.data.activityTotal;
           if (this.activityTotal > 0) this.activityList = res.data.activitylist;
           if (res.data.socialStation.SubsistenceCount > 0)
-            this.subsistenceList = res.data.subsistenceList
+            this.subsistenceList = res.data.subsistenceList;
           this.userList = res.data.userList;
           // this.imageList = res.data.imageList;
           // if (this.imageList.length > 0)
@@ -244,9 +260,9 @@ export default {
         });
     },
     onClickLeft() {
-        this.$router.push({
-          name: this.$route.query.currentPath,
-        });
+      this.$router.push({
+        name: this.$route.query.currentPath
+      });
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -294,6 +310,9 @@ export default {
     showMore(child) {
       this.showDialog = true;
       this.currentChildId = child.Id;
+      this.currentChildName = child.Name;
+      // this.currentParentUser = child.ParentUser;
+      // this.currentParentUserTel = child.ParentUser.Phone;
     },
     afterRead(file) {
       this.showOverlay = true;
@@ -351,6 +370,11 @@ export default {
           console.log("deleteChildren", err);
           this.showOverlay = false;
         });
+    },
+    callConfirm(tel) {
+      if (tel) this.currentParentUserTel = tel;
+      this.showPicker = true;
+      this.showDialog = false;
     }
   }
 };
@@ -358,6 +382,7 @@ export default {
 
 <style lang="less">
 .socialWorkstationDetailPage {
+  position: relative;
   .myChildrenHome {
     height: 200px;
     background: #e6e6e6;
@@ -367,11 +392,12 @@ export default {
       object-fit: fill;
       width: 100%;
     }
-    .van-uploader {
-      /deep/.myChildrenHometips {
+    .uploaderImg {
+      position: relative;
+      .myChildrenHometips {
         position: absolute;
-        right: -200px;
-        bottom: -130px;
+        right: -22vh;
+        bottom: -21vh;
         width: 85px;
         background: #808080ad;
         padding: 5px 20px;
@@ -380,11 +406,13 @@ export default {
         color: #fff;
         font-weight: 100;
       }
-      /deep/.van-uploader__input {
-        right: -200px;
-        bottom: -130px;
+      input {
+        right: -29vh;
+        bottom: -39vh;
         width: 125px;
         height: 26px;
+        position: absolute;
+        margin: auto;
       }
     }
   }

@@ -18,14 +18,21 @@ export default {
   data() {
     return {
       active: "childrenHomePage",
-      navList: [
-        // {
-        //   navName: "儿童之家",
-        //   icon: "wap-home",
-        //   path: "childrenHomePage"
-        // },
+      navList: []
+    };
+  },
+  computed: {
+    UserTpye() {
+      return this.$store.state.common.UserTpye;
+    }
+  },
+  mounted() {
+    this.active = this.selectedNav;
+    console.log("this.UserTpye", this.UserTpye);
+    if (this.UserTpye === 4 || this.UserTpye === 12) {
+      this.navList = [
         {
-          navName: "服务站",
+          navName: this.UserTpye === 4 ? "儿童之家" : "服务站",
           icon: "wap-home",
           path: "childrenHomePage"
         },
@@ -49,19 +56,39 @@ export default {
           icon: "smile",
           path: "growthStory"
         }
-      ]
-    };
-  },
-  mounted() {
-    this.active = this.selectedNav;
+      ];
+    } else {
+      this.navList = [
+        {
+          navName: "新闻动态",
+          icon: "invition",
+          path: "governmentLed"
+        },
+        {
+          navName: "线下活动",
+          icon: "friends",
+          path: "offlineActivity"
+        },
+        {
+          navName: "线上课程",
+          icon: "fire",
+          path: "familyResponsibility"
+        },
+        {
+          navName: "成长故事",
+          icon: "smile",
+          path: "growthStory"
+        }
+      ];
+    }
   },
   watch: {
     active(val) {
       this.$emit("update:selectedNav", this.selectedNav);
       this.$router.push({
         name: this.active,
-        query:{
-          isAssistant:true
+        query: {
+          isAssistant: true
         }
       });
       return this.selectedNav;

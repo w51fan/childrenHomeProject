@@ -7,6 +7,7 @@ const state = {
     UserTpye:'',
     User:'',
     ChildrenHomeId: '',
+    SocialStationId:'',
     PreCurrentPath:'',
 }
 
@@ -36,6 +37,9 @@ const mutations = {
     getChildrenHomeId(state, value) {
       state.ChildrenHomeId = value;
     }, 
+    getSocialStationId(state, value) {
+      state.SocialStationId = value;
+    },
     getPreCurrentPath(state, value) {
       state.PreCurrentPath = value;
     },

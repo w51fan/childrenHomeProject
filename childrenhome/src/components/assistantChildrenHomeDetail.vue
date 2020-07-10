@@ -77,7 +77,7 @@
               <img src="../assets/nohead.png" class="head" alt />
               <div class="name">{{child.Name}}</div>
             </div>
-            <div class="guardianName">测试1</div>
+            <div class="guardianName">{{child.ParentUser.Name}}</div>
             <div class="operation">
               <van-icon name="ellipsis" @click="showMore(child)" />
             </div>
@@ -112,7 +112,7 @@
               </div>
             </div>
             <div>
-              <van-button type="default">拨打电话</van-button>
+              <van-button type="default" @click="callConfirm(user.Phone)">拨打电话</van-button>
             </div>
           </div>
         </div>
@@ -156,13 +156,13 @@
     <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
       <div class="operationDialogList">
         <div class="item">
-          <div class="itemContent" @click="edit">编辑信息-测试</div>
+          <div class="itemContent" @click="edit">编辑信息-{{currentChildName}}</div>
         </div>
         <div class="item" @click="deleteConfirm">
-          <div class="itemContent">删除信息-测试</div>
+          <div class="itemContent">删除信息-{{currentChildName}}</div>
         </div>
-        <div class="item">
-          <div class="itemContent">联系监护人手机-测试1</div>
+        <div class="item" @click="callConfirm">
+          <div class="itemContent">联系监护人手机-{{currentParentUser.Name}}</div>
         </div>
       </div>
     </van-dialog>
@@ -172,8 +172,18 @@
       :showConfirmButton="true"
       @confirm="deleteChild"
     >
-      <div style="padding:20px;">是否删除-测试-儿童信息</div>
+      <div style="padding:20px;">是否删除-{{currentChildName}}-儿童信息</div>
     </van-dialog>
+    <van-popup v-model="showPicker" position="bottom" round>
+      <div style="padding:20px;color: #a0a0a0;font-size: 14px;">{{currentParentUserTel}}</div>
+      <div class="gap gapone"></div>
+      <div class="call" style="padding:20px;">
+        <a :href="`tel:${currentParentUserTel}`"></a>
+        呼叫
+      </div>
+      <div class="gap gapfive"></div>
+      <div class="cancel" style="padding:20px;">取消</div>
+    </van-popup>
   </div>
 </template>
 
@@ -195,7 +205,11 @@ export default {
       showOverlay: false,
       showDialog: false,
       showDeleteConfirm: false,
-      currentChildId: ""
+      showPicker: false,
+      currentChildId: "",
+      currentChildName: "",
+      currentParentUser: "",
+      currentParentUserTel: ""
     };
   },
   computed: {
@@ -290,7 +304,7 @@ export default {
           name: "activityDetail",
           query: {
             activityId: row.Id,
-            showSubmitButton:true,
+            showSubmitButton: true,
             currentPath: "assistantChildrenHomeDetail"
           }
         });
@@ -310,8 +324,12 @@ export default {
       });
     },
     showMore(child) {
+      // console.log("child", child);
       this.showDialog = true;
       this.currentChildId = child.Id;
+      this.currentChildName = child.Name;
+      this.currentParentUser = child.ParentUser;
+      this.currentParentUserTel = child.ParentUser.Phone;
     },
     afterRead(file) {
       this.showOverlay = true;
@@ -369,6 +387,11 @@ export default {
           console.log("deleteChildren", err);
           this.showOverlay = false;
         });
+    },
+    callConfirm(tel) {
+      if(tel)this.currentParentUserTel = tel
+      this.showPicker = true;
+      this.showDialog = false;
     }
   }
 };
@@ -376,6 +399,7 @@ export default {
 
 <style lang="less">
 .assistantChildrenHomeDetailPage {
+  position: relative;
   .myChildrenHome {
     height: 200px;
     background: #e6e6e6;
@@ -385,11 +409,12 @@ export default {
       object-fit: fill;
       width: 100%;
     }
-    .van-uploader {
-      /deep/.myChildrenHometips {
+    .uploaderImg {
+      position: relative;
+      .myChildrenHometips {
         position: absolute;
-        right: -200px;
-        bottom: -130px;
+        right: -22vh;
+        bottom: -21vh;
         width: 85px;
         background: #808080ad;
         padding: 5px 20px;
@@ -398,11 +423,13 @@ export default {
         color: #fff;
         font-weight: 100;
       }
-      /deep/.van-uploader__input {
-        right: -200px;
-        bottom: -130px;
+      input {
+        right: -29vh;
+        bottom: -39vh;
         width: 125px;
         height: 26px;
+        position: absolute;
+        margin: auto;
       }
     }
   }

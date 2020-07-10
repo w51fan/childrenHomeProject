@@ -283,7 +283,6 @@ export const addActivity = function (token, name, type, childrenHomeId, date, ac
 // guardianPhone,
 // relation
 export const addChildren = function (data) {
-  
   return axios.request({
     // url: `https://api.quanjiaxue.net/children/add?token=${data.token}&childrenHomeId=${data.childrenHomeId}&name=${data.name}&sex=${data.sex}&name=${data.date}&idNumber=${data.idNumber}$guardianName=&{dataguardianName}&guardianPhone=${data.guardianPhone}&relation=${data.relation}`,
     url: `https://api.quanjiaxue.net/children/add`,
@@ -384,9 +383,8 @@ export const getSubsistenceDetail = function (id) {
 // beginDate, //非必填
 // reason, //非必填
 export const addSubsistence = function (data) {
-
   return axios.request({
-    url: `https://api.quanjiaxue.net/subsistence/addd`,
+    url: `https://api.quanjiaxue.net/subsistence/add`,
     data: data,
     method: "post"
   });

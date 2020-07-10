@@ -90,12 +90,13 @@ export default {
       login(this.tel, this.code)
         .then(res => {
           console.log("login", res);
-          if (res.data.code > 0) {
+          if (res.data.code > 1) {
             this.$notify({
               type: "warning",
               message: res.data.msg,
               duration: 2000
             });
+            this.showOverlay = false;
           } else {
             this.$store.commit("common/getToken", res.data.token);
             getUserInfo(res.data.token)
@@ -107,8 +108,8 @@ export default {
                 this.showOverlay = false;
                 if (res.data.user.Type === 4) {
                   this.$router.push({
-                    // name: "childrenHomePage",
-                    name: "socialWorkstation",
+                    name: "childrenHomePage",
+                    // name: "socialWorkstation",
                     query: {
                       user: res.data.user
                     }
@@ -118,6 +119,14 @@ export default {
                     name: "socialWorkstation",
                     query: {
                       user: res.data.user
+                    }
+                  });
+                }else{
+                  this.$router.push({
+                    name: "governmentLed",
+                    query: {
+                      user: res.data.user,
+                      isAssistant: true
                     }
                   });
                 }
