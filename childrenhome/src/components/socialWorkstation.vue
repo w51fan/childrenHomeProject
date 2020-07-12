@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <assistantBottomNav ref="assistantBottomNav" :selectedNav.sync="selectedNav"></assistantBottomNav>
   </div>
 </template>
 
@@ -99,43 +99,51 @@ export default {
     }
   },
   mounted() {
+    if (this.$route.query.User && this.$route.query.UserTpye) {
+      this.$store.commit("common/getUserTpye", this.$route.query.UserTpye);
+      this.$store.commit("common/getUser", this.$route.query.User);
+    }
+    if(!this.Token){
+      this.$store.commit("common/getToken", window.localStorage.getItem('Token'));
+    }
     getUserInfo(this.Token).then(res => {
       console.log("getUserInfo", res);
       //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
       // this.$store.commit("common/getUserTpye", res.data.User.Type);
       getSocialStationList(this.Token).then(result => {
         console.log("getSocialStationList", result);
-        // this.socialStationList = result.data.socialStationList;
-        this.socialStationList = [
-          {
-            Id: 183,
-            Name: "兴东村社会救助服务站",
-            Score: 40,
-            ProvinceId: 1974,
-            CityId: 7235,
-            AreaId: 2024,
-            TownId: 3707,
-            VillageId: 3708,
-            SubsistenceCount: 15,
-            ActivityCount: 43,
-            CreateTime: "2018-06-07T10:41:52+08:00",
-            UpdateTime: "2020-07-02T11:20:30+08:00"
-          },
-          {
-            Id: 184,
-            Name: "坪新社区社会救助服务站",
-            Score: 30,
-            ProvinceId: 1974,
-            CityId: 7235,
-            AreaId: 2024,
-            TownId: 3709,
-            VillageId: 3710,
-            SubsistenceCount: 38,
-            ActivityCount: 25,
-            CreateTime: "2018-06-07T10:41:52+08:00",
-            UpdateTime: "2020-07-02T11:20:43+08:00"
-          }
-        ];
+        this.$refs.assistantBottomNav.init()
+        this.socialStationList = result.data.socialStationList;
+        // this.socialStationList = [
+        //   {
+        //     Id: 183,
+        //     Name: "兴东村社会救助服务站",
+        //     Score: 40,
+        //     ProvinceId: 1974,
+        //     CityId: 7235,
+        //     AreaId: 2024,
+        //     TownId: 3707,
+        //     VillageId: 3708,
+        //     SubsistenceCount: 15,
+        //     ActivityCount: 43,
+        //     CreateTime: "2018-06-07T10:41:52+08:00",
+        //     UpdateTime: "2020-07-02T11:20:30+08:00"
+        //   },
+        //   {
+        //     Id: 184,
+        //     Name: "坪新社区社会救助服务站",
+        //     Score: 30,
+        //     ProvinceId: 1974,
+        //     CityId: 7235,
+        //     AreaId: 2024,
+        //     TownId: 3709,
+        //     VillageId: 3710,
+        //     SubsistenceCount: 38,
+        //     ActivityCount: 25,
+        //     CreateTime: "2018-06-07T10:41:52+08:00",
+        //     UpdateTime: "2020-07-02T11:20:43+08:00"
+        //   }
+        // ];
         if (this.socialStationList.length > 0) {
           this.$store.commit(
             "common/getCityId",

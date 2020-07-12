@@ -70,7 +70,7 @@
               </div>
             </div>
             <div>
-              <van-button type="default">拨打电话</van-button>
+              <van-button type="default" @click="callConfirm(user.Phone)">拨打电话</van-button>
             </div>
           </div>
         </div>
@@ -111,6 +111,16 @@
         <van-loading type="spinner" />
       </div>
     </van-overlay>
+    <van-popup v-model="showPicker" position="bottom" round>
+      <div style="padding:20px;color: #a0a0a0;font-size: 14px;">{{currentParentUserTel}}</div>
+      <div class="gap gapone"></div>
+      <div class="call" style="padding:20px;" @click="callPhone">
+        <a :href="`tel:${currentParentUserTel}`"></a>
+        呼叫
+      </div>
+      <div class="gap gapfive"></div>
+      <div class="cancel" style="padding:20px;" @click="cancel">取消</div>
+    </van-popup>
   </div>
 </template>
 
@@ -126,7 +136,9 @@ export default {
       imageList: [],
       starNum: 0,
       showOverlay: false,
-      activityTotal: ""
+      activityTotal: "",
+      showPicker: false,
+      currentParentUserTel:''
     };
   },
   computed: {
@@ -193,6 +205,17 @@ export default {
           currentPath: "childrenHomeDetail"
         }
       });
+    },
+    callConfirm(tel) {
+      if (tel) this.currentParentUserTel = tel;
+      this.showPicker = true;
+      this.showDialog = false;
+    },
+    callPhone() {
+      window.location.href = `tel:${this.currentParentUserTel}`;
+    },
+    cancel() {
+      this.showPicker = false;
     }
   }
 };

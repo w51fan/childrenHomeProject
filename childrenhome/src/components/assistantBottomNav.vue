@@ -27,60 +27,7 @@ export default {
     }
   },
   mounted() {
-    this.active = this.selectedNav;
-    console.log("this.UserTpye", this.UserTpye);
-    if (this.UserTpye === 4 || this.UserTpye === 12) {
-      this.navList = [
-        {
-          navName: this.UserTpye === 4 ? "儿童之家" : "服务站",
-          icon: "wap-home",
-          path: "childrenHomePage"
-        },
-        {
-          navName: "新闻动态",
-          icon: "invition",
-          path: "governmentLed"
-        },
-        {
-          navName: "线下活动",
-          icon: "friends",
-          path: "offlineActivity"
-        },
-        {
-          navName: "线上课程",
-          icon: "fire",
-          path: "familyResponsibility"
-        },
-        {
-          navName: "成长故事",
-          icon: "smile",
-          path: "growthStory"
-        }
-      ];
-    } else {
-      this.navList = [
-        {
-          navName: "新闻动态",
-          icon: "invition",
-          path: "governmentLed"
-        },
-        {
-          navName: "线下活动",
-          icon: "friends",
-          path: "offlineActivity"
-        },
-        {
-          navName: "线上课程",
-          icon: "fire",
-          path: "familyResponsibility"
-        },
-        {
-          navName: "成长故事",
-          icon: "smile",
-          path: "growthStory"
-        }
-      ];
-    }
+    this.init()
   },
   watch: {
     active(val) {
@@ -92,6 +39,64 @@ export default {
         }
       });
       return this.selectedNav;
+    }
+  },
+  methods: {
+    init() {
+      this.active = this.selectedNav;
+      console.log("this.UserTpye", this.UserTpye);
+      if (this.UserTpye === 4 || this.UserTpye === 12) {
+        this.navList = [
+          {
+            navName: this.UserTpye === 4 ? "儿童之家" : "服务站",
+            icon: "wap-home",
+            path: "childrenHomePage"
+          },
+          {
+            navName: "新闻动态",
+            icon: "invition",
+            path: "governmentLed"
+          },
+          {
+            navName: "线下活动",
+            icon: "friends",
+            path: "offlineActivity"
+          },
+          {
+            navName: "线上课程",
+            icon: "fire",
+            path: "familyResponsibility"
+          },
+          {
+            navName: "成长故事",
+            icon: "smile",
+            path: "growthStory"
+          }
+        ];
+      } else {
+        this.navList = [
+          {
+            navName: "新闻动态",
+            icon: "invition",
+            path: "governmentLed"
+          },
+          {
+            navName: "线下活动",
+            icon: "friends",
+            path: "offlineActivity"
+          },
+          {
+            navName: "线上课程",
+            icon: "fire",
+            path: "familyResponsibility"
+          },
+          {
+            navName: "成长故事",
+            icon: "smile",
+            path: "growthStory"
+          }
+        ];
+      }
     }
   }
 };

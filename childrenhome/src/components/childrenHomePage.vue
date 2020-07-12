@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <assistantBottomNav :selectedNav.sync="selectedNav"></assistantBottomNav>
+    <assistantBottomNav ref="assistantBottomNav" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
@@ -118,6 +118,16 @@ export default {
     }
   },
   mounted() {
+    if (this.$route.query.User && this.$route.query.UserTpye) {
+      this.$store.commit("common/getUserTpye", this.$route.query.UserTpye);
+      this.$store.commit("common/getUser", this.$route.query.User);
+    }
+    if (!this.Token) {
+      this.$store.commit(
+        "common/getToken",
+        window.localStorage.getItem("Token")
+      );
+    }
     // this.User = this.$store.state.common.User
     // this.token = this.$store.state.common.token
     this.showOverlay = true;
@@ -125,7 +135,7 @@ export default {
       .then(result => {
         console.log("getChildrenHomeList", result);
         this.childrenHomeList = result.data.childrenHomeList;
-
+        this.$refs.assistantBottomNav.init()
         if (this.childrenHomeList.length > 0) {
           this.$store.commit(
             "common/getCityId",

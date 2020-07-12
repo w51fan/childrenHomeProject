@@ -99,6 +99,7 @@ export default {
             this.showOverlay = false;
           } else {
             this.$store.commit("common/getToken", res.data.token);
+            this.$store.commit("common/SET_TOKEN", res.data.token);
             getUserInfo(res.data.token)
               .then(res => {
                 console.log("getUserInfo", res);

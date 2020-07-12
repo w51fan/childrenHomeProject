@@ -7,7 +7,12 @@
       <van-tab title="家长说">
         <div class="gap"></div>
         <div class="Content">
-          <div v-for="(article,index) in articlelist" :key="index" class="ContentItem">
+          <div
+            v-for="(article,index) in articlelist"
+            :key="index"
+            class="ContentItem"
+            @click="viewDetail(article)"
+          >
             <!-- <div v-html="article.Content" class=""></div> -->
             <img :src="article.NewsThumbnail" alt />
             <div class="articleTitle">
@@ -20,7 +25,12 @@
       <van-tab title="志愿者说">
         <div class="gap"></div>
         <div class="Content">
-          <div v-for="(article,index) in articlelist" :key="index" class="ContentItem">
+          <div
+            v-for="(article,index) in articlelist"
+            :key="index"
+            class="ContentItem"
+            @click="viewDetail(article)"
+          >
             <!-- <div v-html="article.Content" class=""></div> -->
             <img :src="article.NewsThumbnail" alt />
             <div class="articleTitle">
@@ -33,7 +43,12 @@
       <van-tab title="美丽心灵">
         <div class="gap"></div>
         <div class="Content">
-          <div v-for="(article,index) in articlelist" :key="index" class="ContentItem">
+          <div
+            v-for="(article,index) in articlelist"
+            :key="index"
+            class="ContentItem"
+            @click="viewDetail(article)"
+          >
             <!-- <div v-html="article.Content" class=""></div> -->
             <img :src="article.NewsThumbnail" alt />
             <div class="articleTitle">
@@ -70,7 +85,10 @@ export default {
       selectedNav: "growthStory",
       articlelist: [],
       isAssistant: false,
-      showOverlay: false
+      showOverlay: false,
+      showList: true,
+      articleContent: "",
+      articleTitle: ""
     };
   },
   watch: {
@@ -108,6 +126,15 @@ export default {
       let month = activityDate.getMonth() + 1;
       let day = activityDate.getDate();
       return `${year}年${month}月${day}日`;
+    },
+    viewDetail(row) {
+      this.$router.push({
+        name: 'articleDetail',
+        query:{
+          id:row.Id,
+          currentPath:'growthStory'
+        }
+      });
     }
   }
 };

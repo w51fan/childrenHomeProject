@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 
 //新闻咨询列表
 export const getList = function (cityId, type) {
@@ -286,7 +287,8 @@ export const addChildren = function (data) {
   return axios.request({
     // url: `https://api.quanjiaxue.net/children/add?token=${data.token}&childrenHomeId=${data.childrenHomeId}&name=${data.name}&sex=${data.sex}&name=${data.date}&idNumber=${data.idNumber}$guardianName=&{dataguardianName}&guardianPhone=${data.guardianPhone}&relation=${data.relation}`,
     url: `https://api.quanjiaxue.net/children/add`,
-    data: data,
+    data: qs.stringify(data),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     method: "post"
   });
 }
@@ -385,7 +387,8 @@ export const getSubsistenceDetail = function (id) {
 export const addSubsistence = function (data) {
   return axios.request({
     url: `https://api.quanjiaxue.net/subsistence/add`,
-    data: data,
+    data: qs.stringify(data),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     method: "post"
   });
 }
@@ -421,6 +424,14 @@ export const editSubsistence = function (data) {
     url: `https://api.quanjiaxue.net/subsistence/edit`,
     data: data,
     method: "post"
+  });
+}
+
+//学校儿童之家列表
+export const getSchoolChildrenHomeList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/childrenhome/getSchoolChildrenHomeList?cityId=${cityId}`,
+    method: "get"
   });
 }
 

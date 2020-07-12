@@ -8,13 +8,19 @@
         <template #default>
           <van-field v-model="userName" placeholder="请输入姓名" input-align="right" />
         </template>
-      </van-cell> -->
-      <van-field v-model="activityName" label="姓名" placeholder="请输入姓名 " size="large" input-align="right" />
+      </van-cell>-->
+      <van-field
+        v-model="userName"
+        label="姓名"
+        placeholder="请输入姓名 "
+        size="large"
+        input-align="right"
+      />
       <van-cell title="身份" value="村级管理员" />
       <van-cell title="头像">
         <template #default>
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->
-          <van-uploader :after-read="afterRead">
+          <van-uploader :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
             <div class="flex">
               <img class="head" :src="userImg" alt />
               <div class="arrow">
@@ -95,9 +101,12 @@ export default {
         profilePhoto: this.userImg
       }).then(res => {
         console.log("updateUser", res);
-        this.User.name = this.userName;
+        this.User.Name = this.userName;
         this.User.ProfilePhoto = this.userImg;
-        this.$store.commit("common/getUser", this.User);
+        let olduserData = this.User;
+        olduserData.Name = this.userName;
+        olduserData.ProfilePhoto = this.userImg;
+        this.$store.commit("common/getUser", olduserData);
         this.$notify({
           type: "success",
           message: res.data.msg,
@@ -125,6 +134,14 @@ export default {
         });
         this.showOverlay = false;
       });
+    },
+    onOversize(file){
+      // console.log('onOversize',file);
+      this.$notify({
+          type: "warning",
+          message: "图片大小不能超过2M",
+          duration: 1500
+        });
     }
   }
 };

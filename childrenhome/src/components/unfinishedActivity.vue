@@ -38,7 +38,7 @@
         <div style="color:#9c9a9a">点击“+”上传</div>
       </div>-->
       <div style="text-align: left;padding: 0 20px;">
-        <van-uploader :after-read="afterRead" v-model="imgFileList" :max-count="6" />
+        <van-uploader :after-read="afterRead" v-model="imgFileList" :max-count="6" :max-size="2 * 1024 * 1024" @oversize="onOversize"/>
         <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
         </van-uploader>-->
@@ -46,7 +46,7 @@
     </div>
     <div class="activityImgTitle">签到图片（{{signImgFileList.length}}/1）</div>
     <div style="text-align: left;padding: 0 20px;">
-      <van-uploader :after-read="afterSignRead" v-model="signImgFileList" :max-count="1" />
+      <van-uploader :after-read="afterSignRead" v-model="signImgFileList" :max-count="1" :max-size="2 * 1024 * 1024" @oversize="onOversize"/>
       <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
       </van-uploader>-->
@@ -277,6 +277,14 @@ export default {
         .catch(err => {
           console.log("err", err);
           this.showOverlay = false;
+        });
+    },
+    onOversize(file){
+      // console.log('onOversize',file);
+      this.$notify({
+          type: "warning",
+          message: "图片大小不能超过2M",
+          duration: 1500
         });
     }
   }

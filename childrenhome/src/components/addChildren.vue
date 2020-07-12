@@ -29,7 +29,7 @@
         <van-cell title="头像" input-align="right" readonly>
           <template slot="default">
             <!-- <img class="head" src="../assets/nohead.png" alt /> -->
-            <van-uploader :after-read="afterRead">
+            <van-uploader :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
               <div class="flex">
                 <img class="head" :src="childrenImg" alt />
                 <div class="arrow">
@@ -531,7 +531,10 @@ export default {
                 setTimeout(() => {
                   this.showOverlay = false;
                   this.$router.push({
-                    name: "childrenHomeDetail"
+                    name: "assistantChildrenHomeDetail",
+                    query:{
+                      currentPath:'childrenHomePage'
+                    }
                   });
                 }, 1000);
               }
@@ -545,6 +548,14 @@ export default {
         .catch(err => {
           console.log("err", err);
           this.showOverlay = false;
+        });
+    },
+    onOversize(file){
+      // console.log('onOversize',file);
+      this.$notify({
+          type: "warning",
+          message: "图片大小不能超过2M",
+          duration: 1500
         });
     }
   }

@@ -22,7 +22,7 @@
     <div class="gap"></div>
     <div class="flex space-between newsTitle">
       <div style="padding: 10px 20px;">新闻资讯</div>
-      <div style="padding: 10px 20px;color: #989898" @click="changeCity">切换城市</div>
+      <div style="padding: 10px 20px;color: #989898" @click="changeCity"  v-if="!isAssistant">切换城市</div>
     </div>
     <div class="newsList">
       <div v-for="(news,index) in newsList" :key="index">
@@ -33,14 +33,16 @@
           />
           <div style="text-align: left;padding: 0 10px;position: relative;">
             <div>{{news.Title}}</div>
-            <div style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;">{{news.CreateTime}}</div>
+            <div
+              style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;"
+            >{{news.CreateTime}}</div>
           </div>
         </div>
       </div>
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
-    <bottomNav  v-else :selectedNav.sync="selectedNav"></bottomNav>
-        <van-overlay :show="showOverlay" @click="show = false">
+    <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
+    <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
       </div>
@@ -65,7 +67,7 @@ export default {
       tabList: [],
       newsList: [],
       isAssistant: false,
-      showOverlay:false
+      showOverlay: false
     };
   },
   watch: {
@@ -77,29 +79,45 @@ export default {
     }
   },
   mounted() {
-    this.showOverlay = true
+    if (this.$route.query.User && this.$route.query.UserTpye) {
+      this.$store.commit("common/getUserTpye", this.$route.query.UserTpye);
+      this.$store.commit("common/getUser", this.$route.query.User);
+    }
+    if (!this.Token) {
+      this.$store.commit(
+        "common/getToken",
+        window.localStorage.getItem("Token")
+      );
+    }
+    this.showOverlay = true;
     this.isAssistant = this.$route.query.isAssistant;
-    getList(this.cityId, 1).then(res => {
-      this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
-      getList(this.cityId, 2).then(result => {
-        console.log(result);
-        this.tabList = result.data.newsList.reverse();
-      }).catch(err => {
+    getList(this.cityId, 1)
+      .then(res => {
+        this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
+        getList(this.cityId, 2)
+          .then(result => {
+            console.log(result);
+            this.tabList = result.data.newsList.reverse();
+          })
+          .catch(err => {
+            console.log("err", err);
+            this.showOverlay = false;
+          });
+        getList(this.cityId, 3)
+          .then(news => {
+            console.log(news);
+            this.newsList = news.data.newsList;
+            this.showOverlay = false;
+          })
+          .catch(err => {
+            console.log("err", err);
+            this.showOverlay = false;
+          });
+      })
+      .catch(err => {
         console.log("err", err);
         this.showOverlay = false;
       });
-      getList(this.cityId, 3).then(news => {
-        console.log(news);
-        this.newsList = news.data.newsList;
-        this.showOverlay = false
-      }).catch(err => {
-        console.log("err", err);
-        this.showOverlay = false;
-      });
-    }).catch(err => {
-        console.log("err", err);
-        this.showOverlay = false;
-      });;
   },
   computed: {
     cityId() {

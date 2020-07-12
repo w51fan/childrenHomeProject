@@ -9,7 +9,7 @@
       <div v-if="ChildrenHomeImg!==''" style="position: absolute;">
         <img :src="ChildrenHomeImg" alt />
       </div>
-      <van-uploader class="uploaderImg" :after-read="afterRead">
+      <van-uploader class="uploaderImg" :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
         <template slot="default">
           <div class="myChildrenHometips">点击更换形象照</div>
         </template>
@@ -176,12 +176,12 @@
     <van-popup v-model="showPicker" position="bottom" round>
       <div style="padding:20px;color: #a0a0a0;font-size: 14px;">{{currentParentUserTel}}</div>
       <div class="gap gapone"></div>
-      <div class="call" style="padding:20px;">
+      <div class="call" style="padding:20px;" @click="callPhone">
         <a :href="`tel:${currentParentUserTel}`"></a>
         呼叫
       </div>
       <div class="gap gapfive"></div>
-      <div class="cancel" style="padding:20px;">取消</div>
+      <div class="cancel" style="padding:20px;" @click="cancel">取消</div>
     </van-popup>
   </div>
 </template>
@@ -209,7 +209,7 @@ export default {
       showOverlay: false,
       showDialog: false,
       showDeleteConfirm: false,
-      showPicker:false,
+      showPicker: false,
       currentChildId: "",
       currentParentUserTel: ""
     };
@@ -375,6 +375,20 @@ export default {
       if (tel) this.currentParentUserTel = tel;
       this.showPicker = true;
       this.showDialog = false;
+    },
+    callPhone() {
+      window.location.href = `tel:${this.currentParentUserTel}`;
+    },
+    cancel() {
+      this.showPicker = false;
+    },
+    onOversize(file){
+      // console.log('onOversize',file);
+      this.$notify({
+          type: "warning",
+          message: "图片大小不能超过2M",
+          duration: 1500
+        });
     }
   }
 };

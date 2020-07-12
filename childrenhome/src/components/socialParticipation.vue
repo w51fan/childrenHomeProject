@@ -123,6 +123,27 @@
           </van-collapse-item>
         </van-collapse>
       </van-tab>
+      <van-tab title="学校儿童之家">
+        <div class="gap"></div>
+        <van-collapse v-model="selectedTown" accordion>
+          <!-- <van-collapse-item
+            :title="town.text"
+            :name="index+1"
+            v-for="(town,index) in townItems"
+            :key="index"
+            style="text-align: left;"
+            @click="collapseVillage(town)"
+          >
+          </van-collapse-item>-->
+          <van-cell
+            :value="town.text"
+            v-for="(town,index) in townItems"
+            :key="index"
+            style="text-align: left;"
+            @click="viewChildhomeDetail(town)"
+          />
+        </van-collapse>
+      </van-tab>
     </van-tabs>
 
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
@@ -135,7 +156,12 @@
 </template>
 
 <script>
-import { getActivityList, getVillageList, getTownList } from "@/api/home";
+import {
+  getActivityList,
+  getVillageList,
+  getTownList,
+  getSchoolChildrenHomeList
+} from "@/api/home";
 import bottomNav from "./bottomNav";
 export default {
   name: "socialParticipation",
@@ -198,6 +224,18 @@ export default {
         });
       } else if (val === 0) {
         this.getActivityList(this.cityId, 2021, 3713, true);
+      } else if (val === 3) {
+        getSchoolChildrenHomeList(this.cityId).then(res => {
+          console.log("getSchoolChildrenHomeList", res);
+          let townTemp = [];
+          res.data.schoolChildrenHomeList.forEach(ele => {
+            townTemp.push({
+              text: ele.Name,
+              TownId: ele.TownId
+            });
+          });
+          this.townItems = townTemp;
+        });
       } else {
         getTownList(this.cityId).then(town => {
           console.log("townlist2", town);
@@ -214,11 +252,22 @@ export default {
     }
   },
   methods: {
+    viewChildhomeDetail(row){
+      console.log("collapseVillage", row);
+      this.$store.commit("common/getVillageId", row.VillageId);
+      this.$router.push({
+        name: "childrenHomeDetail",
+        query: {
+          currentPath: "socialParticipation"
+        }
+      });
+    },
     viewDetail(row) {
+      console.log(row);
       this.$router.push({
         name: "activityDetail",
         query: {
-          Id: row.Id,
+          activityId: row.Id,
           currentPath: "socialParticipation"
         }
       });
