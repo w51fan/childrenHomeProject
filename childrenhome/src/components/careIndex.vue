@@ -46,63 +46,93 @@
     <van-tabs class="careIndexTabs" v-model="activeTab">
       <van-tab title="活动统计">
         <div class="gap gaptwo"></div>
-        <van-collapse v-model="activeNames" accordion>
-          <van-collapse-item
-            :title="area.text"
-            :name="index+1"
-            v-for="(area,index) in areaItems"
-            :key="index"
-          >
-            <van-collapse v-model="activeNames2" accordion>
-              <van-collapse-item
-                :title="child.text"
-                :name="turn+1"
-                v-for="(child,turn) in area.children"
-                :key="turn"
-              >
-                <van-collapse class="three" v-model="activeNames3">
-                  <van-collapse-item
-                    :title="three.text"
-                    :name="num+1"
-                    v-for="(three,num) in child.children"
-                    :key="num"
-                    disabled
-                  ></van-collapse-item>
-                </van-collapse>
-              </van-collapse-item>
-            </van-collapse>
-          </van-collapse-item>
-        </van-collapse>
+        <div v-for="(area,index) in areaItems" :key="index">
+          <div class="flex space-between" style="padding: 20px;">
+            <div>{{area.text}}</div>
+            <div v-if="area.ActivityCount>0" @click="collapseDown(area,index)">
+              ({{area.ActivityCount}}场)
+              <van-icon name="arrow-down" v-if="showCurrentDown===index" />
+              <van-icon name="arrow" v-else />
+            </div>
+            <div v-else>
+              (0场)
+              <van-icon name="arrow" />
+            </div>
+          </div>
+          <div class="gap gapone"></div>
+          <div v-if="showChild===index">
+            <div v-for="(child,turn) in area.children" :key="turn">
+              <div class="flex space-between" style="padding: 5px 25px;">
+                <div style="border-left: 1px solid #676767;padding-left: 5px;">--{{child.text}}</div>
+                <div v-if="child.ActivityCount>0" @click="collapseSecondDown(child,turn)">
+                  ({{child.ActivityCount}}场)
+                  <van-icon name="arrow-down" v-if="showSecondCurrentDown===turn" />
+                  <van-icon name="arrow" v-else />
+                </div>
+                <div v-else>
+                  (0场)
+                  <van-icon name="arrow" />
+                </div>
+              </div>
+              <div class="gap gapone"></div>
+              <div v-if="showSecondChild===turn">
+                <div v-for="(tree,temp) in child.children" :key="temp">
+                  <div class="flex space-between" style="padding: 5px 45px;">
+                    <div style="border-left: 1px solid #676767;padding-left: 5px;">--{{tree.text}}</div>
+                    <div v-if="tree.ActivityCount>0">({{tree.ActivityCount}}场)</div>
+                    <div v-else>(0场)</div>
+                  </div>
+                </div>
+                <div class="gap gapone"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </van-tab>
       <van-tab title="儿童统计">
         <div class="gap gaptwo"></div>
-        <van-collapse v-model="activeNames" accordion>
-          <van-collapse-item
-            :title="area.text"
-            :name="index+1"
-            v-for="(area,index) in childrenItems"
-            :key="index"
-          >
-            <van-collapse v-model="activeNames2" accordion>
-              <van-collapse-item
-                :title="child.text"
-                :name="turn+1"
-                v-for="(child,turn) in area.children"
-                :key="turn"
-              >
-                <van-collapse class="three" v-model="activeNames3">
-                  <van-collapse-item
-                    :title="three.text"
-                    :name="num+1"
-                    v-for="(three,num) in child.children"
-                    :key="num"
-                    disabled
-                  ></van-collapse-item>
-                </van-collapse>
-              </van-collapse-item>
-            </van-collapse>
-          </van-collapse-item>
-        </van-collapse>
+        <div v-for="(area,index) in childrenItems" :key="index">
+          <div class="flex space-between" style="padding: 20px;">
+            <div>{{area.text}}</div>
+            <div v-if="area.ChildrenCount>0" @click="collapseDown(area,index)">
+              ({{area.ChildrenCount}}名)
+              <van-icon name="arrow-down" v-if="showCurrentDown===index" />
+              <van-icon name="arrow" v-else />
+            </div>
+            <div v-else>
+              (0名)
+              <van-icon name="arrow" />
+            </div>
+          </div>
+          <div class="gap gapone"></div>
+          <div v-if="showChild===index">
+            <div v-for="(child,turn) in area.children" :key="turn">
+              <div class="flex space-between" style="padding: 5px 25px;">
+                <div style="border-left: 1px solid #676767;padding-left: 5px;">--{{child.text}}</div>
+                <div v-if="child.ChildrenCount>0" @click="collapseSecondDown(child,turn)">
+                  ({{child.ChildrenCount}}名)
+                  <van-icon name="arrow-down" v-if="showSecondCurrentDown===turn" />
+                  <van-icon name="arrow" v-else />
+                </div>
+                <div v-else>
+                  (0名)
+                  <van-icon name="arrow" />
+                </div>
+              </div>
+              <div class="gap gapone"></div>
+              <div v-if="showSecondChild===turn">
+                <div v-for="(tree,temp) in child.children" :key="temp">
+                  <div class="flex space-between" style="padding: 5px 45px;">
+                    <div style="border-left: 1px solid #676767;padding-left: 5px;">--{{tree.text}}</div>
+                    <div v-if="tree.ChildrenCount>0">({{tree.ChildrenCount}}名)</div>
+                    <div v-else>(0名)</div>
+                  </div>
+                </div>
+                <div class="gap gapone"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </van-tab>
       <van-tab title="儿童主任">
         <div class="gap gaptwo"></div>
@@ -167,7 +197,11 @@ export default {
       childrenItems: [],
       childerenHomeList: [],
       topChildrenHomeList: [],
-      showOverlay: false
+      showOverlay: false,
+      showCurrentDown: "",
+      showSecondCurrentDown: "",
+      showChild: "",
+      showSecondChild: ""
     };
   },
   mounted() {
@@ -176,26 +210,22 @@ export default {
       this.activeTab = this.$route.query.activeTab;
     getTotalCount(this.cityId)
       .then(res => {
-        console.log('getTotalCount',res)
+        console.log("getTotalCount", res);
         this.totalCount = res.data.totalCount;
         getTreeCount(this.cityId)
           .then(result => {
-            console.log('getTreeCount',result)
+            console.log("getTreeCount", result);
             this.areaList = result.data.areaList;
             this.areaList.forEach(item => {
               let areaTemp = {
-                text:
-                  item.ActivityCount > 0
-                    ? `${item.Name}   (${item.ActivityCount}场)`
-                    : item.Name,
-                children: []
+                text: item.ActivityCount > 0 ? `${item.Name}` : item.Name,
+                children: [],
+                ActivityCount: item.ActivityCount
               };
               let childrenTemp = {
-                text:
-                  item.ChildrenCount > 0
-                    ? `${item.Name}   (${item.ChildrenCount}人)`
-                    : item.Name,
-                children: []
+                text: item.ChildrenCount > 0 ? `${item.Name}   ` : item.Name,
+                children: [],
+                ChildrenCount: item.ChildrenCount
               };
               if (item.Area.length > 0) {
                 item.Area.forEach(areaItem => {
@@ -206,30 +236,34 @@ export default {
                       activityChildren.push({
                         text:
                           threeItem.ActivityCount > 0
-                            ? `${threeItem.Name}   (${threeItem.ActivityCount}场)`
-                            : threeItem.Name
+                            ? `${threeItem.Name}   `
+                            : threeItem.Name,
+                        ActivityCount: threeItem.ActivityCount
                       });
                       childrenChildren.push({
                         text:
                           threeItem.ChildrenCount > 0
-                            ? `${threeItem.Name}   (${threeItem.ChildrenCount}人)`
-                            : threeItem.Name
+                            ? `${threeItem.Name}   `
+                            : threeItem.Name,
+                        ChildrenCount: threeItem.ChildrenCount
                       });
                     });
                   }
                   areaTemp.children.push({
                     text:
                       areaItem.ActivityCount > 0
-                        ? `${areaItem.Name}   (${areaItem.ActivityCount}场)`
+                        ? `${areaItem.Name}  `
                         : areaItem.Name,
-                    children: activityChildren
+                    children: activityChildren,
+                    ActivityCount: areaItem.ActivityCount
                   });
                   childrenTemp.children.push({
                     text:
                       areaItem.ChildrenCount > 0
-                        ? `${areaItem.Name}   (${areaItem.ChildrenCount}人)`
+                        ? `${areaItem.Name}  `
                         : areaItem.Name,
-                    children: childrenChildren
+                    children: childrenChildren,
+                    ChildrenCount: areaItem.ChildrenCount
                   });
                 });
               }
@@ -259,14 +293,16 @@ export default {
     activeTab(val) {
       if (val === 2) {
         this.showOverlay = true;
-        getTopChildrenHomeList(this.cityId).then(res => {
-          console.log("getTopChildrenHomeList", res);
-          this.topChildrenHomeList = res.data.topChildrenHomeList;
-          this.showOverlay = false;
-        }).catch(err => {
-        console.log("getTotalCount", err);
-        this.showOverlay = false;
-      });;
+        getTopChildrenHomeList(this.cityId)
+          .then(res => {
+            console.log("getTopChildrenHomeList", res);
+            this.topChildrenHomeList = res.data.topChildrenHomeList;
+            this.showOverlay = false;
+          })
+          .catch(err => {
+            console.log("getTotalCount", err);
+            this.showOverlay = false;
+          });
       }
     }
   },
@@ -279,6 +315,28 @@ export default {
           currentPath: "careIndex"
         }
       });
+    },
+    collapseDown(data, index) {
+      if (this.showCurrentDown === index) {
+        this.showCurrentDown = "";
+        this.showChild = "";
+      } else {
+        this.showCurrentDown = index;
+        this.showChild = index;
+      }
+
+      console.log(data);
+    },
+    collapseSecondDown(data, index) {
+      if (this.showSecondCurrentDown === index) {
+        this.showSecondCurrentDown = "";
+        this.showSecondChild = "";
+      } else {
+        this.showSecondCurrentDown = index;
+        this.showSecondChild = index;
+      }
+
+      console.log(data);
     }
   }
 };
