@@ -230,7 +230,10 @@
     </van-form>
 
     <div style="padding: 30px;">
-      <van-button style="width:100%;" type="warning" @click="save">新建成员</van-button>
+      <div v-if="showEdit">
+        <van-button style="width:100%;" type="warning" @click="save" >修改信息</van-button>
+      </div>
+      <div v-else @click="save"  style="width:100%;" type="warning">新建成员</div>
     </div>
     <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===1">
@@ -398,6 +401,7 @@ export default {
   data() {
     return {
       // result: [],
+      showEdit:false,
       showOverlay: false,
       showPicker: false,
       currentPick: "",
@@ -470,6 +474,7 @@ export default {
           // this.childrenNationIDList[element.Name] = element.Id;
         });
         if (this.$route.query.childrenId) {
+          this.showEdit = true
           getChildrenDetail(this.$route.query.childrenId).then(result => {
             console.log("getChildrenDetail", result);
             this.childrenName = result.data.children.Name;

@@ -291,6 +291,10 @@ export default {
   },
   watch: {
     activeTab(val) {
+      this.showCurrentDown = "";
+      this.showSecondCurrentDown = "";
+      this.showChild = "";
+      this.showSecondChild = "";
       if (val === 2) {
         this.showOverlay = true;
         getTopChildrenHomeList(this.cityId)
