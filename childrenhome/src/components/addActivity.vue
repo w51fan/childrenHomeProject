@@ -33,7 +33,7 @@
     <div style="padding:20px;">
       <van-button type="primary" color="#ffac22" style="width:100%;" @click="add">新增活动</van-button>
     </div>
-    <van-popup v-model="showPicker" position="bottom" :style="{ height: '50%' }">
+    <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===2">
         <van-picker
           show-toolbar

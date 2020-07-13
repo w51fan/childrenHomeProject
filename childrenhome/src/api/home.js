@@ -302,6 +302,43 @@ export const deleteChildren = function (token, id) {
   });
 }
 
+//添加儿童
+// token,
+// childrenHomeId,
+// name,
+// sex,
+// photo, //非必填
+// childrenType, //非必填
+// nation, //非必填
+// idNumber,
+// childrenAddress, 
+// health, 
+// shcoolLodging, //非必填
+// schoolInfo, //非必填
+// economicSituation, //非必填
+// economicResource, //非必填
+// rescueSituation, //非必填
+// fatherName, //非必填
+// fatherWorkAddress, //非必填
+// fatherPhone, //非必填
+// motherName, //非必填
+// motherWorkAddress, //非必填
+// motherPhone, //非必填
+// guardianName,
+// guardianPhone,
+// relation
+export const editChildren = function (data) {
+  return axios.request({
+    // url: `https://api.quanjiaxue.net/children/add?token=${data.token}&childrenHomeId=${data.childrenHomeId}&name=${data.name}&sex=${data.sex}&name=${data.date}&idNumber=${data.idNumber}$guardianName=&{dataguardianName}&guardianPhone=${data.guardianPhone}&relation=${data.relation}`,
+    url: `https://api.quanjiaxue.net/children/edit`,
+    data: qs.stringify(data),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    method: "post"
+  });
+}
+
 
 //发布活动
 export const release = function (token, id, content, urls, signInImage) {

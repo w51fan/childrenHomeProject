@@ -85,7 +85,7 @@
     <div style="padding:20px;">
       <van-button type="primary" style="width:100%;" @click="add">新增</van-button>
     </div>
-    <van-popup v-model="showPicker" position="bottom" :style="{ height: '50%' }">
+    <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===1">
         <van-picker
           show-toolbar

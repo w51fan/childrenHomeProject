@@ -1,7 +1,7 @@
 <template>
   <div class="addChildrenPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
-    <div class="gap gapone"></div>
+    <div class="gap gaptwenty"></div>
     <van-form ref="addChildrenForm" validate-first @failed="onFailed">
       <div class="title">儿童信息</div>
       <div class="addChildrenTable">
@@ -29,7 +29,11 @@
         <van-cell title="头像" input-align="right" readonly>
           <template slot="default">
             <!-- <img class="head" src="../assets/nohead.png" alt /> -->
-            <van-uploader :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
+            <van-uploader
+              :after-read="afterRead"
+              :max-size="2 * 1024 * 1024"
+              @oversize="onOversize"
+            >
               <div class="flex">
                 <img class="head" :src="childrenImg" alt />
                 <div class="arrow">
@@ -75,6 +79,9 @@
           placeholder="xx市xx县xx镇（区）xx村（必填） "
           size="large"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请输入现居地址' }]"
         />
         <van-field
           readonly
@@ -85,6 +92,9 @@
           size="large"
           @click="showPick(3)"
           input-align="right"
+          name="validator"
+          required
+          :rules="[{ required: true, message: '请选择健康状况' }]"
         />
         <van-field
           readonly
@@ -134,7 +144,7 @@
           input-align="right"
         />
       </div>
-      <div class="gap gapone"></div>
+      <div class="gap gaptwenty"></div>
       <div class="title">父母信息</div>
       <div class="addChildrenTable">
         <van-field
@@ -180,7 +190,7 @@
           input-align="right"
         />
       </div>
-      <div class="gap gapone"></div>
+      <div class="gap gaptwenty"></div>
       <div class="title">实际监护人信息（必填）</div>
       <div class="addChildrenTable">
         <van-field
@@ -222,7 +232,7 @@
     <div style="padding: 30px;">
       <van-button style="width:100%;" type="warning" @click="save">新建成员</van-button>
     </div>
-    <van-popup v-model="showPicker" position="bottom" :style="{ height: '50%' }">
+    <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===1">
         <van-picker
           show-toolbar
@@ -264,28 +274,90 @@
         />
       </div>
       <div v-else-if="currentPick===6">
-        <div>家庭经济来源状况</div>
-        <van-checkbox v-model="checked" shape="square">打工收入</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">种养殖业</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">政府救助</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">亲朋接济</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">经商</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">其他</van-checkbox>
-        <div>
-          <van-button type="default">关闭</van-button>
-          <van-button type="primary" @click="onConfirmFamilyFinancialResources">确定</van-button>
+        <div style="padding:20px;">家庭经济来源状况（多选）</div>
+        <div class="gap gapone"></div>
+        <!-- <van-field name="familyFinancialResourcesCheckboxGroup" label="多选" input-align="center" style="padding: 20px;">
+          <template #input>
+            <van-checkbox-group
+              v-model="familyFinancialResourcesCheckboxGroup"
+              direction="horizontal"
+              class="familyFinancialResources"
+              @change="familyFinancialResourcesCheckboxGroupChange"
+            >
+              <van-checkbox :name="familyFinancialResources" shape="square" v-for="(familyFinancialResources,index) in familyFinancialResourcesList" :key="index">{{familyFinancialResources}}</van-checkbox>
+              
+            </van-checkbox-group>
+          </template>
+        </van-field>-->
+        <!-- <van-checkbox :name="familyFinancialResources" shape="square" v-for="(familyFinancialResources,index) in familyFinancialResourcesList" :key="index">{{familyFinancialResources}}</van-checkbox> -->
+        <van-checkbox-group v-model="familyFinancialResourcesCheckboxGroup" @change="familyFinancialResourcesCheckboxGroupChange">
+          <van-cell
+            v-for="(item, index) in familyFinancialResourcesList"
+            clickable
+            :key="index"
+            :title="item"
+            @click="toggleFamilyFinancialResources(index)"
+          >
+            <template #right-icon>
+              <van-checkbox :name="item" ref="checkboxesFamilyFinancialResources" />
+            </template>
+          </van-cell>
+        </van-checkbox-group>
+
+        <div style="padding:5px 20px;">
+          <van-button type="default" style="width:80px;height: 32px;" @click="showPicker = false">关闭</van-button>
+          <van-button
+            type="primary"
+            @click="onConfirmFamilyFinancialResources"
+            style="width:140px;height: 32px;"
+          >确定</van-button>
         </div>
       </div>
       <div v-else-if="currentPick===7">
-        <div>救助帮扶情况</div>
-        <van-checkbox v-model="checked" shape="square">低保</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">临时救助</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">医疗救助</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">住房救助</van-checkbox>
-        <van-checkbox v-model="checked" shape="square">其他</van-checkbox>
-        <div>
-          <van-button type="default">关闭</van-button>
-          <van-button type="primary" @click="onConfirmAssistanceAndAssistance">确定</van-button>
+        <div style="padding:20px;">救助帮扶情况（多选）</div>
+        <div class="gap gapone"></div>
+        <!-- <van-field name="assistanceAndAssistanceCheckboxGroup" label="多选" input-align="center" style="padding: 20px;">
+          <template #input>
+            <van-checkbox-group
+              v-model="assistanceAndAssistanceCheckboxGroup"
+              direction="horizontal"
+              class="familyFinancialResources"
+              @change="assistanceAndAssistanceCheckboxGroupChange"
+            >
+              <van-checkbox name="低保" shape="square">低保</van-checkbox>
+              <van-checkbox name="临时救助" shape="square">临时救助</van-checkbox>
+              <van-checkbox name="医疗救助" shape="square">医疗救助</van-checkbox>
+              <van-checkbox name="住房救助" shape="square">住房救助</van-checkbox>
+              <van-checkbox name="其他" shape="square">其他</van-checkbox>
+            </van-checkbox-group>
+          </template>
+        </van-field>-->
+        <!-- <van-checkbox
+          :name="assistanceAndAssistance"
+          shape="square"
+          v-for="(assistanceAndAssistance,index) in assistanceAndAssistanceList"
+          :key="index"
+        >{{assistanceAndAssistance}}</van-checkbox> -->
+        <van-checkbox-group v-model="assistanceAndAssistanceCheckboxGroup" @change="assistanceAndAssistanceCheckboxGroupChange">
+          <van-cell
+            v-for="(item, index) in assistanceAndAssistanceList"
+            clickable
+            :key="index"
+            :title="item"
+            @click="toggleAssistanceAndAssistance(index)"
+          >
+            <template #right-icon>
+              <van-checkbox :name="item" ref="checkboxesAssistanceAndAssistance" />
+            </template>
+          </van-cell>
+        </van-checkbox-group>
+        <div style="padding:20px;">
+          <van-button type="default" style="width:80px;height: 32px;" @click="showPicker = false">关闭</van-button>
+          <van-button
+            type="primary"
+            @click="onConfirmAssistanceAndAssistance"
+            style="width:140px;height: 32px;"
+          >确定</van-button>
         </div>
       </div>
       <div v-else-if="currentPick===8">
@@ -316,6 +388,7 @@
 <script>
 import {
   addChildren,
+  editChildren,
   getNationList,
   uploadImg,
   getChildrenDetail
@@ -324,6 +397,7 @@ export default {
   name: "addChildren",
   data() {
     return {
+      // result: [],
       showOverlay: false,
       showPicker: false,
       currentPick: "",
@@ -333,8 +407,8 @@ export default {
       childrenType: "", //非必填
       childrenNation: "", //非必填
       childrenId: "",
-      childrenAddress: "", //非必填
-      childrenHealthy: "", //非必填
+      childrenAddress: "",
+      childrenHealthy: "",
       isBoardingSchool: "", //非必填
       childrenClass: "", //非必填
       familyEconomicSituation: "", //非必填
@@ -349,14 +423,33 @@ export default {
       nameOfGuardian: "",
       telOfGuardian: "",
       identityOfGuardian: "",
-      childrenTypeList: ["困境儿童", "留守儿童"],
+      familyFinancialResourcesCheckboxGroup: [],
+      assistanceAndAssistanceCheckboxGroup: [],
+      familyFinancialResourcesArray: [],
+      assistanceAndAssistanceArray: [],
+      childrenTypeList: ["困境儿童", "留守儿童", "孤儿", "残疾儿童", "其他"], //儿童类型。1. 困境儿童 2. 留守儿童 3.孤儿 4.残疾儿童 5.其他
       childrenNationList: [],
       // childrenNationIDList: [],
       childrenHealthyList: ["健康", "患病", "残疾"],
-      isBoardingSchoolList: ["是", "否"],
-      familyEconomicSituationList: ["富裕", "一般", "贫困"],
-      identityList: ["父母", "亲属", "指定监护人"],
-      genderList: ["男", "女"]
+      isBoardingSchoolList: ["是", "否"], //1是，2否
+      familyEconomicSituationList: ["富裕", "一般", "贫困"], //经济状况（富裕，一般，平困）
+      identityList: ["父母", "亲属", "指定监护人"], //监护人类型；1. 父母 2. 亲属 3. 指定监护人
+      genderList: ["男", "女"], //1男，2女
+      familyFinancialResourcesList: [
+        "打工收入",
+        "种养殖业",
+        "政府救助",
+        "亲朋接济",
+        "经商",
+        "其他"
+      ], //
+      assistanceAndAssistanceList: [
+        "低保",
+        "临时救助",
+        "医疗救助",
+        "住房救助",
+        "其他"
+      ] //
     };
   },
   computed: {
@@ -380,14 +473,18 @@ export default {
           getChildrenDetail(this.$route.query.childrenId).then(result => {
             console.log("getChildrenDetail", result);
             this.childrenName = result.data.children.Name;
-            this.childrenGender = result.data.children.Sex;
+            this.childrenGender = this.genderList[result.data.children.Sex - 1];
             this.childrenImg = result.data.children.Photo;
-            this.childrenType = result.data.children.ChildrenType;
+            this.childrenType = this.childrenTypeList[
+              result.data.children.ChildrenType-1
+            ];
             this.childrenNation = result.data.children.Nation;
-            this.childrenId = result.data.children.IdNumber;
+            this.childrenId = result.data.children.Id;
             this.childrenAddress = result.data.children.ChildrenAddress;
             this.childrenHealthy = result.data.children.Health;
-            this.isBoardingSchool = result.data.children.ShcoolLodging;
+            this.isBoardingSchool = this.isBoardingSchoolList[
+              result.data.children.ShcoolLodging-1
+            ];
             this.childrenClass = result.data.children.SchoolInfo;
             this.familyEconomicSituation =
               result.data.children.EconomicSituation;
@@ -400,9 +497,11 @@ export default {
             this.motherName = result.data.children.MotherName;
             this.motherWorkPlace = result.data.children.MotherWorkAddress;
             this.motherTel = result.data.children.MotherPhone;
-            // guardianName: this.nameOfGuardian=result.data.children.
-            // guardianPhone: this.telOfGuardian=result.data.children.
-            this.identityOfGuardian = result.data.children.Relation;
+            this.nameOfGuardian = result.data.children.ParentUser.Name;
+            this.telOfGuardian = result.data.children.ParentUser.Phone;
+            this.identityOfGuardian = this.identityList[
+              result.data.children.Relation-1
+            ];
             this.showOverlay = false;
           });
         }
@@ -431,7 +530,7 @@ export default {
       this.childrenNation = value;
       this.showPicker = false;
     },
-    onConfirmchildrenHealthy(value) {
+    onConfirmChildrenHealthy(value) {
       this.childrenHealthy = value;
       this.showPicker = false;
     },
@@ -448,16 +547,62 @@ export default {
       this.showPicker = false;
     },
     onConfirmFamilyFinancialResources(value) {
-      this.familyFinancialResources = value;
+      this.familyFinancialResourcesArray = [];
       this.showPicker = false;
     },
     onConfirmAssistanceAndAssistance(value) {
-      this.assistanceAndAssistance = value;
+      this.assistanceAndAssistanceArray = [];
       this.showPicker = false;
     },
     onConfirmGenderList(value) {
       this.childrenGender = value;
       this.showPicker = false;
+    },
+    familyFinancialResourcesCheckboxGroupChange(value) {
+      if (this.familyFinancialResourcesArray.length > 0) {
+        for (const key in value) {
+          if (value.hasOwnProperty(key)) {
+            const element = value[key];
+            if (!this.familyFinancialResourcesArray.includes(element))
+              this.familyFinancialResourcesArray.push(element);
+          }
+        }
+      } else {
+        this.familyFinancialResourcesArray = value;
+      }
+      this.familyFinancialResources = "";
+      for (const key in this.familyFinancialResourcesArray) {
+        if (this.familyFinancialResourcesArray.hasOwnProperty(key)) {
+          const element = this.familyFinancialResourcesArray[key];
+          this.familyFinancialResources =
+            this.familyFinancialResources === ""
+              ? element
+              : `${this.familyFinancialResources}，${element}`;
+        }
+      }
+    },
+    assistanceAndAssistanceCheckboxGroupChange(value) {
+      if (this.assistanceAndAssistanceArray.length > 0) {
+        for (const key in value) {
+          if (value.hasOwnProperty(key)) {
+            const element = value[key];
+            if (!this.assistanceAndAssistanceArray.includes(element))
+              this.assistanceAndAssistanceArray.push(element);
+          }
+        }
+      } else {
+        this.assistanceAndAssistanceArray = value;
+      }
+      this.assistanceAndAssistance = "";
+      for (const key in this.assistanceAndAssistanceArray) {
+        if (this.assistanceAndAssistanceArray.hasOwnProperty(key)) {
+          const element = this.assistanceAndAssistanceArray[key];
+          this.assistanceAndAssistance =
+            this.assistanceAndAssistance === ""
+              ? element
+              : `${this.assistanceAndAssistance}，${element}`;
+        }
+      }
     },
     afterRead(file) {
       this.showOverlay = true;
@@ -487,62 +632,150 @@ export default {
       this.$refs["addChildrenForm"]
         .validateAll()
         .then(() => {
-          addChildren({
-            token: this.Token,
-            childrenHomeId: this.ChildrenHomeId,
-            name: this.childrenName,
-            sex: this.childrenGender,
-            photo: this.childrenImg,
-            childrenType: this.childrenType,
-            nation: this.childrenNation,
-            idNumber: this.childrenId,
-            childrenAddress: this.childrenAddress,
-            health: this.childrenHealthy,
-            shcoolLodging: this.isBoardingSchool,
-            schoolInfo: this.childrenClass,
-            economicSituation: this.familyEconomicSituation,
-            economicResource: this.familyFinancialResources,
-            rescueSituation: this.assistanceAndAssistance,
-            fatherName: this.fatherName,
-            fatherWorkAddress: this.fatherWorkPlace,
-            fatherPhone: this.fatherTel,
-            motherName: this.motherName,
-            motherWorkAddress: this.motherWorkPlace,
-            motherPhone: this.motherTel,
-            guardianName: this.nameOfGuardian,
-            guardianPhone: this.telOfGuardian,
-            relation: this.identityOfGuardian
-          })
-            .then(res => {
-              console.log("addChildren", res);
-              $this.showOverlay = false;
-              if (res.data.code > 1) {
-                this.$notify({
-                  type: "warning",
-                  message: res.data.error,
-                  duration: 500
-                });
-              } else {
-                this.$notify({
-                  type: "success",
-                  message: res.data.msg,
-                  duration: 500
-                });
-                setTimeout(() => {
-                  this.showOverlay = false;
-                  this.$router.push({
-                    name: "assistantChildrenHomeDetail",
-                    query:{
-                      currentPath:'childrenHomePage'
-                    }
-                  });
-                }, 1000);
-              }
+          if (this.$route.query.childrenId) {
+            editChildren({
+              token: this.Token,
+              childrenHomeId: this.ChildrenHomeId,
+              name: this.childrenName,
+              sex: this.childrenGender === "男" ? 1 : 2,
+              photo: this.childrenImg,
+              childrenType:
+                this.childrenType === "困境儿童"
+                  ? 1
+                  : this.childrenType === "留守儿童"
+                  ? 2
+                  : this.childrenType === "孤儿"
+                  ? 3
+                  : this.childrenType === "残疾儿童"
+                  ? 4
+                  : 5,
+              nation: this.childrenNation,
+              idNumber: this.childrenId,
+              childrenAddress: this.childrenAddress,
+              health: this.childrenHealthy,
+              shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
+              schoolInfo: this.childrenClass,
+              economicSituation: this.familyEconomicSituation,
+              economicResource: this.familyFinancialResources,
+              rescueSituation: this.assistanceAndAssistance,
+              fatherName: this.fatherName,
+              fatherWorkAddress: this.fatherWorkPlace,
+              fatherPhone: this.fatherTel,
+              motherName: this.motherName,
+              motherWorkAddress: this.motherWorkPlace,
+              motherPhone: this.motherTel,
+              guardianName: this.nameOfGuardian,
+              guardianPhone: this.telOfGuardian,
+              relation:
+                this.identityOfGuardian === "父母"
+                  ? 1
+                  : this.identityOfGuardian === "亲属"
+                  ? 2
+                  : 3
             })
-            .catch(err => {
-              console.log("addChildren", err);
-              $this.showOverlay = false;
-            });
+              .then(res => {
+                console.log("editChildren", res);
+                $this.showOverlay = false;
+                if (res.data.code > 1) {
+                  this.$notify({
+                    type: "warning",
+                    message: res.data.error,
+                    duration: 500
+                  });
+                } else {
+                  this.$notify({
+                    type: "success",
+                    message: res.data.msg,
+                    duration: 500
+                  });
+                  setTimeout(() => {
+                    this.showOverlay = false;
+                    this.$router.push({
+                      name: "assistantChildrenHomeDetail",
+                      query: {
+                        currentPath: "childrenHomePage"
+                      }
+                    });
+                  }, 1000);
+                }
+              })
+              .catch(err => {
+                console.log("addChildren", err);
+                $this.showOverlay = false;
+              });
+          } else {
+            addChildren({
+              token: this.Token,
+              childrenHomeId: this.ChildrenHomeId,
+              name: this.childrenName,
+              sex: this.childrenGender === "男" ? 1 : 2,
+              photo: this.childrenImg,
+              childrenType:
+                this.childrenType === "困境儿童"
+                  ? 1
+                  : this.childrenType === "留守儿童"
+                  ? 2
+                  : this.childrenType === "孤儿"
+                  ? 3
+                  : this.childrenType === "残疾儿童"
+                  ? 4
+                  : 5,
+              nation: this.childrenNation,
+              idNumber: this.childrenId,
+              childrenAddress: this.childrenAddress,
+              health: this.childrenHealthy,
+              shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
+              schoolInfo: this.childrenClass,
+              economicSituation: this.familyEconomicSituation,
+              economicResource: this.familyFinancialResources,
+              rescueSituation: this.assistanceAndAssistance,
+              fatherName: this.fatherName,
+              fatherWorkAddress: this.fatherWorkPlace,
+              fatherPhone: this.fatherTel,
+              motherName: this.motherName,
+              motherWorkAddress: this.motherWorkPlace,
+              motherPhone: this.motherTel,
+              guardianName: this.nameOfGuardian,
+              guardianPhone: this.telOfGuardian,
+              relation:
+                this.identityOfGuardian === "父母"
+                  ? 1
+                  : this.identityOfGuardian === "亲属"
+                  ? 2
+                  : 3
+            })
+              .then(res => {
+                console.log("addChildren", res);
+                $this.showOverlay = false;
+                if (res.data.code > 1) {
+                  this.$notify({
+                    type: "warning",
+                    message: res.data.error,
+                    duration: 500
+                  });
+                } else {
+                  this.$notify({
+                    type: "success",
+                    message: res.data.msg,
+                    duration: 500
+                  });
+                  setTimeout(() => {
+                    this.showOverlay = false;
+                    this.$router.push({
+                      name: "assistantChildrenHomeDetail",
+                      query: {
+                        currentPath: "childrenHomePage"
+                      }
+                    });
+                  }, 1000);
+                }
+              })
+              .catch(err => {
+                console.log("addChildren", err);
+                $this.showOverlay = false;
+              });
+          }
+
           this.showOverlay = false;
         })
         .catch(err => {
@@ -550,14 +783,20 @@ export default {
           this.showOverlay = false;
         });
     },
-    onOversize(file){
+    onOversize(file) {
       // console.log('onOversize',file);
       this.$notify({
-          type: "warning",
-          message: "图片大小不能超过2M",
-          duration: 1500
-        });
-    }
+        type: "warning",
+        message: "图片大小不能超过2M",
+        duration: 1500
+      });
+    },
+    toggleFamilyFinancialResources(index) {
+      this.$refs.checkboxesFamilyFinancialResources[index].toggle();
+    },
+    toggleAssistanceAndAssistance(index) {
+      this.$refs.checkboxesAssistanceAndAssistance[index].toggle();
+    },
   }
 };
 </script>
@@ -589,6 +828,9 @@ export default {
     background: #e6e6e6;
   }
   .gapone {
+    height: 1px;
+  }
+  .gaptwenty {
     height: 20px;
   }
   .addChildrenTable {
@@ -616,6 +858,14 @@ export default {
         text-align: left;
       }
     }
+  }
+  .familyFinancialResources {
+    text-align: left;
+    width: 100%;
+    display: block;
+    // .van-checkbox-group--horizontal {
+
+    // }
   }
 }
 </style>

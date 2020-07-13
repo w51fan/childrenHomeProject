@@ -78,6 +78,7 @@ export default {
       });
     },
     logout() {
+      let $this = this;
       this.$dialog.alert({
         title: "退出登录",
         message: "是否确认退出当前账号？",
@@ -86,9 +87,15 @@ export default {
       });
       function beforeClose(action, done) {
         if (action === "confirm") {
-          setTimeout(done, 1000);
+          done();
+          window.localStorage.removeItem("Token");
+          $this.$store.commit("common/getToken", "");
+
+          $this.$router.push({
+            name: "assistantEnnterPage"
+          });
         } else {
-          console.log("done", false);
+          // console.log("done", false);
           done();
         }
       }
@@ -135,13 +142,13 @@ export default {
         this.showOverlay = false;
       });
     },
-    onOversize(file){
+    onOversize(file) {
       // console.log('onOversize',file);
       this.$notify({
-          type: "warning",
-          message: "图片大小不能超过2M",
-          duration: 1500
-        });
+        type: "warning",
+        message: "图片大小不能超过2M",
+        duration: 1500
+      });
     }
   }
 };

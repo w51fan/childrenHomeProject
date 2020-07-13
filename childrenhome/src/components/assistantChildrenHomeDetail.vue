@@ -59,9 +59,9 @@
       </div>
     </div>
     <div class="flex space-between" style="padding:20px 20px 10px;">
-      <div class="childrenHomeMemberHead">儿童</div>
-      <div class="childrenHomeMemberHead">监护人</div>
-      <div class="childrenHomeMemberHead">操作</div>
+      <div class="childrenHomeMemberHead" style="flex:1;text-align: left;">儿童</div>
+      <div class="childrenHomeMemberHead" style="flex:1;">监护人</div>
+      <div class="childrenHomeMemberHead" style="flex:1;text-align: right;">操作</div>
     </div>
     <div>
       <van-cell
@@ -473,20 +473,26 @@ export default {
     .childHead {
       display: flex;
       margin-left: 1%;
+      flex: 1;
       .head {
         width: 20px;
         height: 20px;
         padding-right: 5px;
+        
       }
       .name {
         line-height: 20px;
+        
       }
     }
     .guardianName {
-      margin-left: -7%;
+      // margin-left: -7%;
+      flex: 1;
     }
     .operation {
       padding: 0 10px;
+      flex: 1;
+      text-align: right;
     }
   }
   .abbreviation {
