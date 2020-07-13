@@ -11,30 +11,34 @@
         </div>
         <div class="gap gapfive"></div>
         <div v-if="activityList.length>0">
-          <div v-for="(item,index) in activityList" :key="index">
-            <div class="flex space-between">
-              <div style="padding:20px;">
-                <van-icon name="underway" v-if="item.Status===1" />
-                <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-                {{getDate(item.Date)}}
+          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+              <div v-for="(item,index) in activityList" :key="index">
+                <div class="flex space-between">
+                  <div style="padding:20px;">
+                    <van-icon name="underway" v-if="item.Status===1" />
+                    <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+                    {{getDate(item.Date)}}
+                  </div>
+                  <div class="status will" v-if="item.Status===1">即将开始</div>
+                  <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+                  <div class="status finished" v-else>已结束</div>
+                </div>
+                <div class="abbreviation">{{item.Name}}...</div>
+                <div class="flex" @click="viewDetail(item)">
+                  <img
+                    :src="activityImg.Url"
+                    v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
+                    :key="turn"
+                    style="width: 50px;height: 100px;padding: 15px 20px;"
+                  />
+                  <div>...</div>
+                </div>
+                <!-- <van-icon name="checked" />
+                <div>{{item.Date}}</div>-->
               </div>
-              <div class="status will" v-if="item.Status===1">即将开始</div>
-              <div class="status ing" v-else-if="item.Status===2">进行中...</div>
-              <div class="status finished" v-else>已结束</div>
-            </div>
-            <div class="abbreviation">{{item.Name}}...</div>
-            <div class="flex" @click="viewDetail(item)">
-              <img
-                :src="activityImg.Url"
-                v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
-                :key="turn"
-                style="width: 50px;height: 100px;padding: 15px 20px;"
-              />
-              <div>...</div>
-            </div>
-            <!-- <van-icon name="checked" />
-            <div>{{item.Date}}</div>-->
-          </div>
+            </van-list>
+          </van-pull-refresh>
         </div>
         <div v-else style="color: #b9b9b9;padding-top: 30px;line-height: 30px;">没有最新活动数据</div>
       </van-tab>
@@ -189,14 +193,28 @@ export default {
       selectedTown: "",
       townItems: [],
       villageItems: [],
-      showOverlay: false
+      showOverlay: false,
+      loading: false,
+      finished: false,
+      refreshing: false,
+      pageNumber: 1,
+      pageSize: 10,
+      total: ""
     };
   },
   mounted() {
     // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
     // console.log('this.$route.query.cityId',this.cityId)
     this.showOverlay = true;
-    this.getActivityList(this.cityId, 2021, 3713, false);
+    this.getActivityList(
+      this.cityId,
+      2021,
+      3713,
+      false,
+      this.pageNumber,
+      this.pageSize,
+      false
+    );
   },
   computed: {
     cityId() {
@@ -221,9 +239,18 @@ export default {
           });
           this.townList = temp;
           this.selectedTown = this.townList[0].value;
+          this.selectedVillage = "";
         });
       } else if (val === 0) {
-        this.getActivityList(this.cityId, 2021, 3713, true);
+        this.getActivityList(
+          this.cityId,
+          2021,
+          3713,
+          true,
+          this.pageNumber,
+          this.pageSize,
+          false
+        );
       } else if (val === 3) {
         getSchoolChildrenHomeList(this.cityId).then(res => {
           console.log("getSchoolChildrenHomeList", res);
@@ -252,7 +279,7 @@ export default {
     }
   },
   methods: {
-    viewChildhomeDetail(row){
+    viewChildhomeDetail(row) {
       console.log("collapseVillage", row);
       this.$store.commit("common/getVillageId", row.VillageId);
       this.$router.push({
@@ -286,7 +313,8 @@ export default {
           });
         });
         this.villageList = temp;
-        this.selectedVillage = this.villageList[0].value;
+        this.selectedVillage = this.villageList[1].value;
+        this.changeVillage();
       });
     },
     changeVillage(event) {
@@ -296,24 +324,50 @@ export default {
         this.selectedVillage
       );
     },
-    getActivityList(cityId, areaId, townId, isInit) {
+    getActivityList(
+      cityId,
+      areaId,
+      townId,
+      isInit,
+      pageNumber,
+      pageSize,
+      isPull
+    ) {
       getActivityList({
         cityId: cityId,
         areaId: areaId,
-        townId: townId
+        townId: townId,
         // activityType: ""
+        pageNumber,
+        pageSize
       })
         .then(res => {
           console.log("res", res);
-
-          this.activityList = res.data.activityList;
-
-          if (!isInit && this.activityList.length == 0) {
-            this.showTips = 2;
-          } else if (!isInit && this.activityList.length > 0) {
-            this.showTips = 3;
+          if (isPull) {
+            res.data.activityList.forEach(item => {
+              this.activityList.push(item);
+            });
+            this.loading = false;
+            this.showOverlay = false;
+            // console.log('2',this.activityList.length < this.total,this.activityList.length,this.total)
+            if(!(this.activityList.length<this.total))this.finished = true
+          } else {
+            this.activityList = res.data.activityList;
+            this.total = res.data.total;
+            if (!isInit && this.activityList.length == 0) {
+              this.showTips = 2;
+            } else if (!isInit && this.activityList.length > 0) {
+              this.showTips = 3;
+            }
+            this.showOverlay = false;
           }
-          this.showOverlay = false;
+
+          // {
+          //   // 加载状态结束
+          //   this.loading = false;
+          //   // 数据全部加载完成
+          //   this.finished = true;
+          // }
         })
         .catch(err => {
           console.log("getTotalCount", err);
@@ -350,6 +404,33 @@ export default {
           currentPath: "socialParticipation"
         }
       });
+    },
+    onLoad() {
+      // console.log("die", this.loading);
+      // console.log('1',this.activityList.length < this.total,this.activityList.length,this.total)
+      if (this.activityList.length < this.total) {
+        this.getActivityList(
+          this.cityId,
+          2021,
+          3713,
+          false,
+          this.pageNumber + 1,
+          this.pageSize,
+          true
+        );
+      } else {
+        this.loading = false;
+        this.finished = true;
+      }
+    },
+    onRefresh() {
+      // 清空列表数据
+      this.finished = false;
+
+      // 重新加载数据
+      // 将 loading 设置为 true，表示处于加载状态
+      this.loading = true;
+      this.onLoad();
     }
   }
 };
