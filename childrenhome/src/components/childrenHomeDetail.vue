@@ -138,7 +138,7 @@ export default {
       showOverlay: false,
       activityTotal: "",
       showPicker: false,
-      currentParentUserTel:''
+      currentParentUserTel: ""
     };
   },
   computed: {
@@ -147,9 +147,13 @@ export default {
     },
     PreCurrentPath() {
       return this.$store.state.common.PreCurrentPath;
-    }
+    },
+    Select() {
+      return this.$store.state.common.Select;
+    },
   },
   mounted() {
+    if(this.$route.query.select) this.$store.commit("common/getSelect", this.$route.query.select);
     this.showOverlay = true;
     getChildrenHomeDetail(this.VillageId)
       .then(res => {
@@ -170,18 +174,26 @@ export default {
   },
   methods: {
     onClickLeft() {
+      console.log(
+        "this.$route.query.currentPath",
+        this.$route.query.currentPath,
+        this.PreCurrentPath
+      );
       if (this.$route.query.currentPath) {
         this.$router.push({
           name: this.$route.query.currentPath,
           query: {
-            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
+            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0,
+            selected: this.Select
           }
         });
       } else {
         this.$router.push({
           name: this.PreCurrentPath,
+          // name: "socialParticipation",
           query: {
-            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
+            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0,
+            selected: this.Select
           }
         });
       }
@@ -194,10 +206,11 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       this.$router.push({
         name: "activityDetail",
         query: {

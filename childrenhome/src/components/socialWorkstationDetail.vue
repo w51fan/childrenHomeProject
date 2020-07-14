@@ -9,7 +9,12 @@
       <div v-if="ChildrenHomeImg!==''" style="position: absolute;">
         <img :src="ChildrenHomeImg" alt />
       </div>
-      <van-uploader class="uploaderImg" :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
+      <van-uploader
+        class="uploaderImg"
+        :after-read="afterRead"
+        :max-size="2 * 1024 * 1024"
+        @oversize="onOversize"
+      >
         <template slot="default">
           <div class="myChildrenHometips">点击更换形象照</div>
         </template>
@@ -272,10 +277,11 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       if (row.Status === 2) {
         this.$router.push({
           name: "unfinishedActivity",
@@ -295,10 +301,11 @@ export default {
       }
     },
     edit() {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       this.$router.push({
         name: "addLowIncomePerson",
         query: {
@@ -330,10 +337,11 @@ export default {
       });
     },
     addSubsistence() {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       this.$router.push({
         name: "addLowIncomePerson",
         query: {
@@ -382,13 +390,13 @@ export default {
     cancel() {
       this.showPicker = false;
     },
-    onOversize(file){
+    onOversize(file) {
       // console.log('onOversize',file);
       this.$notify({
-          type: "warning",
-          message: "图片大小不能超过2M",
-          duration: 1500
-        });
+        type: "warning",
+        message: "图片大小不能超过2M",
+        duration: 1500
+      });
     }
   }
 };

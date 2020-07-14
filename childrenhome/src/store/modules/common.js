@@ -9,6 +9,7 @@ const state = {
   ChildrenHomeId: '',
   SocialStationId: '',
   PreCurrentPath: '',
+  Select:''
 }
 
 const getters = {}
@@ -47,6 +48,9 @@ const mutations = {
   SET_TOKEN(state, value) {
     state.Token = value;
     window.localStorage.setItem('Token',value)
+  },
+  getSelect(state, value) {
+    state.Select = value;
   },
 }
 

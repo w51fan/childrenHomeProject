@@ -174,7 +174,7 @@ export default {
   },
   data() {
     return {
-      selected: "1",
+      selected: 0,
       selectedActivity: 0,
       selectedNav: "socialParticipation",
       activities: [
@@ -205,6 +205,7 @@ export default {
   mounted() {
     // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
     // console.log('this.$route.query.cityId',this.cityId)
+    if (this.$route.query.selected) this.selected = this.$route.query.selected;
     this.showOverlay = true;
     this.getActivityList(
       this.cityId,
@@ -285,7 +286,8 @@ export default {
       this.$router.push({
         name: "childrenHomeDetail",
         query: {
-          currentPath: "socialParticipation"
+          currentPath: "socialParticipation",
+          select: 3
         }
       });
     },
@@ -350,7 +352,7 @@ export default {
             this.loading = false;
             this.showOverlay = false;
             // console.log('2',this.activityList.length < this.total,this.activityList.length,this.total)
-            if(!(this.activityList.length<this.total))this.finished = true
+            if (!(this.activityList.length < this.total)) this.finished = true;
           } else {
             this.activityList = res.data.activityList;
             this.total = res.data.total;
@@ -382,8 +384,9 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     collapseTown(town) {
+      this.showOverlay = true;
       getVillageList(town.TownId).then(village => {
-        console.log("getVillageList", village);
+        // console.log("getVillageList", village);
         let townTemp = [];
         village.data.villageList.forEach(ele => {
           townTemp.push({
@@ -391,17 +394,19 @@ export default {
             VillageId: ele.VillageId
           });
         });
-        console.log("townTemp", townTemp);
+        // console.log("townTemp", townTemp);
         this.villageItems = townTemp;
+        this.showOverlay = false;
       });
     },
     collapseVillage(village) {
-      console.log("collapseVillage", village);
+      // console.log("collapseVillage", village);
       this.$store.commit("common/getVillageId", village.VillageId);
       this.$router.push({
         name: "childrenHomeDetail",
         query: {
-          currentPath: "socialParticipation"
+          currentPath: "socialParticipation",
+          select: 2
         }
       });
     },

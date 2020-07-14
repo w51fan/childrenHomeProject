@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { getActivityDetail, release } from "@/api/home";
+import { getActivityDetail, release, addRecord } from "@/api/home";
 export default {
   name: "activityDetail",
   data() {
@@ -141,10 +141,10 @@ export default {
       activity: {},
       activityRecordList: [],
       activityImageList: [],
-      signInImageList:[],
+      signInImageList: [],
       showImgPreview: false,
       imagesArray: [],
-      signImagesArray:[],
+      signImagesArray: [],
       turn: 0,
       startPosition: 0,
       ActivityType: "",
@@ -159,6 +159,9 @@ export default {
   computed: {
     Token() {
       return this.$store.state.common.Token;
+    },
+    PreCurrentPath() {
+      return this.$store.state.common.PreCurrentPath;
     }
   },
   mounted() {
@@ -167,8 +170,7 @@ export default {
   methods: {
     init() {
       this.showOverlay = true;
-      if (this.$route.query.showSubmitButton)
-        this.showSubmitButton = true;
+      if (this.$route.query.showSubmitButton) this.showSubmitButton = true;
       getActivityDetail(this.$route.query.activityId)
         .then(res => {
           console.log("activity", res);
@@ -178,8 +180,8 @@ export default {
 
           this.starNum = res.data.activity.Score / 10;
           this.activityRecordList = res.data.activityRecordList;
-          this.activityImageList = res.data.activityImageList.slice(0,6);
-          this.signInImageList = res.data.signInImageList.slice(0,1)
+          this.activityImageList = res.data.activityImageList.slice(0, 6);
+          this.signInImageList = res.data.signInImageList.slice(0, 1);
           this.ActivityType =
             this.activity.ActivityType === 1
               ? "家庭教育"
@@ -191,7 +193,7 @@ export default {
           this.activityImageList.forEach(item => {
             this.imagesArray.push(item.Url);
           });
-          this.signImagesArray.push(this.signInImageList[0].Url)
+          this.signImagesArray.push(this.signInImageList[0].Url);
           // console.log(
           //   "record.Content",
           //   this.activityRecordList[0].Content.indexOf("http") > -1
@@ -216,8 +218,9 @@ export default {
     },
     onImgPreviewChange() {},
     onClickLeft() {
+      // console.log('PreCurrentPath',this.PreCurrentPath)
       this.$router.push({
-        name: this.$route.query.currentPath
+        name: this.$route.query.currentPath,
       });
     },
     showSubmitConfirmfun() {
@@ -229,7 +232,7 @@ export default {
     },
     submitRelease() {
       this.showOverlay = true;
-      release(this.Token, this.activity.Id, this.recordContent)
+      addRecord(this.Token, this.activity.Id, this.recordContent)
         .then(res => {
           console.log("release", res);
 

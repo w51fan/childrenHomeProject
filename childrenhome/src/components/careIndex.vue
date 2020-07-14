@@ -210,11 +210,11 @@ export default {
       this.activeTab = this.$route.query.activeTab;
     getTotalCount(this.cityId)
       .then(res => {
-        console.log("getTotalCount", res);
+        // console.log("getTotalCount", res);
         this.totalCount = res.data.totalCount;
         getTreeCount(this.cityId)
           .then(result => {
-            console.log("getTreeCount", result);
+            // console.log("getTreeCount", result);
             this.areaList = result.data.areaList;
             this.areaList.forEach(item => {
               let areaTemp = {
@@ -269,8 +269,8 @@ export default {
               }
               this.areaItems.push(areaTemp);
               this.childrenItems.push(childrenTemp);
-              console.log("this.areaItems", this.areaItems);
-              console.log("this.childrenItems", this.childrenItems);
+              // console.log("this.areaItems", this.areaItems);
+              // console.log("this.childrenItems", this.childrenItems);
             });
             this.showOverlay = false;
           })
@@ -299,12 +299,12 @@ export default {
         this.showOverlay = true;
         getTopChildrenHomeList(this.cityId)
           .then(res => {
-            console.log("getTopChildrenHomeList", res);
+            // console.log("getTopChildrenHomeList", res);
             this.topChildrenHomeList = res.data.topChildrenHomeList;
             this.showOverlay = false;
           })
           .catch(err => {
-            console.log("getTotalCount", err);
+            // console.log("getTotalCount", err);
             this.showOverlay = false;
           });
       }
@@ -313,6 +313,12 @@ export default {
   methods: {
     goDetail(childrenHome) {
       this.$store.commit("common/getVillageId", childrenHome.VillageId);
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
+
       this.$router.push({
         name: "childrenHomeDetail",
         query: {

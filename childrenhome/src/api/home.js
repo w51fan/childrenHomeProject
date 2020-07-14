@@ -477,3 +477,11 @@ export const getSchoolChildrenHomeList = function (cityId) {
   });
 }
 
+
+//提交活动记录
+export const addRecord = function (token, id,content) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/addRecord?token=${token}&id=${id}&content=${content}`,
+    method: "post"
+  });
+}

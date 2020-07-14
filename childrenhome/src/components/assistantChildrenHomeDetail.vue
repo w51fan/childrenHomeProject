@@ -10,7 +10,12 @@
       <div v-if="ChildrenHomeImg!==''" style="position: absolute;">
         <img :src="ChildrenHomeImg" alt />
       </div>
-      <van-uploader class="uploaderImg" :after-read="afterRead" :max-size="2 * 1024 * 1024" @oversize="onOversize">
+      <van-uploader
+        class="uploaderImg"
+        :after-read="afterRead"
+        :max-size="2 * 1024 * 1024"
+        @oversize="onOversize"
+      >
         <template slot="default">
           <div class="myChildrenHometips">点击更换形象照</div>
         </template>
@@ -258,24 +263,25 @@ export default {
         });
     },
     onClickLeft() {
-      // console.log(
-      //   "this.$route.query.currentPath",
-      //   this.$route.query.currentPath,
-      //   this.PreCurrentPath
-      // );
+      console.log(
+        "this.$route.query.currentPath",
+        this.$route.query.currentPath,
+        this.PreCurrentPath
+      );
       if (this.$route.query.currentPath) {
         this.$router.push({
-          name: this.$route.query.currentPath,
-          query: {
-            activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
-          }
+          name: this.$route.query.currentPath
+          // query: {
+          //   activeTab: this.$route.query.currentPath === "careIndex" ? 2 : 0
+          // }
         });
       } else {
         this.$router.push({
           name: this.PreCurrentPath,
-          query: {
-            activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
-          }
+          // name: "childrenHomePage"
+          // query: {
+          //   activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
+          // }
         });
       }
     },
@@ -287,10 +293,11 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       if (row.Status === 2) {
         this.$router.push({
           name: "unfinishedActivity",
@@ -311,10 +318,11 @@ export default {
       }
     },
     edit() {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       this.$router.push({
         name: "addChildren",
         query: {
@@ -347,10 +355,11 @@ export default {
       });
     },
     addChildren() {
-      this.$store.commit(
-        "common/getPreCurrentPath",
-        this.$route.query.currentPath
-      );
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
       this.$router.push({
         name: "addChildren",
         query: {
@@ -399,13 +408,13 @@ export default {
     callPhone() {
       window.location.href = `tel:${this.currentParentUserTel}`;
     },
-    onOversize(file){
+    onOversize(file) {
       // console.log('onOversize',file);
       this.$notify({
-          type: "warning",
-          message: "图片大小不能超过2M",
-          duration: 1500
-        });
+        type: "warning",
+        message: "图片大小不能超过2M",
+        duration: 1500
+      });
     }
   }
 };
@@ -478,11 +487,9 @@ export default {
         width: 20px;
         height: 20px;
         padding-right: 5px;
-        
       }
       .name {
         line-height: 20px;
-        
       }
     }
     .guardianName {

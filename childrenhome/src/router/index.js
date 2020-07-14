@@ -234,7 +234,7 @@ Router.prototype.push = function push(location) {
 }
 
 router.beforeEach((to, from, next) => {
-  console.log(to, from, next)
+  // console.log(to, from, next)
   //判断是否需要登录
   if (to.meta.requireAuth || to.fullPath === '/loginPage') {
     if (window.localStorage.getItem('Token')) {
