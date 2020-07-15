@@ -166,7 +166,7 @@
         <div class="item" @click="deleteConfirm">
           <div class="itemContent">删除信息-{{currentChildName}}</div>
         </div>
-        <div class="item" @click="callConfirm">
+        <div class="item" @click="callConfirm(currentParentUserTel)">
           <div class="itemContent">联系监护人手机-{{currentParentUser.Name}}</div>
         </div>
       </div>

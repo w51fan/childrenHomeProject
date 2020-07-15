@@ -33,7 +33,7 @@ export const getActivityList = function ({cityId, areaId, townId, type, activity
   }
   else if (data.activityType) {
     return axios.request({
-      url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&areaId=${data.areaId}&townId=${data.townId}&activityType=${data.activityType}`,
+      url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&activityType=${data.activityType}&pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
       method: "get"
     });
   }else if (data.pageNumber) {
@@ -41,7 +41,12 @@ export const getActivityList = function ({cityId, areaId, townId, type, activity
       url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&areaId=${data.areaId}&townId=${data.townId}&activityType=${data.activityType}&pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
       method: "get"
     });
-  }else{
+  } else if (data.areaId && data.townId) {
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&activityType=${data.activityType}&pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
+      method: "get"
+    });
+  } else {
     return axios.request({
       url: `https://api.quanjiaxue.net/activity/list?cityId=${data.cityId}&areaId=${data.areaId}&townId=${data.townId}`,
       method: "get"

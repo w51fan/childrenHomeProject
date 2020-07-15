@@ -6,7 +6,7 @@
         <div class="latestActivity">
           <div style="background-color: #fff;line-height: 48px;">请选择活动类型：</div>
           <van-dropdown-menu active-color="#ee0a24" style="width: 200px;">
-            <van-dropdown-item v-model="selectedActivity" :options="activities" />
+            <van-dropdown-item v-model="selectedActivity" :options="activities" @change="changeActivityType" />
           </van-dropdown-menu>
         </div>
         <div class="gap gapfive"></div>
@@ -140,11 +140,11 @@
           >
           </van-collapse-item>-->
           <van-cell
-            :value="town.text"
-            v-for="(town,index) in townItems"
+            :value="item.Name"
+            v-for="(item,index) in schoolChildrenHomeList"
             :key="index"
             style="text-align: left;"
-            @click="viewChildhomeDetail(town)"
+            @click="viewChildhomeDetail(item)"
           />
         </van-collapse>
       </van-tab>
@@ -199,7 +199,8 @@ export default {
       refreshing: false,
       pageNumber: 1,
       pageSize: 10,
-      total: ""
+      total: "",
+      schoolChildrenHomeList: ""
     };
   },
   mounted() {
@@ -207,15 +208,13 @@ export default {
     // console.log('this.$route.query.cityId',this.cityId)
     if (this.$route.query.selected) this.selected = this.$route.query.selected;
     this.showOverlay = true;
-    this.getActivityList(
-      this.cityId,
-      2021,
-      3713,
-      false,
-      this.pageNumber,
-      this.pageSize,
-      false
-    );
+    this.getActivityList({
+      cityId: this.cityId,
+      isInit: false,
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+      isPull: false
+    });
   },
   computed: {
     cityId() {
@@ -225,6 +224,7 @@ export default {
   watch: {
     selected(val) {
       console.log("val", val);
+      this.showOverlay = true;
       if (val === 1) {
         this.showTips = 1;
         this.activityList = [];
@@ -241,28 +241,29 @@ export default {
           this.townList = temp;
           this.selectedTown = this.townList[0].value;
           this.selectedVillage = "";
+          this.showOverlay = false;
         });
       } else if (val === 0) {
-        this.getActivityList(
-          this.cityId,
-          2021,
-          3713,
-          true,
-          this.pageNumber,
-          this.pageSize,
-          false
-        );
+        this.getActivityList({
+          cityId: this.cityId,
+          isInit: true,
+          pageNumber: this.pageNumber,
+          pageSize: this.pageSize,
+          isPull: false
+        });
       } else if (val === 3) {
         getSchoolChildrenHomeList(this.cityId).then(res => {
           console.log("getSchoolChildrenHomeList", res);
-          let townTemp = [];
-          res.data.schoolChildrenHomeList.forEach(ele => {
-            townTemp.push({
-              text: ele.Name,
-              TownId: ele.TownId
-            });
-          });
-          this.townItems = townTemp;
+          this.schoolChildrenHomeList = res.data.schoolChildrenHomeList;
+          // let townTemp = [];
+          // res.data.schoolChildrenHomeList.forEach(ele => {
+          //   townTemp.push({
+          //     text: ele.Name,
+          //     TownId: ele.TownId
+          //   });
+          // });
+          // this.townItems = townTemp;
+          this.showOverlay = false;
         });
       } else {
         getTownList(this.cityId).then(town => {
@@ -275,6 +276,7 @@ export default {
             });
           });
           this.townItems = townTemp;
+          this.showOverlay = false;
         });
       }
     }
@@ -301,6 +303,17 @@ export default {
         }
       });
     },
+    changeActivityType(event){
+      console.log('event',event)
+      this.selectedActivity = event
+      this.getActivityList({
+      cityId: this.cityId,
+      isInit: false,
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+      isPull: false,
+    });
+    },
     changeTown(event) {
       // console.log('event',event)
       getVillageList(event).then(res => {
@@ -320,32 +333,31 @@ export default {
       });
     },
     changeVillage(event) {
-      this.getActivityList(
-        this.cityId,
-        this.selectedTown,
-        this.selectedVillage
-      );
+      this.getActivityList({
+        cityId: this.cityId,
+        areaId: this.selectedTown,
+        townId: this.selectedVillage
+      });
     },
-    getActivityList(
-      cityId,
-      areaId,
-      townId,
-      isInit,
-      pageNumber,
-      pageSize,
-      isPull
-    ) {
+    //cityId,
+    // areaId,
+    // townId,
+    // isInit,
+    // pageNumber,
+    // pageSize,
+    // isPull
+    getActivityList(param) {
       getActivityList({
-        cityId: cityId,
-        areaId: areaId,
-        townId: townId,
-        // activityType: ""
-        pageNumber,
-        pageSize
+        cityId: param.cityId,
+        areaId: param.areaId,
+        townId: param.townId,
+        activityType: this.selectedActivity>0?this.selectedActivity:'',
+        pageNumber: param.pageNumber,
+        pageSize: param.pageSize
       })
         .then(res => {
           console.log("res", res);
-          if (isPull) {
+          if (param.isPull) {
             res.data.activityList.forEach(item => {
               this.activityList.push(item);
             });
@@ -356,9 +368,9 @@ export default {
           } else {
             this.activityList = res.data.activityList;
             this.total = res.data.total;
-            if (!isInit && this.activityList.length == 0) {
+            if (!param.isInit && this.activityList.length == 0) {
               this.showTips = 2;
-            } else if (!isInit && this.activityList.length > 0) {
+            } else if (!param.isInit && this.activityList.length > 0) {
               this.showTips = 3;
             }
             this.showOverlay = false;
@@ -414,15 +426,13 @@ export default {
       // console.log("die", this.loading);
       // console.log('1',this.activityList.length < this.total,this.activityList.length,this.total)
       if (this.activityList.length < this.total) {
-        this.getActivityList(
-          this.cityId,
-          2021,
-          3713,
-          false,
-          this.pageNumber + 1,
-          this.pageSize,
-          true
-        );
+        this.getActivityList({
+          cityId: this.cityId,
+          isInit: false,
+          pageNumber: this.pageNumber + 1,
+          pageSize: this.pageSize,
+          isPull: true
+        });
       } else {
         this.loading = false;
         this.finished = true;

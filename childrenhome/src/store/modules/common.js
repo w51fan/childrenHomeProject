@@ -1,6 +1,8 @@
 // initial state
 const state = {
   cityId: "",
+  areaId:'',
+  townId:'',
   CourseId: '',
   VillageId: '',
   Token: '',
@@ -19,6 +21,12 @@ const actions = {}
 const mutations = {
   getCityId(state, value) {
     state.cityId = value;
+  },
+  getAreaId(state, value) {
+    state.areaId = value;
+  },
+  getTownId(state, value) {
+    state.townId = value;
   },
   getCourseId(state, value) {
     state.CourseId = value;

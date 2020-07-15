@@ -39,6 +39,43 @@
               </ul>
             </div>
           </div>
+          <div
+            class="position"
+          >位置：{{childrenHome.ProvinceName.Name}} >{{childrenHome.CityeName.Name}} >{{childrenHome.AreaName.Name}} >{{childrenHome.TownName.Name}} >{{childrenHome.VillageName.Name}}</div>
+        </template>
+      </van-cell>
+    </div>
+    <div class="gap gaptwenty"></div>
+    <div style="padding: 20px;">
+      <div class="flex space-between">
+        <div style="text-align: left;font-size: 18px;font-weight: 600;">儿童之家成员</div>
+        <!-- <div style="color: #2c518a;" @click="addChildren">新建成员</div> -->
+      </div>
+    </div>
+    <div class="flex space-between" style="padding:20px 20px 10px;">
+      <div class="childrenHomeMemberHead" style="flex:1;text-align: left;">儿童</div>
+      <div class="childrenHomeMemberHead" style="flex:1;">监护人</div>
+      <div class="childrenHomeMemberHead" style="flex:1;text-align: right;">操作</div>
+    </div>
+    <div>
+      <van-cell
+        class="childrenHomeMember"
+        v-for="(child,index) in childrenList"
+        :key="index"
+        style="border-bottom: 1px solid #efefef;"
+      >
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template #title>
+          <div class="flex space-between">
+            <div class="childHead">
+              <img src="../assets/nohead.png" class="head" alt />
+              <div class="name">{{child.Name}}</div>
+            </div>
+            <div class="guardianName">{{child.ParentUser.Name}}</div>
+            <div class="operation">
+              <van-icon name="ellipsis" @click="showMore(child)" />
+            </div>
+          </div>
         </template>
       </van-cell>
     </div>
@@ -121,6 +158,19 @@
       <div class="gap gapfive"></div>
       <div class="cancel" style="padding:20px;" @click="cancel">取消</div>
     </van-popup>
+    <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
+      <div class="operationDialogList">
+        <!-- <div class="item">
+          <div class="itemContent" @click="edit">编辑信息-{{currentChildName}}</div>
+        </div>
+        <div class="item" @click="deleteConfirm">
+          <div class="itemContent">删除信息-{{currentChildName}}</div>
+        </div>-->
+        <div class="item" @click="callConfirm(currentParentUserTel)">
+          <div class="itemContent">联系监护人手机-{{currentParentUser.Name}}</div>
+        </div>
+      </div>
+    </van-dialog>
   </div>
 </template>
 
@@ -131,6 +181,7 @@ export default {
   data() {
     return {
       childrenHome: [],
+      childrenList: [],
       activityList: [],
       userList: [],
       imageList: [],
@@ -138,7 +189,9 @@ export default {
       showOverlay: false,
       activityTotal: "",
       showPicker: false,
-      currentParentUserTel: ""
+      currentParentUserTel: "",
+      showDialog: false,
+      currentParentUser: ""
     };
   },
   computed: {
@@ -150,10 +203,11 @@ export default {
     },
     Select() {
       return this.$store.state.common.Select;
-    },
+    }
   },
   mounted() {
-    if(this.$route.query.select) this.$store.commit("common/getSelect", this.$route.query.select);
+    if (this.$route.query.select)
+      this.$store.commit("common/getSelect", this.$route.query.select);
     this.showOverlay = true;
     getChildrenHomeDetail(this.VillageId)
       .then(res => {
@@ -161,7 +215,8 @@ export default {
         this.childrenHome = res.data.childrenHome;
         this.activityTotal = res.data.activityTotal;
         if (this.activityTotal > 0) this.activityList = res.data.activitylist;
-
+        if (res.data.childrenHome.ChildrenCount > 0)
+          this.childrenList = res.data.childrenList;
         this.userList = res.data.userList;
         this.imageList = res.data.imageList;
         this.starNum = this.childrenHome.Score / 10;
@@ -229,6 +284,14 @@ export default {
     },
     cancel() {
       this.showPicker = false;
+    },
+    showMore(child) {
+      console.log("child", child);
+      this.showDialog = true;
+      // this.currentChildId = child.Id;
+      // this.currentChildName = child.Name;
+      this.currentParentUser = child.ParentUser;
+      this.currentParentUserTel = child.ParentUser.Phone;
     }
   }
 };
@@ -263,6 +326,30 @@ export default {
     .childrenMastertableHead {
       font-size: 16px;
       font-weight: 600;
+    }
+  }
+  .childrenHomeMember {
+    .childHead {
+      display: flex;
+      margin-left: 1%;
+      flex: 1;
+      .head {
+        width: 20px;
+        height: 20px;
+        padding-right: 5px;
+      }
+      .name {
+        line-height: 20px;
+      }
+    }
+    .guardianName {
+      // margin-left: -7%;
+      flex: 1;
+    }
+    .operation {
+      padding: 0 10px;
+      flex: 1;
+      text-align: right;
     }
   }
   .childrenMaster {
@@ -316,6 +403,14 @@ export default {
   .finished {
     background: #e8e8e8;
     color: #7d7d7d;
+  }
+  .operationDialogList {
+    .item {
+      border-bottom: 1px solid #efefef;
+      .itemContent {
+        padding: 20px;
+      }
+    }
   }
 }
 </style>
