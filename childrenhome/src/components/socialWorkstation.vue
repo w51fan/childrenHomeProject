@@ -159,7 +159,7 @@ export default {
   },
   methods: {
     goSocialStationDetail(socialStation) {
-      this.$store.commit("common/getVillageId", socialStation.VillageId);
+      this.$store.commit("common/getVillageId", socialStation.Id);
       this.$router.push({
         name: "socialWorkstationDetail",
         query: {

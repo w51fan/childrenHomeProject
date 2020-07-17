@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { uploadImg, release, getActivityDetail } from "@/api/home";
+import { uploadImg, release, getActivityDetail,addRecord } from "@/api/home";
 export default {
   name: "unfinishedActivity",
   data() {
@@ -215,7 +215,7 @@ export default {
     },
     submitReleaseRecord() {
       this.showOverlay = true;
-      release(this.Token, this.activity.Id, this.recordContent)
+      addRecord(this.Token, this.activity.Id, this.recordContent)
         .then(res => {
           console.log("release", res);
 

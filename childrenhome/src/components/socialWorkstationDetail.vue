@@ -81,7 +81,7 @@
               <img src="../assets/nohead.png" class="head" alt />
               <div class="name">{{child.Name}}</div>
             </div>
-            <div class="guardianName">测试1</div>
+            <div class="guardianName">{{child.Sex}}</div>
             <div class="operation">
               <van-icon name="ellipsis" @click="showMore(child)" />
             </div>

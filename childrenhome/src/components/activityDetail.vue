@@ -57,15 +57,15 @@
             v-for="(img,index) in signInImageList"
             :key="index"
             class="imgItem"
-            @click="showPreview(index)"
+            @click="showSignPreview(index)"
           />
         </div>
         <van-image-preview
           class="imgPreview"
-          v-model="showImgPreview"
+          v-model="showSignImgPreview"
           :images="signImagesArray"
           @change="onImgPreviewChange"
-          :startPosition="startPosition"
+          :startPosition="startSignPosition"
         >
           <template v-slot:turn>{{ turn }}/{{signInImageList.length}}</template>
         </van-image-preview>
@@ -143,10 +143,12 @@ export default {
       activityImageList: [],
       signInImageList: [],
       showImgPreview: false,
+      showSignImgPreview: false,
       imagesArray: [],
       signImagesArray: [],
       turn: 0,
       startPosition: 0,
+      startSignPosition:0,
       ActivityType: "",
       starNum: 0,
       recordContent: "",
@@ -180,8 +182,8 @@ export default {
 
           this.starNum = res.data.activity.Score / 10;
           this.activityRecordList = res.data.activityRecordList;
-          this.activityImageList = res.data.activityImageList.slice(0, 6);
-          this.signInImageList = res.data.signInImageList.slice(0, 1);
+          this.activityImageList = res.data.activityImageList;
+          this.signInImageList = res.data.signInImageList;
           this.ActivityType =
             this.activity.ActivityType === 1
               ? "家庭教育"
@@ -209,6 +211,10 @@ export default {
       this.showImgPreview = true;
       this.startPosition = index;
     },
+    showSignPreview(index) {
+      this.showSignImgPreview = true;
+      this.startSignPosition = index;
+    },
     getDate(date) {
       let activityDate = new Date(date);
       let year = activityDate.getFullYear();
@@ -220,7 +226,7 @@ export default {
     onClickLeft() {
       // console.log('PreCurrentPath',this.PreCurrentPath)
       this.$router.push({
-        name: this.$route.query.currentPath,
+        name: this.$route.query.currentPath
       });
     },
     showSubmitConfirmfun() {
