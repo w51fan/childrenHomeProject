@@ -1,10 +1,32 @@
 import axios from 'axios';
 import qs from 'qs';
 
-//新闻咨询列表
-export const getList = function (cityId, type) {
+//获取轮播图
+export const getHomeImgList = function (cityId) {
   return axios.request({
-    url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${type}`,
+    url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${1}`,
+    method: "get"
+  });
+}
+//置顶
+export const getMenuList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${2}`,
+    method: "get"
+  });
+}
+//新闻列表
+export const getNewsList = function (cityId,pageNumber,pageSize) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${3}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    method: "get"
+  });
+}
+
+//领导小组
+export const getGoveList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/news/list?cityId=${cityId}&type=${4}`,
     method: "get"
   });
 }
@@ -180,9 +202,9 @@ export const getChildrenHomeDetail = function (villageId) {
 type: 1.家长说；2.志愿者说；3.美丽心灵
 activityType:1.线下活动；2线上活动
 */
-export const getArticleList = function (cityId, type) { 
+export const getArticleList = function (cityId, type,pageNumber,pageSize) { 
   return axios.request({
-    url: `https://api.quanjiaxue.net/article/list?cityId=${cityId}&type=${type}`,
+    url: `https://api.quanjiaxue.net/article/list?cityId=${cityId}&type=${type}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     method: "get"
   });
 }
@@ -490,3 +512,13 @@ export const addRecord = function (token, id,content) {
     method: "post"
   });
 }
+
+
+//提交活动评价
+export const addComment = function (token, id,content,answer) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/addComment?token=${token}&id=${id}&content=${content}&answer=${answer}`,
+    method: "post"
+  });
+}
+

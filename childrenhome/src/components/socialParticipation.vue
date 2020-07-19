@@ -6,7 +6,11 @@
         <div class="latestActivity">
           <div style="background-color: #fff;line-height: 48px;">请选择活动类型：</div>
           <van-dropdown-menu active-color="#ee0a24" style="width: 200px;">
-            <van-dropdown-item v-model="selectedActivity" :options="activities" @change="changeActivityType" />
+            <van-dropdown-item
+              v-model="selectedActivity"
+              :options="activities"
+              @change="changeActivityType"
+            />
           </van-dropdown-menu>
         </div>
         <div class="gap gapfive"></div>
@@ -68,30 +72,34 @@
         </div>
         <div v-else-if="showTips===2">没有数据</div>
         <div v-else>
-          <div v-for="(item,index) in activityList" :key="index">
-            <div class="flex space-between">
-              <div style="padding:20px;">
-                <van-icon name="underway" v-if="item.Status===1" />
-                <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-                {{item.Date}}
+          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+              <div v-for="(item,index) in activityList" :key="index">
+                <div class="flex space-between">
+                  <div style="padding:20px;">
+                    <van-icon name="underway" v-if="item.Status===1" />
+                    <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+                    {{item.Date}}
+                  </div>
+                  <div class="status will" v-if="item.Status===1">即将开始</div>
+                  <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+                  <div class="status finished" v-else>已结束</div>
+                </div>
+                <div class="abbreviation">{{item.Name}}...</div>
+                <div class="flex" @click="viewDetail(item)">
+                  <img
+                    :src="activityImg.Url"
+                    v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
+                    :key="turn"
+                    style="width: 50px;height: 100px;padding: 15px 20px;"
+                  />
+                  <div>...</div>
+                </div>
+                <!-- <van-icon name="checked" />
+                <div>{{item.Date}}</div>-->
               </div>
-              <div class="status will" v-if="item.Status===1">即将开始</div>
-              <div class="status ing" v-else-if="item.Status===2">进行中...</div>
-              <div class="status finished" v-else>已结束</div>
-            </div>
-            <div class="abbreviation">{{item.Name}}...</div>
-            <div class="flex" @click="viewDetail(item)">
-              <img
-                :src="activityImg.Url"
-                v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
-                :key="turn"
-                style="width: 50px;height: 100px;padding: 15px 20px;"
-              />
-              <div>...</div>
-            </div>
-            <!-- <van-icon name="checked" />
-            <div>{{item.Date}}</div>-->
-          </div>
+            </van-list>
+          </van-pull-refresh>
         </div>
       </van-tab>
       <van-tab title="儿童之家">
@@ -303,16 +311,16 @@ export default {
         }
       });
     },
-    changeActivityType(event){
-      console.log('event',event)
-      this.selectedActivity = event
+    changeActivityType(event) {
+      console.log("event", event);
+      this.selectedActivity = event;
       this.getActivityList({
-      cityId: this.cityId,
-      isInit: false,
-      pageNumber: this.pageNumber,
-      pageSize: this.pageSize,
-      isPull: false,
-    });
+        cityId: this.cityId,
+        isInit: false,
+        pageNumber: this.pageNumber,
+        pageSize: this.pageSize,
+        isPull: false
+      });
     },
     changeTown(event) {
       // console.log('event',event)
@@ -336,7 +344,10 @@ export default {
       this.getActivityList({
         cityId: this.cityId,
         areaId: this.selectedTown,
-        townId: this.selectedVillage
+        townId: this.selectedVillage,
+        activityType: this.selectedActivity > 0 ? this.selectedActivity : "",
+        pageNumber: 1,
+        pageSize: 10
       });
     },
     //cityId,
@@ -351,7 +362,7 @@ export default {
         cityId: param.cityId,
         areaId: param.areaId,
         townId: param.townId,
-        activityType: this.selectedActivity>0?this.selectedActivity:'',
+        activityType: this.selectedActivity > 0 ? this.selectedActivity : "",
         pageNumber: param.pageNumber,
         pageSize: param.pageSize
       })
@@ -363,7 +374,6 @@ export default {
             });
             this.loading = false;
             this.showOverlay = false;
-            // console.log('2',this.activityList.length < this.total,this.activityList.length,this.total)
             if (!(this.activityList.length < this.total)) this.finished = true;
           } else {
             this.activityList = res.data.activityList;
@@ -423,20 +433,22 @@ export default {
       });
     },
     onLoad() {
-      // console.log("die", this.loading);
-      // console.log('1',this.activityList.length < this.total,this.activityList.length,this.total)
+      if (this.refreshing) {
+        this.activityList = [];
+        this.refreshing = false;
+      }
       if (this.activityList.length < this.total) {
         this.getActivityList({
           cityId: this.cityId,
           isInit: false,
-          pageNumber: this.pageNumber + 1,
+          pageNumber: this.pageNumber++ + 1,
           pageSize: this.pageSize,
           isPull: true
         });
       } else {
-        this.loading = false;
         this.finished = true;
       }
+      this.loading = false;
     },
     onRefresh() {
       // 清空列表数据

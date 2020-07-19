@@ -1,6 +1,6 @@
 <template>
   <div class="offlineActivityPage">
-    <div style="padding:20px 40px">
+    <div style="padding:20px 40px" v-if="UserTpye!==11">
       <van-button type="warning" color="#ffac22" class="addBtn" @click="go">新建活动</van-button>
     </div>
     <div class="gap gapfive"></div>
@@ -79,7 +79,10 @@ export default {
   computed: {
     Token() {
       return this.$store.state.common.Token;
-    }
+    },
+    UserTpye(){
+      return this.$store.state.common.UserTpye;
+    },
   },
   watch:{
     activeTab(val){

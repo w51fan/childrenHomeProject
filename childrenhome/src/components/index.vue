@@ -22,23 +22,27 @@
     <div class="gap"></div>
     <div class="flex space-between newsTitle">
       <div style="padding: 10px 20px;">新闻资讯</div>
-      <div style="padding: 10px 20px;color: #989898" @click="changeCity"  v-if="!isAssistant">切换城市</div>
+      <div style="padding: 10px 20px;color: #989898" @click="changeCity" v-if="!isAssistant">切换城市</div>
     </div>
     <div class="newsList">
-      <div v-for="(news,index) in newsList" :key="index">
-        <div class="flex" style="padding:10px;" @click="viewDeatil(news)">
-          <img
-            :src="news.NewsThumbnail"
-            style="width:100px;min-width:100px;max-width:100px;height:60px;"
-          />
-          <div style="text-align: left;padding: 0 10px;position: relative;">
-            <div>{{news.Title}}</div>
-            <div
-              style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;"
-            >{{news.CreateTime}}</div>
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <div v-for="(news,index) in newsList" :key="index">
+            <div class="flex" style="padding:10px;" @click="viewDeatil(news)">
+              <img
+                :src="news.NewsThumbnail"
+                style="width:100px;min-width:100px;max-width:100px;height:60px;"
+              />
+              <div style="text-align: left;padding: 0 10px;position: relative;">
+                <div>{{news.Title}}</div>
+                <div
+                  style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;"
+                >{{news.CreateTime}}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </van-list>
+      </van-pull-refresh>
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
@@ -51,7 +55,12 @@
 </template>
 
 <script>
-import { getList } from "@/api/home";
+import {
+  getHomeImgList,
+  getMenuList,
+  getNewsList,
+  getGoveList
+} from "@/api/home";
 import bottomNav from "./bottomNav";
 import assistantBottomNav from "./assistantBottomNav";
 export default {
@@ -67,7 +76,13 @@ export default {
       tabList: [],
       newsList: [],
       isAssistant: false,
-      showOverlay: false
+      showOverlay: false,
+      loading: false,
+      finished: false,
+      refreshing: false,
+      pageNumber: 1,
+      pageSize: 10,
+      total: ""
     };
   },
   watch: {
@@ -91,10 +106,10 @@ export default {
     }
     this.showOverlay = true;
     this.isAssistant = this.$route.query.isAssistant;
-    getList(this.cityId, 1)
+    getHomeImgList(this.cityId)
       .then(res => {
         this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
-        getList(this.cityId, 2)
+        getMenuList(this.cityId)
           .then(result => {
             console.log(result);
             this.tabList = result.data.newsList.reverse();
@@ -103,10 +118,11 @@ export default {
             console.log("err", err);
             this.showOverlay = false;
           });
-        getList(this.cityId, 3)
+        getNewsList(this.cityId, this.pageNumber, this.pageSize)
           .then(news => {
             console.log(news);
             this.newsList = news.data.newsList;
+            this.total = news.data.total;
             this.showOverlay = false;
           })
           .catch(err => {
@@ -141,6 +157,51 @@ export default {
           needComeBack: true
         }
       });
+    },
+    getNewsList(param) {
+      const {cityId, pageNumber, pageSize} =param
+      getNewsList(cityId,pageNumber,pageSize)
+        .then(res => {
+          // console.log(news);
+          res.data.newsList.forEach(item => {
+              this.newsList.push(item);
+            });
+            this.loading = false;
+            this.showOverlay = false;
+            if (!(this.newsList.length < this.total)) this.finished = true;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    },
+    onLoad() {
+      console.log('123456')
+      if (this.refreshing) {
+        this.newsList = [];
+        this.refreshing = false;
+      }
+      console.log('this.newsList.length',this.newsList.length)
+      if (this.newsList.length < this.total) {
+        this.getNewsList({
+          cityId: this.cityId,
+          pageNumber: this.pageNumber++ + 1,
+          pageSize: this.pageSize,
+        });
+      } else {
+        // this.finished = true;
+      }
+      this.loading = false;
+    },
+    onRefresh() {
+      console.log('123')
+      // 清空列表数据
+      this.finished = false;
+
+      // 重新加载数据
+      // 将 loading 设置为 true，表示处于加载状态
+      this.loading = true;
+      this.onLoad();
     }
   }
 };

@@ -50,7 +50,7 @@ export default {
           {
             navName: this.UserTpye === 4 ? "儿童之家" : "服务站",
             icon: "wap-home",
-            path: "childrenHomePage"
+            path: this.UserTpye === 4 ? "childrenHomePage" : "socialWorkstation",
           },
           {
             navName: "新闻动态",

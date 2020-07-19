@@ -16,7 +16,7 @@
         size="large"
         input-align="right"
       />
-      <van-cell title="身份" value="村级管理员" />
+      <van-cell title="身份" :value="User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':User.Type===12?'社区工作服务管理员':'村级讲师'" />
       <van-cell title="头像">
         <template #default>
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->
@@ -111,6 +111,7 @@ export default {
         this.User.Name = this.userName;
         this.User.ProfilePhoto = this.userImg;
         let olduserData = this.User;
+        console.log('olduserData',olduserData)
         olduserData.Name = this.userName;
         olduserData.ProfilePhoto = this.userImg;
         this.$store.commit("common/getUser", olduserData);
@@ -122,7 +123,7 @@ export default {
         setTimeout(() => {
           this.showOverlay = false;
           this.$router.push({
-            name: "childrenHomePage"
+            name: this.$route.query.currentPath
           });
         }, 1000);
       });

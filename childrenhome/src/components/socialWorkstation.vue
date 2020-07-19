@@ -17,7 +17,7 @@
           </div>
           <div>
             <!-- <div class="name">{{User.Name}}</div> -->
-            <div class="name">测试</div>
+            <div class="name">{{User.Name}}</div>
             <div class="status will" style="width: 120px;margin: 0 16px;">社区工作服务管理员</div>
           </div>
         </div>
