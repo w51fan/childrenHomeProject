@@ -11,10 +11,30 @@ const state = {
   ChildrenHomeId: '',
   SocialStationId: '',
   PreCurrentPath: '',
-  Select:''
+  Select:'',
+  activityImageList:[],
+  signImgFileList:[],
+  activityId:'',
+  urls:[]
 }
 
-const getters = {}
+const getters = {
+  cityId: (state) => state.currentTab,
+  areaId: (state) => state.stuViewLists,
+  townId: (state) => state.mediaDevice,
+  CourseId: (state) => state.CourseId,
+  VillageId: (state) => state.VillageId,
+  Token: (state) => state.Token,
+  UserTpye: (state) => state.UserTpye,
+  User: (state) => state.User,
+  ChildrenHomeId: (state) => state.ChildrenHomeId,
+  SocialStationId: (state) => state.SocialStationId,
+  PreCurrentPath: (state) => state.PreCurrentPath,
+  Select: (state) => state.Select,
+  activityImageList: (state) => state.  activityImageList,
+  signImgFileList: (state) => state.signImgFileList,
+}
+
 
 const actions = {}
 
@@ -60,6 +80,19 @@ const mutations = {
   getSelect(state, value) {
     state.Select = value;
   },
+  getActivityImageList(state, value) {
+    state.activityImageList = value;
+  },
+  getSignImgFileList(state, value) {
+    state.signImgFileList = value;
+  },
+  getActivityId(state, value) {
+    state.activityId = value;
+  }, 
+  getUrls(state, value) {
+    state.urls = value;
+  },
+  
 }
 
 export default {

@@ -15,7 +15,7 @@
                     <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
                     <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
                   </div>
-                  <div class="status ing">进行中...</div>
+                  <div class="status ing">进行中</div>
                 </div>
                 <div
                   class="content"

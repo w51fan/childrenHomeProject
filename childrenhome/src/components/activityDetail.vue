@@ -7,7 +7,7 @@
         <li v-for="(n,index) in 5" :key="index" :class="[index+1>starNum?'grayStar':'star']">★</li>
       </ul>
       <div class="status will" v-if="activity.Status===1">即将开始</div>
-      <div class="status ing" v-else-if="activity.Status===2">进行中...</div>
+      <div class="status ing" v-else-if="activity.Status===2">进行中</div>
       <div class="status finished" v-else>已结束</div>
     </div>
     <div class="activityType flex">
@@ -287,8 +287,8 @@ export default {
 
           this.starNum = res.data.activity.Score / 10;
           this.activityRecordList = res.data.activityRecordList;
-          this.activityImageList = res.data.activityImageList;
-          this.signInImageList = res.data.signInImageList;
+          this.activityImageList = res.data.activityImageList.slice(0,6);
+          this.signInImageList = res.data.signInImageList.slice(0,1);
           this.activityCommentList = res.data.activityCommentList;
           this.ActivityType =
             this.activity.ActivityType === 1

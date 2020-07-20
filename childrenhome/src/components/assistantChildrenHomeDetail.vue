@@ -137,7 +137,7 @@
               {{getDate(item.Date)}}
             </div>
             <div class="status will" v-if="item.Status===1">即将开始</div>
-            <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+            <div class="status ing" v-else-if="item.Status===2">进行中</div>
             <div class="status finished" v-else>已结束</div>
           </div>
           <div class="abbreviation">{{item.Name}}</div>
@@ -148,7 +148,7 @@
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
             />
-            <div>...</div>
+            <div v-if="item.ActivityImage.length>0">...</div>
           </div>
         </div>
       </div>

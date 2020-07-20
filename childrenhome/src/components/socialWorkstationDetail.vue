@@ -122,32 +122,32 @@
         </div>
       </div>
     </div>
-    <div>
-      <div class="flex space-between" style="padding: 20px;">
+    <div style="padding: 20px;">
+      <div class="flex space-between">
         <div style="font-size: 18px;font-weight: 600;">社会服务工作站活动</div>
         <div style="color:gray;">{{activityTotal}}场</div>
       </div>
       <div v-if="activityTotal>0">
         <div v-for="(item,index) in activityList" :key="index">
           <div class="flex space-between">
-            <div style="padding:20px;">
+            <div style="padding:20px 0;">
               <van-icon name="underway" v-if="item.Status===1" />
               <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
               {{getDate(item.Date)}}
             </div>
             <div class="status will" v-if="item.Status===1">即将开始</div>
-            <div class="status ing" v-else-if="item.Status===2">进行中...</div>
+            <div class="status ing" v-else-if="item.Status===2">进行中</div>
             <div class="status finished" v-else>已结束</div>
           </div>
-          <div class="abbreviation">{{item.Name}}</div>
-          <div class="flex" @click="viewDetail(item)">
-            <!-- <img
+          <div class="abbreviation" @click="viewDetail(item)">{{item.Name}}</div>
+          <div class="flex" @click="viewDetail(item)" v-if="item.ActivityImage">
+            <img
               :src="activityImg.Url"
               v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
               :key="turn"
               style="width: 80px;height: 100px;padding: 15px 20px;"
-            />-->
-            <div>...</div>
+            />
+            <div v-if="item.ActivityImage.length>0">...</div>
           </div>
         </div>
       </div>
@@ -216,7 +216,8 @@ export default {
       showDeleteConfirm: false,
       showPicker: false,
       currentChildId: "",
-      currentParentUserTel: ""
+      currentParentUserTel: "",
+      currentChildName: ""
     };
   },
   computed: {
@@ -266,7 +267,7 @@ export default {
     },
     onClickLeft() {
       this.$router.push({
-        name: this.$route.query.currentPath
+        name: "socialWorkstation"
       });
     },
     getDate(date) {
@@ -277,6 +278,7 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
+      console.log(row);
       if (this.$route.query.currentPath)
         this.$store.commit(
           "common/getPreCurrentPath",
@@ -286,7 +288,7 @@ export default {
         this.$router.push({
           name: "unfinishedActivity",
           query: {
-            Id: row.Id,
+            activityId: row.Id,
             currentPath: "socialWorkstationDetail"
           }
         });
@@ -294,7 +296,7 @@ export default {
         this.$router.push({
           name: "activityDetail",
           query: {
-            Id: row.Id,
+            activityId: row.Id,
             currentPath: "socialWorkstationDetail"
           }
         });
@@ -464,6 +466,7 @@ export default {
     .childHead {
       display: flex;
       margin-left: 1%;
+      flex: 1;
       .head {
         width: 20px;
         height: 20px;
@@ -474,10 +477,12 @@ export default {
       }
     }
     .guardianName {
-      margin-left: -7%;
+      // margin-left: -7%;
+      flex: 1;
     }
     .operation {
       padding: 0 10px;
+      flex: 1;
     }
   }
   .abbreviation {

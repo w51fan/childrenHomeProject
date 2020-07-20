@@ -8,7 +8,7 @@
         <li v-for="(n,index) in 5" :key="index" :class="[index+1>starNum?'grayStar':'star']">★</li>
       </ul>
       <div class="status will" v-if="activity.Status===1">即将开始</div>
-      <div class="status ing" v-else-if="activity.Status===2">进行中...</div>
+      <div class="status ing" v-else-if="activity.Status===2">进行中</div>
       <div class="status finished" v-else>已结束</div>
     </div>
     <div class="activityType flex">
@@ -38,7 +38,14 @@
         <div style="color:#9c9a9a">点击“+”上传</div>
       </div>-->
       <div style="text-align: left;padding: 0 20px;">
-        <van-uploader :after-read="afterRead" v-model="imgFileList" :max-count="6" :max-size="2 * 1024 * 1024" @oversize="onOversize"/>
+        <van-uploader
+          :after-read="afterRead"
+          :before-delete="beforeDelete"
+          v-model="imgFileList"
+          :max-count="6"
+          :max-size="2 * 1024 * 1024"
+          @oversize="onOversize"
+        />
         <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
         </van-uploader>-->
@@ -46,7 +53,14 @@
     </div>
     <div class="activityImgTitle">签到图片（{{signImgFileList.length}}/1）</div>
     <div style="text-align: left;padding: 0 20px;">
-      <van-uploader :after-read="afterSignRead" v-model="signImgFileList" :max-count="1" :max-size="2 * 1024 * 1024" @oversize="onOversize"/>
+      <van-uploader
+        :after-read="afterSignRead"
+        :before-delete="beforeSignDelete"
+        v-model="signImgFileList"
+        :max-count="1"
+        :max-size="2 * 1024 * 1024"
+        @oversize="onOversize"
+      />
       <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
       </van-uploader>-->
@@ -116,7 +130,7 @@
 </template>
 
 <script>
-import { uploadImg, release, getActivityDetail,addRecord } from "@/api/home";
+import { uploadImg, release, getActivityDetail, addRecord } from "@/api/home";
 export default {
   name: "unfinishedActivity",
   data() {
@@ -126,8 +140,8 @@ export default {
       //   // 如果图片 URL 中不包含类型信息，可以添加 isImage 标记来声明
       //   { url: 'https://cloud-image', isImage: true },
       imgFileList: [],
-      activityImageList: [],
-      signImgFileList: [],
+      // activityImageList: [],
+      // signImgFileList: [],
       activityRecordList: [],
       starNum: 0,
       showOverlay: false,
@@ -135,7 +149,7 @@ export default {
       recordContent: "",
       ProfilePhoto: require("../assets/nohead.png"),
       activity: "",
-      urls: "",
+      // urls: [],
       signInImage: "",
       activityTypeIDArray: {
         1: "家庭教育",
@@ -149,7 +163,31 @@ export default {
   computed: {
     Token() {
       return this.$store.state.common.Token;
-    }
+    },
+    activityImageList: {
+      get() {
+        return this.$store.state.common.activityImageList;
+      },
+      set(val) {
+        this.$store.commit("common/getActivityImageList", val);
+      }
+    },
+    signImgFileList: {
+      get() {
+        return this.$store.state.common.signImgFileList;
+      },
+      set(val) {
+        this.$store.commit("common/getSignImgFileList", val);
+      }
+    },
+    urls:{
+       get() {
+        return this.$store.state.common.urls;
+      },
+      set(val) {
+        this.$store.commit("common/getUrls", val);
+      }
+    },
   },
   mounted() {
     this.init();
@@ -162,6 +200,7 @@ export default {
         this.activity = res.data.activity;
         this.activityRecordList = res.data.activityRecordList;
         this.showOverlay = false;
+        this.imgFileList = this.activityImageList;
       });
     },
     onClickLeft() {
@@ -174,9 +213,10 @@ export default {
       let formData = new window.FormData();
       formData.append("file", file.file);
       uploadImg(formData).then(res => {
-        this.urls =
-          this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
-        console.log('this.urls',this.urls)
+        // this.urls =
+        //   this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
+        this.urls.push(res.data.url)
+        this.activityImageList = this.imgFileList
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -237,10 +277,10 @@ export default {
         });
     },
     submitRelease() {
-      if ((this.urls === "")) {
-        this.$toast("活动图片未上传，请先上传活动图片。");
-        return;
-      }
+      // if (this.urls === "") {
+      //   this.$toast("活动图片未上传，请先上传活动图片。");
+      //   return;
+      // }
       if (this.imgFileList.length < 6) {
         this.$toast("活动图片数量不足，请继续上传。");
         return;
@@ -249,14 +289,19 @@ export default {
         this.$toast("签到图片未上传，请先上传签到图片。");
         return;
       }
+      let urls = '';
+      this.urls.forEach(element => {
+        urls =
+          urls === "" ? element : urls + "," + element;
+      });
       this.showOverlay = true;
-      release(
-        this.Token,
-        this.activity.Id,
-        this.recordContent,
-        this.urls,
-        this.signInImage
-      )
+        release(
+          this.Token,
+          this.activity.Id,
+          this.recordContent,
+          urls,
+          this.signInImage
+        )
         .then(res => {
           console.log("release", res);
 
@@ -269,8 +314,10 @@ export default {
             this.showOverlay = false;
           } else {
             this.recordContent = "";
+            this.$store.commit("common/getActivityImageList", []);
+            this.$store.commit("common/getSignImgFileList", []);
             this.$router.push({
-              name: "offlineActivity"
+              name: this.$route.query.currentPath
             });
           }
         })
@@ -279,13 +326,24 @@ export default {
           this.showOverlay = false;
         });
     },
-    onOversize(file){
+    onOversize(file) {
       // console.log('onOversize',file);
       this.$notify({
-          type: "warning",
-          message: "图片大小不能超过2M",
-          duration: 1500
-        });
+        type: "warning",
+        message: "图片大小不能超过2M",
+        duration: 1500
+      });
+    },
+    beforeDelete(file,event) {
+      // console.log('file',file,event)
+      // console.log(this.urls)
+      this.imgFileList.splice(event.index, 1);
+      this.urls.splice(event.index, 1);
+    },
+    beforeSignDelete(file,event) {
+      // console.log('file',file,this.signInImage)
+      this.signImgFileList = []
+      this.signInImage =''
     }
   }
 };
@@ -400,11 +458,10 @@ export default {
       border: 1px solid #efefef;
     }
   }
-  .bgColor{
+  .bgColor {
     background: rgba(128, 128, 128, 0.1);
   }
   .noRecords {
-    
     height: 80px;
     .text {
       padding-top: 30px;
