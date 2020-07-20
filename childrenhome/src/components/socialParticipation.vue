@@ -15,7 +15,7 @@
         </div>
         <div class="gap gapfive"></div>
         <div v-if="activityList.length>0">
-          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+          <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
               <div v-for="(item,index) in activityList" :key="index">
                 <div class="flex space-between">
@@ -36,13 +36,13 @@
                     :key="turn"
                     style="width: 50px;height: 100px;padding: 15px 20px;"
                   />
-                  <div>...</div>
+                  <div v-if="item.ActivityImage.length>0">...</div>
                 </div>
                 <!-- <van-icon name="checked" />
                 <div>{{item.Date}}</div>-->
               </div>
             </van-list>
-          </van-pull-refresh>
+          <!-- </van-pull-refresh> -->
         </div>
         <div v-else style="color: #b9b9b9;padding-top: 30px;line-height: 30px;">没有最新活动数据</div>
       </van-tab>
@@ -72,7 +72,7 @@
         </div>
         <div v-else-if="showTips===2">没有数据</div>
         <div v-else>
-          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+          <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
               <div v-for="(item,index) in activityList" :key="index">
                 <div class="flex space-between">
@@ -93,13 +93,13 @@
                     :key="turn"
                     style="width: 50px;height: 100px;padding: 15px 20px;"
                   />
-                  <div>...</div>
+                  <div v-if="item.ActivityImage.length>0">...</div>
                 </div>
                 <!-- <van-icon name="checked" />
                 <div>{{item.Date}}</div>-->
               </div>
             </van-list>
-          </van-pull-refresh>
+          <!-- </van-pull-refresh> -->
         </div>
       </van-tab>
       <van-tab title="儿童之家">

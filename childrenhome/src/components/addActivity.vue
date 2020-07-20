@@ -20,14 +20,26 @@
         placeholder="请选择"
         @click="showPick(2)"
       />
-      <van-field
-        readonly
-        clickable
-        label="活动儿童之家"
-        :value="activityHome"
-        placeholder="请选择"
-        @click="showPick(3)"
-      />
+      <div v-if="UserTpye===4">
+        <van-field
+          readonly
+          clickable
+          label="活动儿童之家"
+          :value="activityHome"
+          placeholder="请选择"
+          @click="showPick(3)"
+        />
+      </div>
+      <div v-else-if="UserTpye===12">
+        <van-field
+          readonly
+          clickable
+          label="活动工作站"
+          :value="activityHome"
+          placeholder="请选择"
+          @click="showPick(3)"
+        />
+      </div>
     </van-cell-group>
     <div class="gap gapfive"></div>
     <div style="padding:20px;">
@@ -70,7 +82,11 @@
 </template>
 
 <script>
-import { getChildrenHomeList, addActivity } from "@/api/home";
+import {
+  getChildrenHomeList,
+  addActivity,
+  getSocialStationList
+} from "@/api/home";
 export default {
   name: "addActivity",
   data() {
@@ -98,35 +114,55 @@ export default {
         "微课"
       ],
       activityTypeIDArray: {
-        "家庭教育":1,
-        "儿童团辅":2,
-        "家庭亲子":3,
-        "安全护卫":4,
-        "微课":5
+        家庭教育: 1,
+        儿童团辅: 2,
+        家庭亲子: 3,
+        安全护卫: 4,
+        微课: 5
       }
     };
   },
   computed: {
     Token() {
       return this.$store.state.common.Token;
+    },
+    UserTpye() {
+      return this.$store.state.common.UserTpye;
     }
   },
   mounted() {
     this.showOverlay = true;
-    getChildrenHomeList(this.Token)
-      .then(res => {
-        console.log("getChildrenHomeList", res);
-        // this.childrenHomeListArray = res.data.childrenHomeList;
-        res.data.childrenHomeList.forEach(element => {
-          this.childrenHomeListArray.push(element.Name);
-          this.childrenHomeIDListArray[element.Name] = element.Id;
+    if (this.UserTpye === 4) {
+      getChildrenHomeList(this.Token)
+        .then(res => {
+          console.log("getChildrenHomeList", res);
+          // this.childrenHomeListArray = res.data.childrenHomeList;
+          res.data.childrenHomeList.forEach(element => {
+            this.childrenHomeListArray.push(element.Name);
+            this.childrenHomeIDListArray[element.Name] = element.Id;
+          });
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("getChildrenHomeList", err);
+          this.showOverlay = false;
         });
-        this.showOverlay = false;
-      })
-      .catch(err => {
-        console.log("getChildrenHomeList", err);
-        this.showOverlay = false;
-      });
+    } else {
+      getSocialStationList(this.Token)
+        .then(res => {
+          console.log("getChildrenHomeList", res);
+          // this.childrenHomeListArray = res.data.childrenHomeList;
+          res.data.socialStationList.forEach(element => {
+            this.childrenHomeListArray.push(element.Name);
+            this.childrenHomeIDListArray[element.Name] = element.Id;
+          });
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("getChildrenHomeList", err);
+          this.showOverlay = false;
+        });
+    }
   },
   methods: {
     onClickLeft() {
@@ -154,22 +190,23 @@ export default {
       let activityDate = new Date(date);
       let year = activityDate.getFullYear();
       let month = activityDate.getMonth() + 1;
-      if(month<10)month=`0${month}`
+      if (month < 10) month = `0${month}`;
       let day = activityDate.getDate();
-      if(day<10)day=`0${day}`
+      if (day < 10) day = `0${day}`;
       return `${year}-${month}-${day}`;
     },
     add() {
       this.showOverlay = true;
       // console.log('this.activityTypeIDArray[this.activityType]',this.activityTypeIDArray[this.activityType])
-      addActivity(
-        this.Token,
-        this.activityName,
-        this.activityTypeIDArray[this.activityType],
-        this.childrenHomeIDListArray[this.activityHome],
-        this.activityDate,
-        this.$route.query.activityType
-      )
+      addActivity({
+        token: this.Token,
+        name: this.activityName,
+        type: this.activityTypeIDArray[this.activityType],
+        childrenHomeId: this.childrenHomeIDListArray[this.activityHome],
+        date: this.activityDate,
+        activityType: this.$route.query.activityType,
+        socialStationId: this.childrenHomeIDListArray[this.activityHome]
+      })
         .then(res => {
           console.log("addActivity", res);
           this.$notify({

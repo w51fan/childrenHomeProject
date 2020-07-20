@@ -283,11 +283,21 @@ export const uploadImg = function (file) {
 }
 
 //添加活动
-export const addActivity = function (token, name, type, childrenHomeId, date, activityType) {
-  return axios.request({
-    url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}&activityType=${activityType}`,
-    method: "get"
-  });
+export const addActivity = function (param) {
+  const { token, name, type, childrenHomeId, date, activityType, socialStationId } = param
+  if (socialStationId){
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&socialStationId=${socialStationId}&date=${date}&activityType=${activityType}`,
+      method: "get"
+    });
+  }else{
+    return axios.request({
+      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}&activityType=${activityType}`,
+      method: "get"
+    });
+  }
+
+  
 }
 
 //添加儿童
@@ -519,6 +529,14 @@ export const addComment = function (token, id,content,answer) {
   return axios.request({
     url: `https://api.quanjiaxue.net/activity/addComment?token=${token}&id=${id}&content=${content}&answer=${answer}`,
     method: "post"
+  });
+}
+
+//学校儿童之家列表
+export const getSocialStationActivityListByUserId = function (token, status) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/activity/getSocialStationActivityListByUserId?token=${token}&status=${status}`,
+    method: "get"
   });
 }
 

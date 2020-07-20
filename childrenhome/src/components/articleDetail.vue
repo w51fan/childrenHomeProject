@@ -4,7 +4,7 @@
     <div>
       <div class="title">{{articleTitle}}</div>
       <div class="time">{{getDate(CreateTime)}}</div>
-      <div style="padding:20px;" v-html="articleContent"></div>
+      <div style="padding:20px;text-align: left;" v-html="articleContent"></div>
     </div>
   </div>
 </template>

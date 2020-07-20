@@ -1,45 +1,51 @@
 <template>
   <div class="offlineActivityPage">
-    <div style="padding:20px 40px" v-if="UserTpye!==11">
+    <div style="padding:20px 40px" v-if="showAddBtn">
       <van-button type="warning" color="#ffac22" class="addBtn" @click="go">新建活动</van-button>
     </div>
-    <div class="gap gapfive"></div>
+    <div class="gap gapfive" v-if="showAddBtn"></div>
     <div class="content">
       <van-tabs v-model="activeTab" class="offlineActivityTabs">
         <van-tab title="未完成活动">
-          <div v-for="(activity,index) in activityList" :key="index">
-            <div class="unfinishedItem" @click="goUnfinishedActivity(activity)">
-              <div class="title flex space-between">
-                <div class="flex">
-                  <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
-                  <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+          <div v-if="activityList.length>0">
+            <div v-for="(activity,index) in activityList" :key="index">
+              <div class="unfinishedItem" @click="goUnfinishedActivity(activity)">
+                <div class="title flex space-between">
+                  <div class="flex">
+                    <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                    <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+                  </div>
+                  <div class="status ing">进行中...</div>
                 </div>
-                <div class="status ing">进行中...</div>
+                <div
+                  class="content"
+                >{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 即将举办 {{activityTypeIDArray[activity.Type]}}</div>
               </div>
-              <div
-                class="content"
-              >{{activity.ChildrenHome.Name}} 即将举办 {{activityTypeIDArray[activity.Type]}}</div>
+              <div class="gap gapone"></div>
             </div>
-            <div class="gap gapone"></div>
           </div>
+          <div v-else style="padding: 20px;">暂未完成活动</div>
         </van-tab>
         <van-tab title="已完成活动">
           <div class="finishedItem">
-            <div v-for="(activity,index) in activityList" :key="index">
-            <div class="unfinishedItem" @click="goActivityDetail(activity)">
-              <div class="title flex space-between">
-                <div class="flex">
-                  <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
-                  <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+            <div v-if="activityList.length>0">
+              <div v-for="(activity,index) in activityList" :key="index">
+                <div class="unfinishedItem" @click="goActivityDetail(activity)">
+                  <div class="title flex space-between">
+                    <div class="flex">
+                      <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                      <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+                    </div>
+                    <div class="status finished">已结束</div>
+                  </div>
+                  <div
+                    class="content"
+                  >{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 举办了 {{activityTypeIDArray[activity.Type]}}</div>
                 </div>
-                <div class="status finished">已结束</div>
+                <div class="gap gapone"></div>
               </div>
-              <div
-                class="content"
-              >{{activity.ChildrenHome.Name}} 举办了 {{activityTypeIDArray[activity.Type]}}</div>
             </div>
-            <div class="gap gapone"></div>
-            </div>
+            <div v-else style="padding: 20px;">暂已完成活动</div>
           </div>
         </van-tab>
       </van-tabs>
@@ -55,7 +61,11 @@
 
 <script>
 import assistantBottomNav from "./assistantBottomNav";
-import { getActivityList, getActivityListByUserId } from "@/api/home";
+import {
+  getActivityList,
+  getActivityListByUserId,
+  getSocialStationActivityListByUserId
+} from "@/api/home";
 export default {
   name: "offlineActivity",
   components: {
@@ -63,6 +73,7 @@ export default {
   },
   data() {
     return {
+      showAddBtn: true,
       activeTab: 0,
       selectedNav: "offlineActivity",
       showOverlay: false,
@@ -80,38 +91,52 @@ export default {
     Token() {
       return this.$store.state.common.Token;
     },
-    UserTpye(){
+    UserTpye() {
       return this.$store.state.common.UserTpye;
-    },
+    }
   },
-  watch:{
-    activeTab(val){
-      console.log(val)
-      if(val ===1){
-        this.init(3)
-      }else{
-        this.init(1)
+  watch: {
+    activeTab(val) {
+      console.log(val);
+      if (val === 1) {
+        this.init(3);
+      } else {
+        this.init(1);
       }
     }
   },
   mounted() {
     //1未完成活动，3已完成活动
     //{cityId, areaId, townId, type, activityType}
+    if (this.UserTpye === 11) this.showAddBtn = false;
     this.showOverlay = true;
-    this.init(1)
+    this.init(1);
   },
   methods: {
-    init(type){
-      getActivityListByUserId(this.Token, type)
-      .then(res => {
-        console.log("getActivityListByUserId", res);
-        this.activityList = res.data.activityList;
-        this.showOverlay = false;
-      })
-      .catch(err => {
-        console.log("err", err);
-        this.showOverlay = false;
-      });
+    init(type) {
+      if (this.UserTpye === 4) {
+        getActivityListByUserId(this.Token, type)
+          .then(res => {
+            console.log("getActivityListByUserId", res);
+            this.activityList = res.data.activityList;
+            this.showOverlay = false;
+          })
+          .catch(err => {
+            console.log("err", err);
+            this.showOverlay = false;
+          });
+      } else {
+        getSocialStationActivityListByUserId(this.Token, type)
+          .then(res => {
+            console.log("getActivityListByUserId", res);
+            this.activityList = res.data.activityList;
+            this.showOverlay = false;
+          })
+          .catch(err => {
+            console.log("err", err);
+            this.showOverlay = false;
+          });
+      }
     },
     edit() {},
     go() {
@@ -138,7 +163,7 @@ export default {
         query: {
           currentPath: "offlineActivity",
           activityId: activity.Id,
-          showSubmitButton:true,
+          showSubmitButton: true
         }
       });
     },

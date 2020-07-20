@@ -160,14 +160,14 @@
     <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
       <div class="operationDialogList">
         <div class="item">
-          <div class="itemContent" @click="edit">编辑信息-测试</div>
+          <div class="itemContent" @click="edit">编辑信息-{{currentChildName}}</div>
         </div>
         <div class="item" @click="deleteConfirm">
-          <div class="itemContent">删除信息-测试</div>
+          <div class="itemContent">删除信息-{{currentChildName}}</div>
         </div>
-        <!-- <div class="item">
-          <div class="itemContent">联系监护人手机-测试1</div>
-        </div>-->
+        <div class="item" v-if="currentParentUserTel!==''">
+          <div class="itemContent">联系监护人手机-{{currentParentUserTel}}</div>
+        </div>
       </div>
     </van-dialog>
     <van-dialog
@@ -309,7 +309,7 @@ export default {
       this.$router.push({
         name: "addLowIncomePerson",
         query: {
-          childrenId: this.currentChildId,
+          SubsistenceID: this.currentChildId,
           currentPath: "assistantChildrenHomeDetail"
         }
       });
@@ -319,7 +319,7 @@ export default {
       this.currentChildId = child.Id;
       this.currentChildName = child.Name;
       // this.currentParentUser = child.ParentUser;
-      // this.currentParentUserTel = child.ParentUser.Phone;
+      this.currentParentUserTel = child.Contact;
     },
     afterRead(file) {
       this.showOverlay = true;

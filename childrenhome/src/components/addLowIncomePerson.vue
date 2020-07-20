@@ -83,7 +83,12 @@
       />
     </van-form>
     <div style="padding:20px;">
-      <van-button type="primary" style="width:100%;" @click="add">新增</van-button>
+      <div v-if="showEdit">
+        <van-button style="width:100%;" type="warning" @click="add">修改信息</van-button>
+      </div>
+      <div v-else>
+        <van-button type="primary" style="width:100%;" @click="add">新建成员</van-button>
+      </div>
     </div>
     <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===1">
@@ -114,7 +119,7 @@
 </template>
 
 <script>
-import { addSubsistence } from "@/api/home";
+import { addSubsistence, getSubsistenceDetail } from "@/api/home";
 export default {
   name: "addLowIncomePerson",
   data() {
@@ -133,7 +138,8 @@ export default {
       lowIncomeType: "",
       familyMonthIncome: "",
       contactInfo: "",
-      applyReason: ""
+      applyReason: "",
+      showEdit: false
     };
   },
   computed: {
@@ -142,6 +148,23 @@ export default {
     },
     SocialStationId() {
       return this.$store.state.common.SocialStationId;
+    }
+  },
+  mounted() {
+    if (this.$route.query.SubsistenceID) {
+      this.showEdit = true
+      getSubsistenceDetail(this.$route.query.SubsistenceID).then(res => {
+        console.log("getSubsistenceDetail", res);
+        this.name = res.data.subsistence.Name;
+        this.gender = res.data.subsistence.Sex;
+        this.idNumber = res.data.subsistence.IdNumber;
+        this.address = res.data.subsistence.Address;
+        this.lowIncomeType = res.data.subsistence.SubsistenceType;
+        this.familyMonthIncome = res.data.subsistence.Income;
+        this.contactInfo = res.data.subsistence.Contact;
+        this.beginDate = res.date.subsistence.BeginDate;
+        this.applyReason = res.date.subsistence.BeginDate.Reason;
+      });
     }
   },
   methods: {
@@ -166,7 +189,9 @@ export default {
       let activityDate = new Date(date);
       let year = activityDate.getFullYear();
       let month = activityDate.getMonth() + 1;
+      if (month < 10) month = `0${month}`;
       let day = activityDate.getDate();
+      if (day < 10) day = `0${day}`;
       return `${year}-${month}-${day}`;
     },
     onConfirmGenderList(value) {

@@ -36,6 +36,8 @@ export default {
 <style lang="less">
 .newsDetailPage {
   .newsContent {
+    text-align: left;
+    padding: 10px 20px;
     img {
       width: 100%;
     }

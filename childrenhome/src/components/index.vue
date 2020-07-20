@@ -25,7 +25,7 @@
       <div style="padding: 10px 20px;color: #989898" @click="changeCity" v-if="!isAssistant">切换城市</div>
     </div>
     <div class="newsList">
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <div v-for="(news,index) in newsList" :key="index">
             <div class="flex" style="padding:10px;" @click="viewDeatil(news)">
@@ -42,7 +42,7 @@
             </div>
           </div>
         </van-list>
-      </van-pull-refresh>
+      <!-- </van-pull-refresh> -->
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
     <bottomNav v-else :selectedNav.sync="selectedNav"></bottomNav>
@@ -176,12 +176,12 @@ export default {
         });
     },
     onLoad() {
-      console.log('123456')
+      // console.log('123456')
       if (this.refreshing) {
         this.newsList = [];
         this.refreshing = false;
       }
-      console.log('this.newsList.length',this.newsList.length)
+      // console.log('this.newsList.length',this.newsList.length)
       if (this.newsList.length < this.total) {
         this.getNewsList({
           cityId: this.cityId,
@@ -194,7 +194,7 @@ export default {
       this.loading = false;
     },
     onRefresh() {
-      console.log('123')
+      // console.log('123')
       // 清空列表数据
       this.finished = false;
 
