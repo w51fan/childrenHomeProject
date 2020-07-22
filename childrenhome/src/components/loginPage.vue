@@ -102,12 +102,13 @@ export default {
             this.$store.commit("common/SET_TOKEN", res.data.token);
             getUserInfo(res.data.token)
               .then(res => {
-                console.log("getUserInfo", res);
+                console.log("getUserInfo init", res);
                 //type 4:儿童主任,显示儿童之家，   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户 12 社会救助服务管理员 显示社工服务
                 this.$store.commit("common/getUserTpye", res.data.user.Type);
                 this.$store.commit("common/getUser", res.data.user);
                 this.showOverlay = false;
-                if (res.data.user.Type === 4) {
+                if (res.data.user.Type === 4 || res.data.user.Type === 11) {
+                  
                   this.$router.push({
                     name: "childrenHomePage",
                     // name: "socialWorkstation",

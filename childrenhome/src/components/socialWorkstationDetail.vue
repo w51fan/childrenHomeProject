@@ -112,7 +112,7 @@
                 <div
                   class="will"
                   style="padding: 5px 10px;border-radius: 14px;font-size: 13px;"
-                >{{user.Type===4?'村级管理员':user.Type===7?'志愿者':user.Type===3?'镇级管理员':user.Type===2?'县级管理员':user.Type===1?'市级管理员':user.Type===6?'助理':user.Type===12?'社区工作服务管理员':'村级讲师'}}</div>
+                >{{UserTpye===4?'村级管理员':UserTpye===7?'志愿者':UserTpye===3?'镇级管理员':UserTpye===2?'县级管理员':UserTpye===1?'市级管理员':UserTpye===6?'助理':UserTpye===11?'家长':UserTpye===12?'社区工作服务管理员':'村级讲师'}}</div>
               </div>
             </div>
             <div>
@@ -229,6 +229,9 @@ export default {
     },
     PreCurrentPath() {
       return this.$store.state.common.PreCurrentPath;
+    },
+    UserTpye() {
+      return this.$store.state.common.UserTpye;
     }
   },
   mounted() {

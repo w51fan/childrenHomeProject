@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     cityId() {
-      console.log("his.$store.state", this.$store.state);
+      console.log("governmentLed", this.$store.state);
       return this.$store.state.common.cityId;
     }
   },

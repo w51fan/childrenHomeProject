@@ -16,7 +16,7 @@
         size="large"
         input-align="right"
       />
-      <van-cell title="身份" :value="User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':User.Type===12?'社区工作服务管理员':'村级讲师'" />
+      <van-cell title="身份" :value="User.Type===4?'村级管理员':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':User.Type===11?'家长':User.Type===12?'社区工作服务管理员':'村级讲师'" />
       <van-cell title="头像">
         <template #default>
           <!-- <img class="head" src="../assets/nohead.png" alt /> -->

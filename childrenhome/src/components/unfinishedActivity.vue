@@ -28,7 +28,7 @@
           <div
             class="status will"
             style="width: 80px;color: black;margin:0;"
-          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
+          >{{UserTpye===4?'村级管理员':UserTpye===7?'志愿者':UserTpye===3?'镇级管理员':UserTpye===2?'县级管理员':UserTpye===1?'市级管理员':UserTpye===6?'助理':UserTpye===11?'家长':UserTpye===12?'社区工作服务管理员':'村级讲师'}}</div>
         </div>
       </div>
       <!-- <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div> -->
@@ -45,6 +45,7 @@
           :max-count="6"
           :max-size="2 * 1024 * 1024"
           @oversize="onOversize"
+          :disabled="UserTpye!==4" 
         />
         <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
@@ -60,6 +61,7 @@
         :max-count="1"
         :max-size="2 * 1024 * 1024"
         @oversize="onOversize"
+        :disabled="UserTpye!==4" 
       />
       <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
@@ -78,7 +80,7 @@
           show-word-limit
         />
         <div style="text-align: right;padding: 10px 20px 0;">
-          <van-button type="default" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
+          <van-button type="default" :disabled="UserTpye!==4" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
         </div>
       </div>
       <div class="bgColor">
@@ -112,7 +114,7 @@
         <div class="text">暂无活动评价</div>
       </div>
     </div>
-    <van-button type="warning" style="width:100%;" @click="submitRelease">完成并公布此活动</van-button>
+    <van-button type="warning" style="width:100%;" :disabled="UserTpye!==4" @click="submitRelease">完成并公布此活动</van-button>
     <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
@@ -180,14 +182,17 @@ export default {
         this.$store.commit("common/getSignImgFileList", val);
       }
     },
-    urls:{
-       get() {
+    urls: {
+      get() {
         return this.$store.state.common.urls;
       },
       set(val) {
         this.$store.commit("common/getUrls", val);
       }
     },
+    UserTpye() {
+      return this.$store.state.common.UserTpye;
+    }
   },
   mounted() {
     this.init();
@@ -215,8 +220,8 @@ export default {
       uploadImg(formData).then(res => {
         // this.urls =
         //   this.urls === "" ? res.data.url : this.urls + "," + res.data.url;
-        this.urls.push(res.data.url)
-        this.activityImageList = this.imgFileList
+        this.urls.push(res.data.url);
+        this.activityImageList = this.imgFileList;
         this.$notify({
           type: "success",
           message: "上传成功",
@@ -289,19 +294,18 @@ export default {
         this.$toast("签到图片未上传，请先上传签到图片。");
         return;
       }
-      let urls = '';
+      let urls = "";
       this.urls.forEach(element => {
-        urls =
-          urls === "" ? element : urls + "," + element;
+        urls = urls === "" ? element : urls + "," + element;
       });
       this.showOverlay = true;
-        release(
-          this.Token,
-          this.activity.Id,
-          this.recordContent,
-          urls,
-          this.signInImage
-        )
+      release(
+        this.Token,
+        this.activity.Id,
+        this.recordContent,
+        urls,
+        this.signInImage
+      )
         .then(res => {
           console.log("release", res);
 
@@ -334,16 +338,16 @@ export default {
         duration: 1500
       });
     },
-    beforeDelete(file,event) {
+    beforeDelete(file, event) {
       // console.log('file',file,event)
       // console.log(this.urls)
       this.imgFileList.splice(event.index, 1);
       this.urls.splice(event.index, 1);
     },
-    beforeSignDelete(file,event) {
+    beforeSignDelete(file, event) {
       // console.log('file',file,this.signInImage)
-      this.signImgFileList = []
-      this.signInImage =''
+      this.signImgFileList = [];
+      this.signInImage = "";
     }
   }
 };

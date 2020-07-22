@@ -501,7 +501,10 @@ export const editSubsistence = function (data) {
 
   return axios.request({
     url: `https://api.quanjiaxue.net/subsistence/edit`,
-    data: data,
+    data: qs.stringify(data),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
     method: "post"
   });
 }

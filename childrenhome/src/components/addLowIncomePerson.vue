@@ -84,7 +84,7 @@
     </van-form>
     <div style="padding:20px;">
       <div v-if="showEdit">
-        <van-button style="width:100%;" type="warning" @click="add">修改信息</van-button>
+        <van-button style="width:100%;" type="warning" @click="edit">修改信息</van-button>
       </div>
       <div v-else>
         <van-button type="primary" style="width:100%;" @click="add">新建成员</van-button>
@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { addSubsistence, getSubsistenceDetail } from "@/api/home";
+import { addSubsistence, getSubsistenceDetail,editSubsistence } from "@/api/home";
 export default {
   name: "addLowIncomePerson",
   data() {
@@ -223,6 +223,58 @@ export default {
           })
             .then(res => {
               console.log("addSubsistence", res);
+              this.showOverlay = false;
+              if (res.data.code > 1) {
+                this.$notify({
+                  type: "warning",
+                  message: res.data.error,
+                  duration: 500
+                });
+              } else {
+                this.$notify({
+                  type: "success",
+                  message: res.data.msg,
+                  duration: 500
+                });
+                setTimeout(() => {
+                  this.showOverlay = false;
+                  this.$router.push({
+                    name: "socialWorkstationDetail"
+                  });
+                }, 1000);
+              }
+            })
+            .catch(err => {
+              console.log("addSubsistence", err);
+              this.showOverlay = false;
+            });
+        })
+        .catch(err => {
+          console.log("validateAll", err);
+          this.showOverlay = false;
+        });
+    },
+    edit(){
+      this.showOverlay = true;
+      let $this = this;
+      this.$refs["addLowIncomePersonForm"]
+        .validateAll()
+        .then(() => {
+          editSubsistence({
+            token: this.Token,
+            socialStationId: this.SocialStationId,
+            name: this.name,
+            sex: this.gender,
+            idNumber: this.idNumber,
+            address: this.address, //非必填
+            subsistenceType: this.lowIncomeType, //非必填
+            income: this.familyMonthIncome, //非必填
+            contact: this.contactInfo, //非必填
+            beginDate: this.activityDate, //非必填
+            reason: this.applyReason //非必填
+          })
+            .then(res => {
+              console.log("editSubsistence", res);
               this.showOverlay = false;
               if (res.data.code > 1) {
                 this.$notify({

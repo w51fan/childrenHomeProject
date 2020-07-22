@@ -45,12 +45,12 @@ export default {
     init() {
       this.active = this.selectedNav;
       console.log("this.UserTpye", this.UserTpye);
-      if (this.UserTpye === 4 || this.UserTpye === 12) {
+      if (this.UserTpye === 4 || this.UserTpye === 11 ||this.UserTpye === 12) {
         this.navList = [
           {
-            navName: this.UserTpye === 4 ? "儿童之家" : "服务站",
+            navName: this.UserTpye === 4|| this.UserTpye === 11 ? "儿童之家" : "服务站",
             icon: "wap-home",
-            path: this.UserTpye === 4 ? "childrenHomePage" : "socialWorkstation",
+            path: this.UserTpye === 4|| this.UserTpye === 11 ? "childrenHomePage" : "socialWorkstation",
           },
           {
             navName: "新闻动态",

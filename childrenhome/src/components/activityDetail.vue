@@ -24,7 +24,7 @@
           <div
             class="status will"
             style="width: 80px;color: black;margin:0;"
-          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':'村级讲师'}}</div>
+          >{{UserTpye===4?'村级管理员':UserTpye===7?'志愿者':UserTpye===3?'镇级管理员':UserTpye===2?'县级管理员':UserTpye===1?'市级管理员':UserTpye===6?'助理':UserTpye===11?'家长':UserTpye===12?'社区工作服务管理员':'村级讲师'}}</div>
         </div>
       </div>
       <div class="activityImgTitle">活动图片（{{activityImageList.length}}/6）</div>
@@ -73,7 +73,7 @@
     </div>
     <div>
       <div class="activityRecord">活动记录</div>
-      <div class="activityRecordInput" style="padding:20px;" v-if="showSubmitButton">
+      <div class="activityRecordInput" style="padding:20px;" v-if="showSubmitButton&&UserTpye===4">
         <van-field
           v-model="recordContent"
           type="textarea"
@@ -115,7 +115,7 @@
     <div>
       <div class="activityEvaluate">活动评价</div>
       <!-- <div class="activityEvaluateContent" >暂无活动评价</div> -->
-      <div v-if="UserTpye===11&&activityCommentList.length<0">
+      <div v-if="UserTpye===11&&activityCommentList.length===0">
         <div v-for="(item,index) in activityEvaluateContent" :key="index">
           <div class="flex space-between activityEvaluateContentItem">
             <div>{{index+1}}、{{item.content}}</div>
