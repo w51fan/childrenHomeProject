@@ -263,11 +263,13 @@ export default {
     edit() {
       this.showOverlay = true;
       let $this = this;
+      console.log('this.$route.query.SubsistenceID',this.$route.query.SubsistenceID)
       this.$refs["addLowIncomePersonForm"]
         .validateAll()
         .then(() => {
           editSubsistence({
             token: this.Token,
+            id:this.$route.query.SubsistenceID,
             socialStationId: this.SocialStationId,
             name: this.name,
             sex: this.gender,

@@ -45,7 +45,7 @@
           :max-count="6"
           :max-size="2 * 1024 * 1024"
           @oversize="onOversize"
-          :disabled="UserTpye!==4" 
+          :disabled="disabledBtn"
         />
         <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
@@ -61,7 +61,7 @@
         :max-count="1"
         :max-size="2 * 1024 * 1024"
         @oversize="onOversize"
-        :disabled="UserTpye!==4" 
+        :disabled="disabledBtn"
       />
       <!-- <van-uploader>
           <van-button icon="photo" type="primary">上传文件</van-button>
@@ -80,7 +80,12 @@
           show-word-limit
         />
         <div style="text-align: right;padding: 10px 20px 0;">
-          <van-button type="default" :disabled="UserTpye!==4" size="small" @click="showSubmitConfirmfun">提交记录</van-button>
+          <van-button
+            type="default"
+            :disabled="disabledBtn"
+            size="small"
+            @click="showSubmitConfirmfun"
+          >提交记录</van-button>
         </div>
       </div>
       <div class="bgColor">
@@ -114,7 +119,12 @@
         <div class="text">暂无活动评价</div>
       </div>
     </div>
-    <van-button type="warning" style="width:100%;" :disabled="UserTpye!==4" @click="submitRelease">完成并公布此活动</van-button>
+    <van-button
+      type="warning"
+      style="width:100%;"
+      :disabled="disabledBtn"
+      @click="submitRelease"
+    >完成并公布此活动</van-button>
     <van-overlay :show="showOverlay" @click="show = false">
       <div style="margin-top: 50%;">
         <van-loading type="spinner" />
@@ -159,7 +169,8 @@ export default {
         3: "家庭亲子",
         4: "安全护卫",
         5: "微课"
-      }
+      },
+      disabledBtn: false
     };
   },
   computed: {
@@ -200,6 +211,7 @@ export default {
   methods: {
     init() {
       this.showOverlay = true;
+      if (this.UserTpye !== 4 && this.UserTpye !== 12) this.disabledBtn = true;
       getActivityDetail(this.$route.query.activityId).then(res => {
         console.log("getActivityDetail", res);
         this.activity = res.data.activity;

@@ -484,6 +484,7 @@ export const deleteSubsistence = function (token, id) {
 //编辑低保对象
 // token,
 // socialStationId,
+// id,
 // name,
 // sex,
 // photo, //非必填
