@@ -486,6 +486,7 @@ export default {
     .operation {
       padding: 0 10px;
       flex: 1;
+      text-align: right;
     }
   }
   .abbreviation {

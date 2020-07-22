@@ -26,22 +26,22 @@
     </div>
     <div class="newsList">
       <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-          <div v-for="(news,index) in newsList" :key="index">
-            <div class="flex" style="padding:10px;" @click="viewDeatil(news)">
-              <img
-                :src="news.NewsThumbnail"
-                style="width:100px;min-width:100px;max-width:100px;height:60px;"
-              />
-              <div style="text-align: left;padding: 0 10px;position: relative;">
-                <div>{{news.Title}}</div>
-                <div
-                  style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;"
-                >{{news.CreateTime}}</div>
-              </div>
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <div v-for="(news,index) in newsList" :key="index">
+          <div class="flex" style="padding:10px;" @click="viewDeatil(news)">
+            <img
+              :src="news.NewsThumbnail"
+              style="width:100px;min-width:100px;max-width:100px;height:60px;"
+            />
+            <div style="text-align: left;padding: 0 10px;position: relative;">
+              <div>{{news.Title}}</div>
+              <div
+                style="position: absolute;color: #a0a0a0;font-size: 14px;padding: 5px 0;"
+              >{{news.CreateTime}}</div>
             </div>
           </div>
-        </van-list>
+        </div>
+      </van-list>
       <!-- </van-pull-refresh> -->
     </div>
     <assistantBottomNav v-if="isAssistant" :selectedNav.sync="selectedNav"></assistantBottomNav>
@@ -96,6 +96,7 @@ export default {
   mounted() {
     if (this.$route.query.User && this.$route.query.UserTpye) {
       this.$store.commit("common/getUserTpye", this.$route.query.UserTpye);
+      this.$store.commit("common/SET_UserTpye", this.$route.query.UserTpye);
       this.$store.commit("common/getUser", this.$route.query.User);
     }
     if (!this.Token) {
@@ -106,6 +107,12 @@ export default {
     }
     this.showOverlay = true;
     this.isAssistant = this.$route.query.isAssistant;
+    if (!this.cityId) {
+      this.$store.commit(
+        "common/getCityId",
+        window.localStorage.getItem("cityId")
+      );
+    }
     getHomeImgList(this.cityId)
       .then(res => {
         this.imgList = res.data.newsList[0].NewsThumbnail.split(",");
@@ -159,16 +166,17 @@ export default {
       });
     },
     getNewsList(param) {
-      const {cityId, pageNumber, pageSize} =param
-      getNewsList(cityId,pageNumber,pageSize)
+      const { cityId, pageNumber, pageSize } = param;
+      this.showOverlay = true;
+      getNewsList(cityId, pageNumber, pageSize)
         .then(res => {
           // console.log(news);
           res.data.newsList.forEach(item => {
-              this.newsList.push(item);
-            });
-            this.loading = false;
-            this.showOverlay = false;
-            if (!(this.newsList.length < this.total)) this.finished = true;
+            this.newsList.push(item);
+          });
+          this.loading = false;
+          this.showOverlay = false;
+          if (!(this.newsList.length < this.total)) this.finished = true;
         })
         .catch(err => {
           console.log("err", err);
@@ -186,7 +194,7 @@ export default {
         this.getNewsList({
           cityId: this.cityId,
           pageNumber: this.pageNumber++ + 1,
-          pageSize: this.pageSize,
+          pageSize: this.pageSize
         });
       } else {
         // this.finished = true;

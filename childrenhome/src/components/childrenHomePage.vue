@@ -120,6 +120,7 @@ export default {
   mounted() {
     if (this.$route.query.User && this.$route.query.UserTpye) {
       this.$store.commit("common/getUserTpye", this.$route.query.UserTpye);
+      this.$store.commit("common/SET_UserTpye", this.$route.query.UserTpye);
       this.$store.commit("common/getUser", this.$route.query.User);
     }
     if (!this.Token) {
@@ -135,16 +136,22 @@ export default {
       .then(result => {
         console.log("getChildrenHomeList", result);
         this.childrenHomeList = result.data.childrenHomeList;
-        this.$refs.assistantBottomNav.init()
+        this.$refs.assistantBottomNav.init();
         if (this.childrenHomeList.length > 0) {
           this.$store.commit(
             "common/getCityId",
+            this.childrenHomeList[0].CityId
+          );
+          this.$store.commit(
+            "common/SET_cityId",
             this.childrenHomeList[0].CityId
           );
           // this.$store.commit("common/getTownId", this.childrenHomeList[0].TownId);
           // this.$store.commit("common/getVillageId", this.childrenHomeList[0].VillageId);
         } else {
           this.$store.commit("common/getCityId", 2018);
+          this.$store.commit("common/getCityId", 2018);
+          this.$store.commit("common/SET_cityId", 2018);
         }
         this.showOverlay = false;
       })

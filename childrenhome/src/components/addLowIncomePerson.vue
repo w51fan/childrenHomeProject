@@ -101,11 +101,12 @@
       </div>
       <div v-else-if="currentPick===2">
         <van-datetime-picker
-          v-model="activityDate"
+          v-model="beginDate"
           type="date"
           title="选择年月日"
           :min-date="minDate"
           :max-date="maxDate"
+          @cancel="showPicker = false"
           @confirm="onConfirmDate"
         />
       </div>
@@ -119,7 +120,11 @@
 </template>
 
 <script>
-import { addSubsistence, getSubsistenceDetail,editSubsistence } from "@/api/home";
+import {
+  addSubsistence,
+  getSubsistenceDetail,
+  editSubsistence
+} from "@/api/home";
 export default {
   name: "addLowIncomePerson",
   data() {
@@ -139,6 +144,7 @@ export default {
       familyMonthIncome: "",
       contactInfo: "",
       applyReason: "",
+      beginDate: "",
       showEdit: false
     };
   },
@@ -152,7 +158,7 @@ export default {
   },
   mounted() {
     if (this.$route.query.SubsistenceID) {
-      this.showEdit = true
+      this.showEdit = true;
       getSubsistenceDetail(this.$route.query.SubsistenceID).then(res => {
         console.log("getSubsistenceDetail", res);
         this.name = res.data.subsistence.Name;
@@ -162,8 +168,8 @@ export default {
         this.lowIncomeType = res.data.subsistence.SubsistenceType;
         this.familyMonthIncome = res.data.subsistence.Income;
         this.contactInfo = res.data.subsistence.Contact;
-        this.beginDate = res.date.subsistence.BeginDate;
-        this.applyReason = res.date.subsistence.BeginDate.Reason;
+        this.activityDate = res.data.subsistence.BeginDate;
+        this.applyReason = res.data.subsistence.Reason;
       });
     }
   },
@@ -254,7 +260,7 @@ export default {
           this.showOverlay = false;
         });
     },
-    edit(){
+    edit() {
       this.showOverlay = true;
       let $this = this;
       this.$refs["addLowIncomePersonForm"]

@@ -6,6 +6,11 @@
       <div class="time">{{getDate(CreateTime)}}</div>
       <div style="padding:20px;text-align: left;" v-html="articleContent"></div>
     </div>
+    <van-overlay :show="showOverlay" @click="show = false">
+      <div style="margin-top: 50%;">
+        <van-loading type="spinner" />
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -17,16 +22,22 @@ export default {
     return {
       articleTitle: "",
       articleContent: "",
-      CreateTime: ""
+      CreateTime: "",
+      showOverlay:true
     };
   },
   mounted() {
+    this.showOverlay = true
     getArticleDetail(this.$route.query.id).then(res => {
       this.showList = false;
       console.log("getArticleDetail", res);
       this.articleTitle = res.data.article.Title;
       this.CreateTime = res.data.article.CreateTime;
       this.articleContent = res.data.article.Content;
+      this.showOverlay = false
+    }).catch(err=>{
+      console.log("getArticleDetail", err);
+      this.showOverlay = false
     });
   },
   methods: {

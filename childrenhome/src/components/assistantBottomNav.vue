@@ -44,7 +44,13 @@ export default {
   methods: {
     init() {
       this.active = this.selectedNav;
-      console.log("this.UserTpye", this.UserTpye);
+      // console.log("this.UserTpye", this.UserTpye);
+      if(!this.UserTpye){
+         this.$store.commit(
+        "common/getCityId",
+        window.localStorage.getItem("UserTpye")
+      );
+      }
       if (this.UserTpye === 4 || this.UserTpye === 11 ||this.UserTpye === 12) {
         this.navList = [
           {

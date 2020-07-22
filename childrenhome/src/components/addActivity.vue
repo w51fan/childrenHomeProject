@@ -167,7 +167,7 @@ export default {
   methods: {
     onClickLeft() {
       this.$router.push({
-        name: this.$route.query.currentPath
+        name: 'offlineActivity'
       });
     },
     showPick(index) {

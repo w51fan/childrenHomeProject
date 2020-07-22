@@ -35,6 +35,8 @@ export default {
   methods: {
     selectedCity(city) {
       this.$store.commit("common/getCityId", city.Id);
+      this.$store.commit("common/SET_cityId", city.Id);
+
       this.$router.push({
         name: "ennterPage"
       });
