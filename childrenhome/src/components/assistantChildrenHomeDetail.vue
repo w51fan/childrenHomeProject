@@ -15,6 +15,7 @@
         :after-read="afterRead"
         :max-size="2 * 1024 * 1024"
         @oversize="onOversize"
+        v-if="UserTpye===4"
       >
         <template slot="default">
           <div class="myChildrenHometips">点击更换形象照</div>
@@ -161,9 +162,9 @@
     <van-dialog v-model="showDialog" :show-cancel-button="true" :showConfirmButton="false">
       <div class="operationDialogList">
         <div class="item">
-          <div class="itemContent" @click="edit">编辑信息-{{currentChildName}}</div>
+          <div class="itemContent" v-if="UserTpye===4" @click="edit">编辑信息-{{currentChildName}}</div>
         </div>
-        <div class="item" @click="deleteConfirm">
+        <div class="item" v-if="UserTpye===4" @click="deleteConfirm">
           <div class="itemContent">删除信息-{{currentChildName}}</div>
         </div>
         <div class="item" @click="callConfirm(currentParentUserTel)">

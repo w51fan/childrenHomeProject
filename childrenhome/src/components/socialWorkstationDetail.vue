@@ -14,6 +14,7 @@
         :after-read="afterRead"
         :max-size="2 * 1024 * 1024"
         @oversize="onOversize"
+        v-if="UserTpye===12"
       >
         <template slot="default">
           <div class="myChildrenHometips">点击更换形象照</div>
@@ -165,9 +166,9 @@
         <div class="item" @click="deleteConfirm">
           <div class="itemContent">删除信息-{{currentChildName}}</div>
         </div>
-        <div class="item" v-if="currentParentUserTel!==''">
+        <!-- <div class="item" v-if="currentParentUserTel!==''">
           <div class="itemContent">联系监护人手机-{{currentParentUserTel}}</div>
-        </div>
+        </div> -->
       </div>
     </van-dialog>
     <van-dialog

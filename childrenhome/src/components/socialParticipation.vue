@@ -16,32 +16,32 @@
         <div class="gap gapfive"></div>
         <div v-if="activityList.length>0">
           <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
-            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <div v-for="(item,index) in activityList" :key="index">
-                <div class="flex space-between">
-                  <div style="padding:20px;">
-                    <van-icon name="underway" v-if="item.Status===1" />
-                    <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-                    {{getDate(item.Date)}}
-                  </div>
-                  <div class="status will" v-if="item.Status===1">即将开始</div>
-                  <div class="status ing" v-else-if="item.Status===2">进行中</div>
-                  <div class="status finished" v-else>已结束</div>
+          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+            <div v-for="(item,index) in activityList" :key="index">
+              <div class="flex space-between">
+                <div style="padding:20px;">
+                  <van-icon name="underway" v-if="item.Status===1" />
+                  <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+                  {{getDate(item.Date)}}
                 </div>
-                <div class="abbreviation">{{item.Name}}...</div>
-                <div class="flex" @click="viewDetail(item)">
-                  <img
-                    :src="activityImg.Url"
-                    v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
-                    :key="turn"
-                    style="width: 50px;height: 100px;padding: 15px 20px;"
-                  />
-                  <div v-if="item.ActivityImage.length>0">...</div>
-                </div>
-                <!-- <van-icon name="checked" />
-                <div>{{item.Date}}</div>-->
+                <div class="status will" v-if="item.Status===1">即将开始</div>
+                <div class="status ing" v-else-if="item.Status===2">进行中</div>
+                <div class="status finished" v-else>已结束</div>
               </div>
-            </van-list>
+              <div class="abbreviation">{{item.Name}}...</div>
+              <div class="flex" @click="viewDetail(item)">
+                <img
+                  :src="activityImg.Url"
+                  v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
+                  :key="turn"
+                  style="width: 50px;height: 100px;padding: 15px 20px;"
+                />
+                <div v-if="item.ActivityImage.length>0">...</div>
+              </div>
+              <!-- <van-icon name="checked" />
+              <div>{{item.Date}}</div>-->
+            </div>
+          </van-list>
           <!-- </van-pull-refresh> -->
         </div>
         <div v-else style="color: #b9b9b9;padding-top: 30px;line-height: 30px;">没有最新活动数据</div>
@@ -73,32 +73,32 @@
         <div v-else-if="showTips===2">没有数据</div>
         <div v-else>
           <!-- <van-pull-refresh v-model="refreshing" @refresh="onRefresh"> -->
-            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <div v-for="(item,index) in activityList" :key="index">
-                <div class="flex space-between">
-                  <div style="padding:20px;">
-                    <van-icon name="underway" v-if="item.Status===1" />
-                    <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
-                    {{item.Date}}
-                  </div>
-                  <div class="status will" v-if="item.Status===1">即将开始</div>
-                  <div class="status ing" v-else-if="item.Status===2">进行中</div>
-                  <div class="status finished" v-else>已结束</div>
+          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+            <div v-for="(item,index) in activityList" :key="index">
+              <div class="flex space-between">
+                <div style="padding:20px;">
+                  <van-icon name="underway" v-if="item.Status===1" />
+                  <van-icon name="checked" v-else :class="item.Status===3?'gry':''" />
+                  {{item.Date}}
                 </div>
-                <div class="abbreviation">{{item.Name}}...</div>
-                <div class="flex" @click="viewDetail(item)">
-                  <img
-                    :src="activityImg.Url"
-                    v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
-                    :key="turn"
-                    style="width: 50px;height: 100px;padding: 15px 20px;"
-                  />
-                  <div v-if="item.ActivityImage.length>0">...</div>
-                </div>
-                <!-- <van-icon name="checked" />
-                <div>{{item.Date}}</div>-->
+                <div class="status will" v-if="item.Status===1">即将开始</div>
+                <div class="status ing" v-else-if="item.Status===2">进行中</div>
+                <div class="status finished" v-else>已结束</div>
               </div>
-            </van-list>
+              <div class="abbreviation">{{item.Name}}...</div>
+              <div class="flex" @click="viewDetail(item)">
+                <img
+                  :src="activityImg.Url"
+                  v-for="(activityImg,turn) in item.ActivityImage.slice(0,3)"
+                  :key="turn"
+                  style="width: 50px;height: 100px;padding: 15px 20px;"
+                />
+                <div v-if="item.ActivityImage.length>0">...</div>
+              </div>
+              <!-- <van-icon name="checked" />
+              <div>{{item.Date}}</div>-->
+            </div>
+          </van-list>
           <!-- </van-pull-refresh> -->
         </div>
       </van-tab>
@@ -215,6 +215,14 @@ export default {
     // 邵阳市cityId:2018 双清区areaId:2021 板桥乡townId:3713 activityType 不传就是全部
     // console.log('this.$route.query.cityId',this.cityId)
     if (this.$route.query.selected) this.selected = this.$route.query.selected;
+    if (!this.cityId) {
+      this.$store.commit(
+        "common/getCityId",
+        window.localStorage.getItem("cityId")-0
+      );
+      // this.cityId = window.localStorage.getItem("cityId");
+    }
+    console.log("this.cityId", this.cityId);
     this.showOverlay = true;
     this.getActivityList({
       cityId: this.cityId,

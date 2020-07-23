@@ -27,7 +27,7 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    this.init();
   },
   watch: {
     active(val) {
@@ -45,18 +45,27 @@ export default {
     init() {
       this.active = this.selectedNav;
       // console.log("this.UserTpye", this.UserTpye);
-      if(!this.UserTpye){
-         this.$store.commit(
-        "common/getCityId",
-        window.localStorage.getItem("UserTpye")
-      );
+      if (!this.UserTpye) {
+        this.$store.commit(
+          "common/getUserTpye",
+          window.localStorage.getItem("UserTpye")-0
+        );
+        // console.log('this.UserTpye222',this.UserTpye,(this.UserTpye === 4 || this.UserTpye === 11 || this.UserTpye === 12))
       }
-      if (this.UserTpye === 4 || this.UserTpye === 11 ||this.UserTpye === 12) {
+      // console.log('this.UserTpye',!this.UserTpye,window.localStorage.getItem("UserTpye"))
+      if (this.UserTpye === 4 || this.UserTpye === 11 || this.UserTpye === 12) {
+        // console.log('this.UserTpye22222222',this.UserTpye)
         this.navList = [
           {
-            navName: this.UserTpye === 4|| this.UserTpye === 11 ? "儿童之家" : "服务站",
+            navName:
+              this.UserTpye === 4 || this.UserTpye === 11
+                ? "儿童之家"
+                : "服务站",
             icon: "wap-home",
-            path: this.UserTpye === 4|| this.UserTpye === 11 ? "childrenHomePage" : "socialWorkstation",
+            path:
+              this.UserTpye === 4 || this.UserTpye === 11
+                ? "childrenHomePage"
+                : "socialWorkstation"
           },
           {
             navName: "新闻动态",

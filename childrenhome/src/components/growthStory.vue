@@ -134,6 +134,14 @@ export default {
   mounted() {
     this.showOverlay = true;
     this.isAssistant = this.$route.query.isAssistant;
+    if (!this.cityId) {
+      this.$store.commit(
+        "common/getCityId",
+        window.localStorage.getItem("cityId")-0
+      );
+      // this.cityId = window.localStorage.getItem("cityId");
+    }
+    console.log("this.cityId", this.cityId);
     // getArticleList(this.cityId, 1, this.pageNumber, this.pageSize)
     //   .then(res => {
     //     console.log("getArticleList", res);

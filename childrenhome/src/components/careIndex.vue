@@ -208,6 +208,14 @@ export default {
     this.showOverlay = true;
     if (this.$route.query.activeTab)
       this.activeTab = this.$route.query.activeTab;
+    if (!this.cityId) {
+      this.$store.commit(
+        "common/getCityId",
+        window.localStorage.getItem("cityId")-0
+      );
+      // this.cityId = window.localStorage.getItem("cityId");
+    }
+    console.log("this.cityId", this.cityId);
     getTotalCount(this.cityId)
       .then(res => {
         // console.log("getTotalCount", res);

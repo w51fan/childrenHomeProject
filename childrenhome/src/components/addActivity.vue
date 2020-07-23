@@ -1,46 +1,75 @@
 <template>
   <div class="addActivityPage">
     <van-nav-bar left-text="返回" left-arrow @click-left="onClickLeft" />
-    <div class="title">活动信息</div>
-    <van-cell-group class="addActivtyTable">
-      <van-field v-model="activityName" label="活动名称" placeholder="请输入活动名称 " size="large" />
-      <van-field
-        readonly
-        clickable
-        label="活动日期"
-        :value="activityDate"
-        placeholder="请选择活动日期"
-        @click="showPick(1)"
-      />
-      <van-field
-        readonly
-        clickable
-        label="活动类型"
-        :value="activityType"
-        placeholder="请选择"
-        @click="showPick(2)"
-      />
-      <div v-if="UserTpye===4">
+    <van-form ref="addActivityForm" validate-first @failed="onFailed">
+      <div class="title">活动信息</div>
+      <van-cell-group class="addActivtyTable">
+        <van-field
+          v-model="activityName"
+          :value="activityName"
+          label="活动名称"
+          placeholder="请输入活动名称 "
+          size="large"
+          input-align="right"
+          name="validator"
+          required
+          :error-message="activityNameErrText"
+        />
         <van-field
           readonly
           clickable
-          label="活动儿童之家"
-          :value="activityHome"
-          placeholder="请选择"
-          @click="showPick(3)"
+          label="活动日期"
+          :value="activityDate"
+          placeholder="请选择活动日期"
+          @click="showPick(1)"
+          input-align="right"
+          name="validator"
+          required
+          :error-message="activityDateErrText"
         />
-      </div>
-      <div v-else-if="UserTpye===12">
         <van-field
           readonly
           clickable
-          label="活动工作站"
-          :value="activityHome"
+          v-model="activityType"
+          label="活动类型"
+          :value="activityType"
           placeholder="请选择"
-          @click="showPick(3)"
+          @click="showPick(2)"
+          input-align="right"
+          name="validator"
+          required
+          :error-message="activityTypeErrText"
         />
-      </div>
-    </van-cell-group>
+        <div v-if="UserTpye===4">
+          <van-field
+            readonly
+            clickable
+            label="活动儿童之家"
+            :value="activityHome"
+            placeholder="请选择"
+            @click="showPick(3)"
+            input-align="right"
+            name="validator"
+            required
+            :error-message="activityHomeErrText"
+          />
+        </div>
+        <div v-else-if="UserTpye===12">
+          <van-field
+            readonly
+            clickable
+            label="活动工作站"
+            :value="activityHome"
+            placeholder="请选择"
+            @click="showPick(3)"
+            input-align="right"
+            name="validator"
+            required
+            :error-message="activityHomeErrText"
+          />
+        </div>
+      </van-cell-group>
+    </van-form>
     <div class="gap gapfive"></div>
     <div style="padding:20px;">
       <van-button type="primary" color="#ffac22" style="width:100%;" @click="add">新增活动</van-button>
@@ -119,7 +148,11 @@ export default {
         家庭亲子: 3,
         安全护卫: 4,
         微课: 5
-      }
+      },
+      activityNameErrText: "",
+      activityDateErrText: "",
+      activityTypeErrText: "",
+      activityHomeErrText: ""
     };
   },
   computed: {
@@ -129,6 +162,36 @@ export default {
     UserTpye() {
       return this.$store.state.common.UserTpye;
     }
+  },
+  watch:{
+    activityName(vale){
+      if (vale === "") {
+        this.activityNameErrText = "请输入";
+      } else {
+        this.activityNameErrText = "";
+      }
+    },
+    activityDate(vale){
+      if (vale === "") {
+        this.activityDateErrText = "请选择";
+      } else {
+        this.activityDateErrText = "";
+      }
+    },
+    activityType(vale){
+      if (vale === "") {
+        this.activityTypeErrText = "请选择";
+      } else {
+        this.activityTypeErrText = "";
+      }
+    },
+    activityHome(vale){
+      if (vale === "") {
+        this.activityHomeErrText = "请选择";
+      } else {
+        this.activityHomeErrText = "";
+      }
+    },
   },
   mounted() {
     this.showOverlay = true;
@@ -167,7 +230,7 @@ export default {
   methods: {
     onClickLeft() {
       this.$router.push({
-        name: 'offlineActivity'
+        name: "offlineActivity"
       });
     },
     showPick(index) {
@@ -179,12 +242,13 @@ export default {
       this.showPicker = false;
     },
     onConfirmType(value) {
+      console.log(value);
       this.activityType = value;
       this.showPicker = false;
     },
     onConfirmDate(value) {
-      this.showPicker = false;
       this.activityDate = this.getDate(value);
+      this.showPicker = false;
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -195,9 +259,41 @@ export default {
       if (day < 10) day = `0${day}`;
       return `${year}-${month}-${day}`;
     },
+    onFailed(errorInfo) {
+      console.log("failed", errorInfo);
+    },
     add() {
       this.showOverlay = true;
+      let $this = this;
       // console.log('this.activityTypeIDArray[this.activityType]',this.activityTypeIDArray[this.activityType])
+      if (this.activityName === "") {
+        this.activityNameErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.activityNameErrText = "";
+      }
+      if (this.activityDate === "") {
+        this.activityDateErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.activityDateErrText = "";
+      }
+      if (this.activityType === "") {
+        this.activityTypeErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.activityTypeErrText = "";
+      }
+      if (this.activityHome === "") {
+        this.activityHomeErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.activityHomeErrText = "";
+      }
       addActivity({
         token: this.Token,
         name: this.activityName,
@@ -209,21 +305,21 @@ export default {
       })
         .then(res => {
           console.log("addActivity", res);
-          this.$notify({
+          $this.$notify({
             type: "success",
             message: res.data.msg,
             duration: 500
           });
           setTimeout(() => {
-            this.showOverlay = false;
-            this.$router.push({
+            $this.showOverlay = false;
+            $this.$router.push({
               name: "offlineActivity"
             });
           }, 1000);
         })
         .catch(err => {
           console.log("addActivity", err);
-          this.showOverlay = false;
+          $this.showOverlay = false;
         });
     }
   }
@@ -253,6 +349,9 @@ export default {
       }
       .van-cell__value {
         text-align: left;
+        .van-field__error-message {
+          text-align: right;
+        }
       }
     }
   }

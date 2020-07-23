@@ -13,7 +13,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请填写姓名' }]"
+          :error-message="childrenNameErrText"
         />
         <van-field
           v-model="childrenGender"
@@ -24,7 +24,7 @@
           name="validator"
           @click="showPick(8)"
           required
-          :rules="[{ required: true, message: '请选择性别' }]"
+          :error-message="childrenGenderErrText"
         />
         <van-cell title="头像" input-align="right" readonly>
           <template slot="default">
@@ -71,7 +71,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请输入身份证号码' }]"
+          :error-message="childrenIdErrText"
         />
         <van-field
           v-model="childrenAddress"
@@ -81,7 +81,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请输入现居地址' }]"
+          :error-message="childrenAddressErrText"
         />
         <van-field
           readonly
@@ -94,7 +94,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请选择健康状况' }]"
+          :error-message="childrenHealthyErrText"
         />
         <van-field
           readonly
@@ -201,7 +201,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请输入监护人姓名' }]"
+          :error-message="nameOfGuardianErrText"
         />
         <van-field
           v-model="telOfGuardian"
@@ -211,7 +211,7 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请输入监护人手机号' }]"
+          :error-message="telOfGuardianErrText"
         />
         <van-field
           readonly
@@ -224,16 +224,18 @@
           input-align="right"
           name="validator"
           required
-          :rules="[{ required: true, message: '请选择身份' }]"
+          :error-message="identityOfGuardianErrText"
         />
       </div>
     </van-form>
 
     <div style="padding: 30px;">
       <div v-if="showEdit">
-        <van-button style="width:100%;" type="warning" @click="save" >修改信息</van-button>
+        <van-button style="width:100%;" type="warning" @click="save">修改信息</van-button>
       </div>
-      <div v-else @click="save"  style="width:100%;" type="warning">新建成员</div>
+      <div v-else style="width:100%;">
+        <van-button type="primary" style="width:100%;" @click="save">新建成员</van-button>
+      </div>
     </div>
     <van-popup v-model="showPicker" position="bottom" round :style="{ height: '50%' }">
       <div v-if="currentPick===1">
@@ -293,7 +295,10 @@
           </template>
         </van-field>-->
         <!-- <van-checkbox :name="familyFinancialResources" shape="square" v-for="(familyFinancialResources,index) in familyFinancialResourcesList" :key="index">{{familyFinancialResources}}</van-checkbox> -->
-        <van-checkbox-group v-model="familyFinancialResourcesCheckboxGroup" @change="familyFinancialResourcesCheckboxGroupChange">
+        <van-checkbox-group
+          v-model="familyFinancialResourcesCheckboxGroup"
+          @change="familyFinancialResourcesCheckboxGroupChange"
+        >
           <van-cell
             v-for="(item, index) in familyFinancialResourcesList"
             clickable
@@ -340,8 +345,11 @@
           shape="square"
           v-for="(assistanceAndAssistance,index) in assistanceAndAssistanceList"
           :key="index"
-        >{{assistanceAndAssistance}}</van-checkbox> -->
-        <van-checkbox-group v-model="assistanceAndAssistanceCheckboxGroup" @change="assistanceAndAssistanceCheckboxGroupChange">
+        >{{assistanceAndAssistance}}</van-checkbox>-->
+        <van-checkbox-group
+          v-model="assistanceAndAssistanceCheckboxGroup"
+          @change="assistanceAndAssistanceCheckboxGroupChange"
+        >
           <van-cell
             v-for="(item, index) in assistanceAndAssistanceList"
             clickable
@@ -401,7 +409,7 @@ export default {
   data() {
     return {
       // result: [],
-      showEdit:false,
+      showEdit: false,
       showOverlay: false,
       showPicker: false,
       currentPick: "",
@@ -453,7 +461,15 @@ export default {
         "医疗救助",
         "住房救助",
         "其他"
-      ] //
+      ], //
+      childrenNameErrText: "",
+      childrenGenderErrText: "",
+      childrenIdErrText: "",
+      childrenAddressErrText: "",
+      childrenHealthyErrText: "",
+      nameOfGuardianErrText: "",
+      telOfGuardianErrText: "",
+      identityOfGuardianErrText: ""
     };
   },
   computed: {
@@ -462,6 +478,64 @@ export default {
     },
     ChildrenHomeId() {
       return this.$store.state.common.ChildrenHomeId;
+    }
+  },
+  watch: {
+    childrenName(vale) {
+      if (vale === "") {
+        this.childrenNameErrText = "请输入";
+      } else {
+        this.childrenNameErrText = "";
+      }
+    },
+    childrenGender(vale) {
+      if (vale === "") {
+        this.childrenGenderErrText = "请选择";
+      } else {
+        this.childrenGenderErrText = "";
+      }
+    },
+    childrenId(vale) {
+      if (vale === "") {
+        this.childrenIdErrText = "请输入";
+      } else {
+        this.childrenIdErrText = "";
+      }
+    },
+    childrenAddress(vale) {
+      if (vale === "") {
+        this.childrenAddressErrText = "请输入";
+      } else {
+        this.childrenAddressErrText = "";
+      }
+    },
+    childrenHealthy(vale) {
+      if (vale === "") {
+        this.childrenHealthyErrText = "请选择";
+      } else {
+        this.childrenHealthyErrText = "";
+      }
+    },
+    nameOfGuardian(vale) {
+      if (vale === "") {
+        this.nameOfGuardianErrText = "请输入";
+      } else {
+        this.nameOfGuardianErrText = "";
+      }
+    },
+    telOfGuardian(vale) {
+      if (vale === "") {
+        this.telOfGuardianErrText = "请输入";
+      } else {
+        this.telOfGuardianErrText = "";
+      }
+    },
+    identityOfGuardian(vale) {
+      if (vale === "") {
+        this.identityOfGuardianErrText = "请选择";
+      } else {
+        this.identityOfGuardianErrText = "";
+      }
     }
   },
   mounted() {
@@ -474,21 +548,21 @@ export default {
           // this.childrenNationIDList[element.Name] = element.Id;
         });
         if (this.$route.query.childrenId) {
-          this.showEdit = true
+          this.showEdit = true;
           getChildrenDetail(this.$route.query.childrenId).then(result => {
             console.log("getChildrenDetail", result);
             this.childrenName = result.data.children.Name;
             this.childrenGender = this.genderList[result.data.children.Sex - 1];
             this.childrenImg = result.data.children.Photo;
             this.childrenType = this.childrenTypeList[
-              result.data.children.ChildrenType-1
+              result.data.children.ChildrenType - 1
             ];
             this.childrenNation = result.data.children.Nation;
             this.childrenId = result.data.children.Id;
             this.childrenAddress = result.data.children.ChildrenAddress;
             this.childrenHealthy = result.data.children.Health;
             this.isBoardingSchool = this.isBoardingSchoolList[
-              result.data.children.ShcoolLodging-1
+              result.data.children.ShcoolLodging - 1
             ];
             this.childrenClass = result.data.children.SchoolInfo;
             this.familyEconomicSituation =
@@ -505,7 +579,7 @@ export default {
             this.nameOfGuardian = result.data.children.ParentUser.Name;
             this.telOfGuardian = result.data.children.ParentUser.Phone;
             this.identityOfGuardian = this.identityList[
-              result.data.children.Relation-1
+              result.data.children.Relation - 1
             ];
             this.showOverlay = false;
           });
@@ -630,163 +704,207 @@ export default {
     save() {
       this.showOverlay = true;
       let $this = this;
-      // console.log(
-      //   'this.$refs["addChildrenForm"]',
-      //   this.$refs["addChildrenForm"]
-      // );
-      this.$refs["addChildrenForm"]
-        .validateAll()
-        .then(() => {
-          if (this.$route.query.childrenId) {
-            editChildren({
-              token: this.Token,
-              childrenHomeId: this.ChildrenHomeId,
-              name: this.childrenName,
-              sex: this.childrenGender === "男" ? 1 : 2,
-              photo: this.childrenImg,
-              childrenType:
-                this.childrenType === "困境儿童"
-                  ? 1
-                  : this.childrenType === "留守儿童"
-                  ? 2
-                  : this.childrenType === "孤儿"
-                  ? 3
-                  : this.childrenType === "残疾儿童"
-                  ? 4
-                  : 5,
-              nation: this.childrenNation,
-              idNumber: this.childrenId,
-              childrenAddress: this.childrenAddress,
-              health: this.childrenHealthy,
-              shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
-              schoolInfo: this.childrenClass,
-              economicSituation: this.familyEconomicSituation,
-              economicResource: this.familyFinancialResources,
-              rescueSituation: this.assistanceAndAssistance,
-              fatherName: this.fatherName,
-              fatherWorkAddress: this.fatherWorkPlace,
-              fatherPhone: this.fatherTel,
-              motherName: this.motherName,
-              motherWorkAddress: this.motherWorkPlace,
-              motherPhone: this.motherTel,
-              guardianName: this.nameOfGuardian,
-              guardianPhone: this.telOfGuardian,
-              relation:
-                this.identityOfGuardian === "父母"
-                  ? 1
-                  : this.identityOfGuardian === "亲属"
-                  ? 2
-                  : 3
-            })
-              .then(res => {
-                console.log("editChildren", res);
-                $this.showOverlay = false;
-                if (res.data.code > 1) {
-                  this.$notify({
-                    type: "warning",
-                    message: res.data.error,
-                    duration: 500
-                  });
-                } else {
-                  this.$notify({
-                    type: "success",
-                    message: res.data.msg,
-                    duration: 500
-                  });
-                  setTimeout(() => {
-                    this.showOverlay = false;
-                    this.$router.push({
-                      name: "assistantChildrenHomeDetail",
-                      query: {
-                        currentPath: "childrenHomePage"
-                      }
-                    });
-                  }, 1000);
-                }
-              })
-              .catch(err => {
-                console.log("addChildren", err);
-                $this.showOverlay = false;
-              });
-          } else {
-            addChildren({
-              token: this.Token,
-              childrenHomeId: this.ChildrenHomeId,
-              name: this.childrenName,
-              sex: this.childrenGender === "男" ? 1 : 2,
-              photo: this.childrenImg,
-              childrenType:
-                this.childrenType === "困境儿童"
-                  ? 1
-                  : this.childrenType === "留守儿童"
-                  ? 2
-                  : this.childrenType === "孤儿"
-                  ? 3
-                  : this.childrenType === "残疾儿童"
-                  ? 4
-                  : 5,
-              nation: this.childrenNation,
-              idNumber: this.childrenId,
-              childrenAddress: this.childrenAddress,
-              health: this.childrenHealthy,
-              shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
-              schoolInfo: this.childrenClass,
-              economicSituation: this.familyEconomicSituation,
-              economicResource: this.familyFinancialResources,
-              rescueSituation: this.assistanceAndAssistance,
-              fatherName: this.fatherName,
-              fatherWorkAddress: this.fatherWorkPlace,
-              fatherPhone: this.fatherTel,
-              motherName: this.motherName,
-              motherWorkAddress: this.motherWorkPlace,
-              motherPhone: this.motherTel,
-              guardianName: this.nameOfGuardian,
-              guardianPhone: this.telOfGuardian,
-              relation:
-                this.identityOfGuardian === "父母"
-                  ? 1
-                  : this.identityOfGuardian === "亲属"
-                  ? 2
-                  : 3
-            })
-              .then(res => {
-                console.log("addChildren", res);
-                $this.showOverlay = false;
-                if (res.data.code > 1) {
-                  this.$notify({
-                    type: "warning",
-                    message: res.data.error,
-                    duration: 500
-                  });
-                } else {
-                  this.$notify({
-                    type: "success",
-                    message: res.data.msg,
-                    duration: 500
-                  });
-                  setTimeout(() => {
-                    this.showOverlay = false;
-                    this.$router.push({
-                      name: "assistantChildrenHomeDetail",
-                      query: {
-                        currentPath: "childrenHomePage"
-                      }
-                    });
-                  }, 1000);
-                }
-              })
-              .catch(err => {
-                console.log("addChildren", err);
-                $this.showOverlay = false;
-              });
-          }
-
-          this.showOverlay = false;
+      if (this.childrenName === "") {
+        this.childrenNameErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.childrenNameErrText = "";
+      }
+      if (this.childrenGender === "") {
+        this.childrenGenderErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.childrenGenderErrText = "";
+      }
+      if (this.childrenId === "") {
+        this.childrenIdErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.childrenIdErrText = "";
+      }
+      if (this.childrenAddress === "") {
+        this.childrenAddressErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.childrenAddressErrText = "";
+      }
+      if (this.childrenHealthy === "") {
+        this.childrenHealthyErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.childrenHealthyErrText = "";
+      }
+      if (this.nameOfGuardian === "") {
+        this.nameOfGuardianErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.nameOfGuardianErrText = "";
+      }
+      if (this.telOfGuardian === "") {
+        this.telOfGuardianErrText = "请输入";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.telOfGuardianErrText = "";
+      }
+      if (this.identityOfGuardian === "") {
+        this.identityOfGuardianErrText = "请选择";
+        this.showOverlay = false;
+        return;
+      } else {
+        this.identityOfGuardianErrText = "";
+      }
+      if (this.$route.query.childrenId) {
+        editChildren({
+          token: this.Token,
+          childrenHomeId: this.ChildrenHomeId,
+          name: this.childrenName,
+          sex: this.childrenGender === "男" ? 1 : 2,
+          photo: this.childrenImg,
+          childrenType:
+            this.childrenType === "困境儿童"
+              ? 1
+              : this.childrenType === "留守儿童"
+              ? 2
+              : this.childrenType === "孤儿"
+              ? 3
+              : this.childrenType === "残疾儿童"
+              ? 4
+              : 5,
+          nation: this.childrenNation,
+          idNumber: this.childrenId,
+          childrenAddress: this.childrenAddress,
+          health: this.childrenHealthy,
+          shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
+          schoolInfo: this.childrenClass,
+          economicSituation: this.familyEconomicSituation,
+          economicResource: this.familyFinancialResources,
+          rescueSituation: this.assistanceAndAssistance,
+          fatherName: this.fatherName,
+          fatherWorkAddress: this.fatherWorkPlace,
+          fatherPhone: this.fatherTel,
+          motherName: this.motherName,
+          motherWorkAddress: this.motherWorkPlace,
+          motherPhone: this.motherTel,
+          guardianName: this.nameOfGuardian,
+          guardianPhone: this.telOfGuardian,
+          relation:
+            this.identityOfGuardian === "父母"
+              ? 1
+              : this.identityOfGuardian === "亲属"
+              ? 2
+              : 3
         })
-        .catch(err => {
-          console.log("err", err);
-          this.showOverlay = false;
-        });
+          .then(res => {
+            console.log("editChildren", res);
+            $this.showOverlay = false;
+            if (res.data.code > 1) {
+              this.$notify({
+                type: "warning",
+                message: res.data.error,
+                duration: 500
+              });
+            } else {
+              this.$notify({
+                type: "success",
+                message: res.data.msg,
+                duration: 500
+              });
+              setTimeout(() => {
+                this.showOverlay = false;
+                this.$router.push({
+                  name: "assistantChildrenHomeDetail",
+                  query: {
+                    currentPath: "childrenHomePage"
+                  }
+                });
+              }, 1000);
+            }
+          })
+          .catch(err => {
+            console.log("addChildren", err);
+            $this.showOverlay = false;
+          });
+      } else {
+        addChildren({
+          token: this.Token,
+          childrenHomeId: this.ChildrenHomeId,
+          name: this.childrenName,
+          sex: this.childrenGender === "男" ? 1 : 2,
+          photo: this.childrenImg,
+          childrenType:
+            this.childrenType === "困境儿童"
+              ? 1
+              : this.childrenType === "留守儿童"
+              ? 2
+              : this.childrenType === "孤儿"
+              ? 3
+              : this.childrenType === "残疾儿童"
+              ? 4
+              : 5,
+          nation: this.childrenNation,
+          idNumber: this.childrenId,
+          childrenAddress: this.childrenAddress,
+          health: this.childrenHealthy,
+          shcoolLodging: this.isBoardingSchool === "是" ? 1 : 2,
+          schoolInfo: this.childrenClass,
+          economicSituation: this.familyEconomicSituation,
+          economicResource: this.familyFinancialResources,
+          rescueSituation: this.assistanceAndAssistance,
+          fatherName: this.fatherName,
+          fatherWorkAddress: this.fatherWorkPlace,
+          fatherPhone: this.fatherTel,
+          motherName: this.motherName,
+          motherWorkAddress: this.motherWorkPlace,
+          motherPhone: this.motherTel,
+          guardianName: this.nameOfGuardian,
+          guardianPhone: this.telOfGuardian,
+          relation:
+            this.identityOfGuardian === "父母"
+              ? 1
+              : this.identityOfGuardian === "亲属"
+              ? 2
+              : 3
+        })
+          .then(res => {
+            console.log("addChildren", res);
+            $this.showOverlay = false;
+            if (res.data.code > 1) {
+              this.$notify({
+                type: "warning",
+                message: res.data.error,
+                duration: 500
+              });
+            } else {
+              this.$notify({
+                type: "success",
+                message: res.data.msg,
+                duration: 500
+              });
+              setTimeout(() => {
+                this.showOverlay = false;
+                this.$router.push({
+                  name: "assistantChildrenHomeDetail",
+                  query: {
+                    currentPath: "childrenHomePage"
+                  }
+                });
+              }, 1000);
+            }
+          })
+          .catch(err => {
+            console.log("addChildren", err);
+            $this.showOverlay = false;
+          });
+      }
+
+      this.showOverlay = false;
     },
     onOversize(file) {
       // console.log('onOversize',file);
@@ -801,7 +919,7 @@ export default {
     },
     toggleAssistanceAndAssistance(index) {
       this.$refs.checkboxesAssistanceAndAssistance[index].toggle();
-    },
+    }
   }
 };
 </script>

@@ -155,7 +155,7 @@
           <div v-for="(record,index) in activityCommentList" :key="index">
             <div class="activityRecordUser">
               <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
-              <div style="line-height: 46px;padding-left: 10px;">{{record.Name}}</div>
+              <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
             </div>
             <div>
               <div class="activityRecordUserContent">
@@ -228,31 +228,31 @@ export default {
       evaluateAnswer: "",
       activityEvaluateContent: [
         {
-          content: "活动内容是否充实",
+          content: "活动内容是否充实？",
           yes: 0,
           isYes: false,
           isNot: false
         },
         {
-          content: "活动内容是否充实",
-          yes: 0,
-          isYes: false,
-          isNot: true
-        },
-        {
-          content: "活动内容是否充实",
-          yes: 0,
-          isYes: true,
-          isNot: false
-        },
-        {
-          content: "活动内容是否充实",
+          content: "组织人员是否热情？",
           yes: 0,
           isYes: false,
           isNot: false
         },
         {
-          content: "活动内容是否充实",
+          content: "孩子是否学习到内容？",
+          yes: 0,
+          isYes: false,
+          isNot: false
+        },
+        {
+          content: "儿童之家设施是否完善？",
+          yes: 0,
+          isYes: false,
+          isNot: false
+        },
+        {
+          content: "活动时间是否充足？",
           yes: 0,
           isYes: false,
           isNot: false

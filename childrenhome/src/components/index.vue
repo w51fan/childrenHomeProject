@@ -110,9 +110,11 @@ export default {
     if (!this.cityId) {
       this.$store.commit(
         "common/getCityId",
-        window.localStorage.getItem("cityId")
+        window.localStorage.getItem("cityId")-0
       );
+      // this.cityId = window.localStorage.getItem("cityId")
     }
+    console.log('this.cityId',this.cityId)
     getHomeImgList(this.cityId)
       .then(res => {
         this.imgList = res.data.newsList[0].NewsThumbnail.split(",");

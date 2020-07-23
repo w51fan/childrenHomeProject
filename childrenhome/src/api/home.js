@@ -424,9 +424,9 @@ export const getSocialstationDetail = function (id) {
 }
 
 //获取登录用户关联的儿童之家的活动列表 status活动状态，1：未完成活动，3：已完成活动
-export const getActivityListByUserId = function (token, status) {
+export const getActivityListByUserId = function (token, status, pageNumber, pageSize) {
   return axios.request({
-    url: `https://api.quanjiaxue.net/activity/getActivityListByUserId?token=${token}&status=${status}`,
+    url: `https://api.quanjiaxue.net/activity/getActivityListByUserId?token=${token}&status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     method: "get"
   });
 }
@@ -537,9 +537,9 @@ export const addComment = function (token, id,content,answer) {
 }
 
 //学校儿童之家列表
-export const getSocialStationActivityListByUserId = function (token, status) {
+export const getSocialStationActivityListByUserId = function (token, status, pageNumber, pageSize) {
   return axios.request({
-    url: `https://api.quanjiaxue.net/activity/getSocialStationActivityListByUserId?token=${token}&status=${status}`,
+    url: `https://api.quanjiaxue.net/activity/getSocialStationActivityListByUserId?token=${token}&status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     method: "get"
   });
 }

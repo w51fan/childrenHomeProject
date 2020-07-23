@@ -1,51 +1,65 @@
 <template>
   <div class="offlineActivityPage">
     <div style="padding:20px 40px" v-if="showAddBtn">
+      <!-- <div style="padding:20px 40px" > -->
       <van-button type="warning" color="#ffac22" class="addBtn" @click="go">新建活动</van-button>
     </div>
     <div class="gap gapfive" v-if="showAddBtn"></div>
     <div class="content">
       <van-tabs v-model="activeTab" class="offlineActivityTabs">
         <van-tab title="未完成活动">
-          <div v-if="activityList.length>0">
-            <div v-for="(activity,index) in activityList" :key="index">
-              <div class="unfinishedItem" @click="goUnfinishedActivity(activity)">
-                <div class="title flex space-between">
-                  <div class="flex">
-                    <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
-                    <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
-                  </div>
-                  <div class="status ing">进行中</div>
-                </div>
-                <div
-                  class="content"
-                >{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 即将举办 {{activityTypeIDArray[activity.Type]}}</div>
-              </div>
-              <div class="gap gapone"></div>
-            </div>
-          </div>
-          <div v-else style="padding: 20px;">暂未完成活动</div>
-        </van-tab>
-        <van-tab title="已完成活动">
-          <div class="finishedItem">
-            <div v-if="activityList.length>0">
+          <div v-if="!showNodata">
+            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
               <div v-for="(activity,index) in activityList" :key="index">
-                <div class="unfinishedItem" @click="goActivityDetail(activity)">
+                <div class="unfinishedItem" @click="goUnfinishedActivity(activity)">
                   <div class="title flex space-between">
                     <div class="flex">
                       <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
                       <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
                     </div>
-                    <div class="status finished">已结束</div>
+                    <div class="status ing">进行中</div>
                   </div>
-                  <div
-                    class="content"
-                  >{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 举办了 {{activityTypeIDArray[activity.Type]}}</div>
+                  <div class="content">
+                    <div>{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 即将举办 {{activityTypeIDArray[activity.Type]}}</div>
+                  </div>
                 </div>
                 <div class="gap gapone"></div>
               </div>
+            </van-list>
+          </div>
+          <div v-else style="padding: 20px;">暂无未完成活动</div>
+        </van-tab>
+        <van-tab title="已完成活动">
+          <div class="finishedItem">
+            <div v-if="!showNodata">
+              <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+                <div v-for="(activity,index) in activityList" :key="index">
+                  <div class="unfinishedItem" @click="goActivityDetail(activity)">
+                    <div class="title flex space-between">
+                      <div class="flex">
+                        <van-icon name="checked" color="#10559e" style="font-size: 20px;" />
+                        <div style="padding-left:5px;">{{getDate(activity.Date)}}</div>
+                      </div>
+                      <div class="status finished">已结束</div>
+                    </div>
+                    <div class="content">
+                      <div>{{activity.ChildrenHome.Name!==''?activity.ChildrenHome.Name:activity.SocialStation.Name}} 举办了 {{activityTypeIDArray[activity.Type]}}</div>
+                      <div class="flex">
+                        <img
+                          :src="activityImg.Url"
+                          v-for="(activityImg,turn) in activity.ActivityImage.slice(0,3)"
+                          :key="turn"
+                          style="width: 80px;height: 100px;padding: 15px 15px 15px 0;"
+                        />
+                        <div v-if="activity.ActivityImage.length>0">...</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="gap gapone"></div>
+                </div>
+              </van-list>
             </div>
-            <div v-else style="padding: 20px;">暂已完成活动</div>
+            <div v-else style="padding: 20px;">暂无已完成活动</div>
           </div>
         </van-tab>
       </van-tabs>
@@ -78,13 +92,21 @@ export default {
       selectedNav: "offlineActivity",
       showOverlay: false,
       activityList: [],
+      activityImg: [],
+      showNodata: true,
       activityTypeIDArray: {
         1: "家庭教育",
         2: "儿童团辅",
         3: "家庭亲子",
         4: "安全护卫",
         5: "微课"
-      }
+      },
+      loading: false,
+      finished: false,
+      // refreshing: false,
+      pageNumber: 1,
+      pageSize: 10,
+      total: ""
     };
   },
   computed: {
@@ -114,28 +136,20 @@ export default {
   },
   methods: {
     init(type) {
-      if (this.UserTpye === 4) {
-        getActivityListByUserId(this.Token, type)
-          .then(res => {
-            console.log("getActivityListByUserId", res);
-            this.activityList = res.data.activityList;
-            this.showOverlay = false;
-          })
-          .catch(err => {
-            console.log("err", err);
-            this.showOverlay = false;
-          });
+      if (this.UserTpye === 4 || this.UserTpye === 11) {
+        this.getActivityListByUserId({
+          type: type,
+          pageNumber: this.pageNumber,
+          pageSize: this.pageSize,
+          isPull: false
+        });
       } else {
-        getSocialStationActivityListByUserId(this.Token, type)
-          .then(res => {
-            console.log("getActivityListByUserId", res);
-            this.activityList = res.data.activityList;
-            this.showOverlay = false;
-          })
-          .catch(err => {
-            console.log("err", err);
-            this.showOverlay = false;
-          });
+        this.getSocialStationActivityListByUserId({
+          type: type,
+          pageNumber: this.pageNumber,
+          pageSize: this.pageSize,
+          isPull: false
+        });
       }
     },
     edit() {},
@@ -147,6 +161,63 @@ export default {
           activityType: 1
         }
       });
+    },
+    getActivityListByUserId(param) {
+      const { type, pageNumber, pageSize, isPull } = param;
+      getActivityListByUserId(this.Token, type, pageNumber, pageSize)
+        .then(res => {
+          console.log("getActivityListByUserId", res);
+          if (isPull) {
+            res.data.activityList.forEach(item => {
+              this.activityList.push(item);
+            });
+            this.loading = false;
+            this.showOverlay = false;
+            if (!(this.activityList.length < this.total)) this.finished = true;
+          } else {
+            this.total = res.data.total;
+            if (res.data.code) this.showOverlay = false;
+            if (res.data.activityList) {
+              this.activityList = res.data.activityList;
+              this.showNodata = false;
+            }
+          }
+
+          this.showOverlay = false;
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
+    },
+    getSocialStationActivityListByUserId(param) {
+      const { type, pageNumber, pageSize } = param;
+      getSocialStationActivityListByUserId(
+        this.Token,
+        type,
+        pageNumber,
+        pageSize
+      )
+        .then(res => {
+          console.log("getActivityListByUserId", res);
+
+          if (isPull) {
+            res.data.activityList.forEach(item => {
+              this.activityList.push(item);
+            });
+            this.loading = false;
+            this.showOverlay = false;
+            if (!(this.activityList.length < this.total)) this.finished = true;
+          } else {
+            this.total = res.data.total;
+            this.activityList = res.data.activityList;
+            this.showOverlay = false;
+          }
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.showOverlay = false;
+        });
     },
     goUnfinishedActivity(activity) {
       this.$router.push({
@@ -173,6 +244,57 @@ export default {
       let month = activityDate.getMonth() + 1;
       let day = activityDate.getDate();
       return `${year}-${month}-${day}`;
+    },
+    onLoad() {
+      // if (this.refreshing) {
+      //   this.activityList = [];
+      //   this.refreshing = false;
+      // }
+      if (this.activityList.length < this.total) {
+        if (this.activeTab === 1) {
+          if (this.UserTpye === 4 || this.UserTpye === 11) {
+            this.getActivityListByUserId({
+              type: 3,
+              pageNumber: this.pageNumber++ + 1,
+              pageSize: this.pageSize,
+              isPull: true
+            });
+          } else {
+            this.getSocialStationActivityListByUserId({
+              type: 3,
+              pageNumber: this.pageNumber++ + 1,
+              pageSize: this.pageSize,
+              isPull: true
+            });
+          }
+        } else {
+          if (this.UserTpye === 4 || this.UserTpye === 11) {
+            this.getActivityListByUserId({
+              type: 1,
+              pageNumber: this.pageNumber++ + 1,
+              pageSize: this.pageSize,
+              isPull: true
+            });
+          } else {
+            this.getSocialStationActivityListByUserId({
+              type: 1,
+              pageNumber: this.pageNumber++ + 1,
+              pageSize: this.pageSize,
+              isPull: true
+            });
+          }
+        }
+        // this.getActivityList({
+        //   cityId: this.cityId,
+        //   isInit: false,
+        //   pageNumber: this.pageNumber++ + 1,
+        //   pageSize: this.pageSize,
+        //   isPull: true
+        // });
+      } else {
+        this.finished = true;
+      }
+      this.loading = false;
     }
   }
 };

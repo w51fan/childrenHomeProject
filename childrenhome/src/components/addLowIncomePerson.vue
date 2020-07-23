@@ -11,10 +11,11 @@
         input-align="right"
         name="validator"
         required
-        :rules="[{ required: true, message: '请填写户主' }]"
+        :error-message="nameErrText"
       />
       <van-field
         v-model="gender"
+        readonly
         label="性别"
         placeholder="请选择"
         size="large"
@@ -22,7 +23,7 @@
         name="validator"
         @click="showPick(1)"
         required
-        :rules="[{ required: true, message: '请选择性别' }]"
+        :error-message="genderErrText"
       />
       <van-field
         v-model="idNumber"
@@ -32,7 +33,7 @@
         input-align="right"
         name="validator"
         required
-        :rules="[{ required: true, message: '请输入身份证号码' }]"
+        :error-message="idNumberErrText"
       />
       <van-field
         v-model="address"
@@ -145,7 +146,10 @@ export default {
       contactInfo: "",
       applyReason: "",
       beginDate: "",
-      showEdit: false
+      showEdit: false,
+      nameErrText: "",
+      genderErrText: "",
+      idNumberErrText: ""
     };
   },
   computed: {
@@ -154,6 +158,29 @@ export default {
     },
     SocialStationId() {
       return this.$store.state.common.SocialStationId;
+    }
+  },
+  watch: {
+    name(vale) {
+      if (vale === "") {
+        this.nameErrText = "请输入";
+      } else {
+        this.nameErrText = "";
+      }
+    },
+    gender(vale) {
+      if (vale === "") {
+        this.genderErrText = "请选择";
+      } else {
+        this.genderErrText = "";
+      }
+    },
+    idNumber(vale) {
+      if (vale === "") {
+        this.idNumberErrText = "请输入";
+      } else {
+        this.idNumberErrText = "";
+      }
     }
   },
   mounted() {
@@ -208,109 +235,118 @@ export default {
       this.showPicker = false;
       this.activityDate = this.getDate(value);
     },
+    checkData() {
+      if (this.name === "") {
+        this.nameErrText = "请输入";
+        this.showOverlay = false;
+        return false;
+      } else {
+        this.nameErrText = "";
+      }
+      if (this.gender === "") {
+        this.genderErrText = "请选择";
+        this.showOverlay = false;
+        return false;
+      } else {
+        this.genderErrText = "";
+      }
+      if (this.idNumber === "") {
+        this.idNumberErrText = "请输入";
+        this.showOverlay = false;
+        return false;
+      } else {
+        this.idNumberErrText = "";
+      }
+      return true;
+    },
     add() {
       this.showOverlay = true;
       let $this = this;
-      this.$refs["addLowIncomePersonForm"]
-        .validateAll()
-        .then(() => {
-          addSubsistence({
-            token: this.Token,
-            socialStationId: this.SocialStationId,
-            name: this.name,
-            sex: this.gender,
-            idNumber: this.idNumber,
-            address: this.address, //非必填
-            subsistenceType: this.lowIncomeType, //非必填
-            income: this.familyMonthIncome, //非必填
-            contact: this.contactInfo, //非必填
-            beginDate: this.activityDate, //非必填
-            reason: this.applyReason //非必填
-          })
-            .then(res => {
-              console.log("addSubsistence", res);
-              this.showOverlay = false;
-              if (res.data.code > 1) {
-                this.$notify({
-                  type: "warning",
-                  message: res.data.error,
-                  duration: 500
-                });
-              } else {
-                this.$notify({
-                  type: "success",
-                  message: res.data.msg,
-                  duration: 500
-                });
-                setTimeout(() => {
-                  this.showOverlay = false;
-                  this.$router.push({
-                    name: "socialWorkstationDetail"
-                  });
-                }, 1000);
-              }
-            })
-            .catch(err => {
-              console.log("addSubsistence", err);
-              this.showOverlay = false;
+      if (!this.checkData()) return;
+      addSubsistence({
+        token: this.Token,
+        socialStationId: this.SocialStationId,
+        name: this.name,
+        sex: this.gender,
+        idNumber: this.idNumber,
+        address: this.address, //非必填
+        subsistenceType: this.lowIncomeType, //非必填
+        income: this.familyMonthIncome, //非必填
+        contact: this.contactInfo, //非必填
+        beginDate: this.activityDate, //非必填
+        reason: this.applyReason //非必填
+      })
+        .then(res => {
+          console.log("addSubsistence", res);
+          this.showOverlay = false;
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 500
             });
+          } else {
+            this.$notify({
+              type: "success",
+              message: res.data.msg,
+              duration: 500
+            });
+            setTimeout(() => {
+              this.showOverlay = false;
+              this.$router.push({
+                name: "socialWorkstationDetail"
+              });
+            }, 1000);
+          }
         })
         .catch(err => {
-          console.log("validateAll", err);
+          console.log("addSubsistence", err);
           this.showOverlay = false;
         });
     },
     edit() {
       this.showOverlay = true;
       let $this = this;
-      console.log('this.$route.query.SubsistenceID',this.$route.query.SubsistenceID)
-      this.$refs["addLowIncomePersonForm"]
-        .validateAll()
-        .then(() => {
-          editSubsistence({
-            token: this.Token,
-            id:this.$route.query.SubsistenceID,
-            socialStationId: this.SocialStationId,
-            name: this.name,
-            sex: this.gender,
-            idNumber: this.idNumber,
-            address: this.address, //非必填
-            subsistenceType: this.lowIncomeType, //非必填
-            income: this.familyMonthIncome, //非必填
-            contact: this.contactInfo, //非必填
-            beginDate: this.activityDate, //非必填
-            reason: this.applyReason //非必填
-          })
-            .then(res => {
-              console.log("editSubsistence", res);
-              this.showOverlay = false;
-              if (res.data.code > 1) {
-                this.$notify({
-                  type: "warning",
-                  message: res.data.error,
-                  duration: 500
-                });
-              } else {
-                this.$notify({
-                  type: "success",
-                  message: res.data.msg,
-                  duration: 500
-                });
-                setTimeout(() => {
-                  this.showOverlay = false;
-                  this.$router.push({
-                    name: "socialWorkstationDetail"
-                  });
-                }, 1000);
-              }
-            })
-            .catch(err => {
-              console.log("addSubsistence", err);
-              this.showOverlay = false;
+      if (!this.checkData()) return;
+      editSubsistence({
+        token: this.Token,
+        id: this.$route.query.SubsistenceID,
+        socialStationId: this.SocialStationId,
+        name: this.name,
+        sex: this.gender,
+        idNumber: this.idNumber,
+        address: this.address, //非必填
+        subsistenceType: this.lowIncomeType, //非必填
+        income: this.familyMonthIncome, //非必填
+        contact: this.contactInfo, //非必填
+        beginDate: this.activityDate, //非必填
+        reason: this.applyReason //非必填
+      })
+        .then(res => {
+          console.log("editSubsistence", res);
+          this.showOverlay = false;
+          if (res.data.code > 1) {
+            this.$notify({
+              type: "warning",
+              message: res.data.error,
+              duration: 500
             });
+          } else {
+            this.$notify({
+              type: "success",
+              message: res.data.msg,
+              duration: 500
+            });
+            setTimeout(() => {
+              this.showOverlay = false;
+              this.$router.push({
+                name: "socialWorkstationDetail"
+              });
+            }, 1000);
+          }
         })
         .catch(err => {
-          console.log("validateAll", err);
+          console.log("addSubsistence", err);
           this.showOverlay = false;
         });
     }
