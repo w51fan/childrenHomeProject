@@ -107,7 +107,16 @@
             style="padding: 10px;"
           >
             <div class="flex">
-              <img src="../assets/nohead.png" alt style="40px;height:40px;margin-top: 5px;" />
+              <div v-if="user.ProfilePhoto!==''">
+                <img
+                  :src="user.ProfilePhoto"
+                  style="width:40px;height:40px;margin-top: 5px;object-fit: contain;border-radius: 50%;"
+                  alt
+                />
+              </div>
+              <div v-else>
+                <img src="../assets/nohead.png" alt style="width:40px;height:40px;margin-top: 5px;" />
+              </div>
               <div style="text-align: left;padding-left: 10px;">
                 <div style="padding: 0 10px;">{{user.Name}}</div>
                 <div

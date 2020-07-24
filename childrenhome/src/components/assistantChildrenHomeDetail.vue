@@ -80,7 +80,12 @@
         <template #title>
           <div class="flex space-between">
             <div class="childHead">
-              <img src="../assets/nohead.png" class="head" alt />
+              <div v-if="child.Photo!==''">
+                <img :src="child.Photo" class="head" alt />
+              </div>
+              <div v-else>
+                <img src="../assets/nohead.png" class="head" alt />
+              </div>
               <div class="name">{{child.Name}}</div>
             </div>
             <div class="guardianName">{{child.ParentUser.Name}}</div>
@@ -98,9 +103,6 @@
       </div>
       <div>
         <div class="activityRecordUser">
-          <!-- <div class="activityRecordUserHead">
-              <div style="color: #ffb100;">暂无头像</div>
-          </div>-->
           <div
             v-for="(user,index) in userList"
             :key="index"
@@ -108,7 +110,16 @@
             style="padding: 10px;"
           >
             <div class="flex">
-              <img src="../assets/nohead.png" alt style="40px;height:40px;margin-top: 5px;" />
+              <div v-if="user.ProfilePhoto!==''">
+                <img
+                  :src="user.ProfilePhoto"
+                  style="width:40px;height:40px;margin-top: 5px;object-fit: contain;border-radius: 50%;"
+                  alt
+                />
+              </div>
+              <div v-else>
+                <img src="../assets/nohead.png" alt style="width:40px;height:40px;margin-top: 5px;" />
+              </div>
               <div style="text-align: left;padding-left: 10px;">
                 <div style="padding: 0 10px;">{{user.Name}}</div>
                 <div
@@ -281,7 +292,7 @@ export default {
         });
       } else {
         this.$router.push({
-          name: this.PreCurrentPath,
+          name: this.PreCurrentPath
           // name: "childrenHomePage"
           // query: {
           //   activeTab: this.PreCurrentPath === "careIndex" ? 2 : 0
@@ -491,6 +502,7 @@ export default {
         width: 20px;
         height: 20px;
         padding-right: 5px;
+        object-fit: contain;
       }
       .name {
         line-height: 20px;

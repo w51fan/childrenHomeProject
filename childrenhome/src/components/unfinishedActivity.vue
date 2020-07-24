@@ -92,7 +92,10 @@
         <div v-if="activityRecordList.length>0">
           <div v-for="(record,index) in activityRecordList" :key="index">
             <div class="activityRecordUser">
-              <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+              <img
+                :src="ProfilePhoto"
+                style="width: 40px;height: 40px;border-radius: 50%;object-fit: contain;"
+              />
               <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
             </div>
             <div>
@@ -387,6 +390,8 @@ export default {
       width: 50px;
       height: 50px;
       padding-left: 7%;
+      border-radius: 50%;
+      object-fit: contain;
     }
   }
   .activityImgTitle {

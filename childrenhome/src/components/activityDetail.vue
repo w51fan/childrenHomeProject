@@ -91,7 +91,7 @@
         <div v-if="activityRecordList.length>0">
           <div v-for="(record,index) in activityRecordList" :key="index">
             <div class="activityRecordUser">
-              <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+              <img :src="ProfilePhoto" style="width: 40px;height: 40px;border-radius: 50%;object-fit: contain;" />
               <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
             </div>
             <div>
@@ -154,7 +154,7 @@
         <div v-if="activityCommentList.length>0">
           <div v-for="(record,index) in activityCommentList" :key="index">
             <div class="activityRecordUser">
-              <img :src="ProfilePhoto" style="width: 40px;height: 40px;" />
+              <img :src="ProfilePhoto" style="width: 40px;height: 40px;border-radius: 50%;object-fit: contain;" />
               <div style="line-height: 46px;padding-left: 10px;">{{record.User.Name}}</div>
             </div>
             <div>
@@ -287,8 +287,8 @@ export default {
 
           this.starNum = res.data.activity.Score / 10;
           this.activityRecordList = res.data.activityRecordList;
-          this.activityImageList = res.data.activityImageList.slice(0,6);
-          this.signInImageList = res.data.signInImageList.slice(0,1);
+          this.activityImageList = res.data.activityImageList.slice(0, 6);
+          this.signInImageList = res.data.signInImageList.slice(0, 1);
           this.activityCommentList = res.data.activityCommentList;
           this.ActivityType =
             this.activity.ActivityType === 1
@@ -453,6 +453,8 @@ export default {
       width: 50px;
       height: 50px;
       padding-left: 7%;
+      border-radius: 50%;
+      object-fit: contain;
     }
   }
   .activityImgTitle {
