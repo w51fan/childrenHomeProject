@@ -763,6 +763,7 @@ export default {
       if (this.$route.query.childrenId) {
         editChildren({
           token: this.Token,
+          id:this.$route.query.childrenId,
           childrenHomeId: this.ChildrenHomeId,
           name: this.childrenName,
           sex: this.childrenGender === "男" ? 1 : 2,

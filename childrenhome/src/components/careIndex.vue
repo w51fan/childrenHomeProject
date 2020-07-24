@@ -41,6 +41,13 @@
         </div>
         <div>儿童主任</div>
       </div>
+      <div class="item">
+        <div>
+          <span class="green">{{totalCount.SocialStationCount}}</span>
+          <span class="gray">个</span>
+        </div>
+        <div>社工站</div>
+      </div>
     </div>
     <div class="gap gapten"></div>
     <van-tabs class="careIndexTabs" v-model="activeTab">
@@ -159,6 +166,31 @@
           </template>
         </van-cell>
       </van-tab>
+      <van-tab title="社工站">
+        <div class="gap gaptwo"></div>
+        <div class="flex space-between">
+          <div class="childrenMastertableHead">社工站</div>
+          <!-- <div class="childrenMastertableHead">社工管理员</div> -->
+          <div class="childrenMastertableHead">活动数</div>
+        </div>
+        <div class="gap gapone"></div>
+        <van-cell
+          class="childrenMaster"
+          :value="SocialStation.ActivityCount"
+          is-link
+          @click="goSocialStation(SocialStation)"
+          v-for="(SocialStation,index) in topSocialStationList"
+          :key="index"
+        >
+          <!-- 使用 title 插槽来自定义标题 -->
+          <template #title>
+            <div class="flex space-between">
+              <div class="custom-title">{{SocialStation.Name}}</div>
+              <!-- <div>{{SocialStation.ChildrenDirector}}</div> -->
+            </div>
+          </template>
+        </van-cell>
+      </van-tab>
     </van-tabs>
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
     <van-overlay :show="showOverlay" @click="show = false">
@@ -175,7 +207,8 @@ import bottomNav from "./bottomNav";
 import {
   getTotalCount,
   getTreeCount,
-  getTopChildrenHomeList
+  getTopChildrenHomeList,
+  getTopSocialStationList
 } from "@/api/home";
 export default {
   name: "careIndex",
@@ -197,6 +230,7 @@ export default {
       childrenItems: [],
       childerenHomeList: [],
       topChildrenHomeList: [],
+      topSocialStationList:[],
       showOverlay: false,
       showCurrentDown: "",
       showSecondCurrentDown: "",
@@ -211,7 +245,7 @@ export default {
     if (!this.cityId) {
       this.$store.commit(
         "common/getCityId",
-        window.localStorage.getItem("cityId")-0
+        window.localStorage.getItem("cityId") - 0
       );
       // this.cityId = window.localStorage.getItem("cityId");
     }
@@ -315,6 +349,18 @@ export default {
             // console.log("getTotalCount", err);
             this.showOverlay = false;
           });
+      } else if (val === 3) {
+        this.showOverlay = true;
+        getTopSocialStationList(this.cityId)
+          .then(res => {
+            // console.log("getTopChildrenHomeList", res);
+            this.topSocialStationList = res.data.topSocialStationList;
+            this.showOverlay = false;
+          })
+          .catch(err => {
+            // console.log("getTotalCount", err);
+            this.showOverlay = false;
+          });
       }
     }
   },
@@ -331,6 +377,23 @@ export default {
         name: "childrenHomeDetail",
         query: {
           currentPath: "careIndex"
+        }
+      });
+    },
+    goSocialStation(SocialStation){
+      console.log('SocialStation',SocialStation)
+      this.$store.commit("common/getSocialStationId", SocialStation.Id);
+      if (this.$route.query.currentPath)
+        this.$store.commit(
+          "common/getPreCurrentPath",
+          this.$route.query.currentPath
+        );
+
+      this.$router.push({
+        name: "socialWorkstationDetail",
+        query: {
+          currentPath: "careIndex",
+          isAssistant: false
         }
       });
     },

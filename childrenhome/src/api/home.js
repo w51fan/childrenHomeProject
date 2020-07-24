@@ -284,15 +284,24 @@ export const uploadImg = function (file) {
 
 //添加活动
 export const addActivity = function (param) {
-  const { token, name, type, childrenHomeId, date, activityType, socialStationId } = param
-  if (socialStationId){
+  const {
+    token,
+    name,
+    type,
+    childrenHomeId,
+    date,
+    activityType,
+    socialStationId,
+    isChildrenHome
+  } = param
+  if (isChildrenHome) {
     return axios.request({
-      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&socialStationId=${socialStationId}&date=${date}&activityType=${activityType}`,
+      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}&activityType=${activityType}`,
       method: "get"
     });
   }else{
     return axios.request({
-      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&childrenHomeId=${childrenHomeId}&date=${date}&activityType=${activityType}`,
+      url: `https://api.quanjiaxue.net/activity/add?token=${token}&name=${name}&type=${type}&socialStationId=${socialStationId}&date=${date}&activityType=${activityType}`,
       method: "get"
     });
   }
@@ -540,6 +549,16 @@ export const addComment = function (token, id,content,answer) {
 export const getSocialStationActivityListByUserId = function (token, status, pageNumber, pageSize) {
   return axios.request({
     url: `https://api.quanjiaxue.net/activity/getSocialStationActivityListByUserId?token=${token}&status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    method: "get"
+  });
+}
+
+
+
+//社工站排名列表（关爱指数）
+export const getTopSocialStationList = function (cityId) {
+  return axios.request({
+    url: `https://api.quanjiaxue.net/socialstation/getTopSocialStationList?cityId=${cityId}`,
     method: "get"
   });
 }

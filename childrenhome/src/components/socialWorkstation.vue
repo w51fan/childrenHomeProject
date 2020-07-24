@@ -136,8 +136,6 @@ export default {
                 "common/SET_cityId",
                 this.socialStationList[0].CityId
               );
-              // this.$store.commit("common/getTownId", this.socialStationList[0].TownId);
-              // this.$store.commit("common/getVillageId", this.socialStationList[0].VillageId);
               this.showOverlay = false;
             } else {
               this.$store.commit("common/getCityId", 2018);
@@ -158,11 +156,12 @@ export default {
   },
   methods: {
     goSocialStationDetail(socialStation) {
-      this.$store.commit("common/getVillageId", socialStation.Id);
+      this.$store.commit("common/getSocialStationId", socialStation.Id);
       this.$router.push({
         name: "socialWorkstationDetail",
         query: {
-          currentPath: "socialWorkstation"
+          currentPath: "socialWorkstation",
+          isAssistant: true
         }
       });
     },

@@ -164,6 +164,7 @@ export default {
     },
     getActivityListByUserId(param) {
       const { type, pageNumber, pageSize, isPull } = param;
+      console.log("isPull ", isPull);
       getActivityListByUserId(this.Token, type, pageNumber, pageSize)
         .then(res => {
           console.log("getActivityListByUserId", res);
@@ -191,7 +192,8 @@ export default {
         });
     },
     getSocialStationActivityListByUserId(param) {
-      const { type, pageNumber, pageSize } = param;
+      const { type, pageNumber, pageSize, isPull } = param;
+      console.log("isPull ", isPull);
       getSocialStationActivityListByUserId(
         this.Token,
         type,
@@ -199,7 +201,7 @@ export default {
         pageSize
       )
         .then(res => {
-          console.log("getActivityListByUserId", res);
+          console.log("getSocialStationActivityListByUserId", res);
 
           if (isPull) {
             res.data.activityList.forEach(item => {
@@ -210,7 +212,11 @@ export default {
             if (!(this.activityList.length < this.total)) this.finished = true;
           } else {
             this.total = res.data.total;
-            this.activityList = res.data.activityList;
+            if (res.data.code) this.showOverlay = false;
+            if (res.data.activityList) {
+              this.activityList = res.data.activityList;
+              this.showNodata = false;
+            }
             this.showOverlay = false;
           }
         })

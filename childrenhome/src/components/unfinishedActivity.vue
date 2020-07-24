@@ -212,6 +212,7 @@ export default {
     init() {
       this.showOverlay = true;
       if (this.UserTpye !== 4 && this.UserTpye !== 12) this.disabledBtn = true;
+      if (!this.$route.query.isAssistant) this.disabledBtn = true;
       getActivityDetail(this.$route.query.activityId).then(res => {
         console.log("getActivityDetail", res);
         this.activity = res.data.activity;

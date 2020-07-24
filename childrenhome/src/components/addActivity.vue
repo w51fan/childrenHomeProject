@@ -294,6 +294,7 @@ export default {
       } else {
         this.activityHomeErrText = "";
       }
+      console.log('this.childrenHomeIDListArray',this.childrenHomeIDListArray)
       addActivity({
         token: this.Token,
         name: this.activityName,
@@ -301,7 +302,8 @@ export default {
         childrenHomeId: this.childrenHomeIDListArray[this.activityHome],
         date: this.activityDate,
         activityType: this.$route.query.activityType,
-        socialStationId: this.childrenHomeIDListArray[this.activityHome]
+        socialStationId: this.childrenHomeIDListArray[this.activityHome],
+        isChildrenHome:this.UserTpye === 4?true:false
       })
         .then(res => {
           console.log("addActivity", res);

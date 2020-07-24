@@ -60,7 +60,7 @@
     <div style="padding: 20px;">
       <div class="flex space-between">
         <div style="text-align: left;font-size: 18px;font-weight: 600;">低保对象人员</div>
-        <div style="color: #2c518a;" @click="addSubsistence">新建成员</div>
+        <div style="color: #2c518a;" @click="addSubsistence" v-if="showAddSocialWorkstation">新建成员</div>
       </div>
     </div>
     <div class="flex space-between" style="padding:20px 20px 10px;">
@@ -168,7 +168,7 @@
         </div>
         <!-- <div class="item" v-if="currentParentUserTel!==''">
           <div class="itemContent">联系监护人手机-{{currentParentUserTel}}</div>
-        </div> -->
+        </div>-->
       </div>
     </van-dialog>
     <van-dialog
@@ -211,7 +211,7 @@ export default {
       starNum: 0,
       activityTotal: "",
       ChildrenHomeImg: "",
-      showAddChildren: false,
+      showAddSocialWorkstation: false,
       showOverlay: false,
       showDialog: false,
       showDeleteConfirm: false,
@@ -222,8 +222,8 @@ export default {
     };
   },
   computed: {
-    VillageId() {
-      return this.$store.state.common.VillageId;
+    SocialStationId() {
+      return this.$store.state.common.SocialStationId;
     },
     Token() {
       return this.$store.state.common.Token;
@@ -241,10 +241,12 @@ export default {
   methods: {
     init() {
       this.showOverlay = true;
-      if (this.$route.query.currentPath === "childrenHomePage") {
-        this.showAddChildren = true;
+      // console.log('this.$route.query.isAssistant',this.$route.query.isAssistant)
+      if (this.$route.query.isAssistant) {
+        // console.log('this.$route.query.isAssistant222',this.$route.query.isAssistant)
+        this.showAddSocialWorkstation = true;
       }
-      getSocialstationDetail(this.VillageId)
+      getSocialstationDetail(this.SocialStationId)
         .then(res => {
           console.log("getSocialstationDetail", res);
           this.$store.commit(
@@ -270,9 +272,26 @@ export default {
         });
     },
     onClickLeft() {
-      this.$router.push({
-        name: "socialWorkstation"
-      });
+      console.log(
+        "this.$route.query.currentPath",
+        this.$route.query.currentPath,
+        this.PreCurrentPath
+      );
+      if (this.$route.query.currentPath) {
+        this.$router.push({
+          name: this.$route.query.currentPath,
+          query: {
+            activeTab: this.$route.query.currentPath === "careIndex" ? 3 : 0
+          }
+        });
+      } else {
+        this.$router.push({
+          name: this.PreCurrentPath,
+          query: {
+            activeTab: this.PreCurrentPath === "careIndex" ? 3 : 0
+          }
+        });
+      }
     },
     getDate(date) {
       let activityDate = new Date(date);
@@ -293,7 +312,7 @@ export default {
           name: "unfinishedActivity",
           query: {
             activityId: row.Id,
-            currentPath: "socialWorkstationDetail"
+            currentPath: "socialWorkstationDetail",
           }
         });
       } else {
@@ -301,7 +320,7 @@ export default {
           name: "activityDetail",
           query: {
             activityId: row.Id,
-            currentPath: "socialWorkstationDetail"
+            currentPath: "socialWorkstationDetail",
           }
         });
       }
@@ -321,6 +340,14 @@ export default {
       });
     },
     showMore(child) {
+      if (!this.showAddSocialWorkstation) {
+        this.$notify({
+          type: "warning",
+          message: "无权限操作",
+          duration: 1000
+        });
+        return;
+      }
       this.showDialog = true;
       this.currentChildId = child.Id;
       this.currentChildName = child.Name;
