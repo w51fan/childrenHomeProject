@@ -135,18 +135,9 @@
           </van-collapse-item>
         </van-collapse>
       </van-tab>
-      <van-tab title="学校儿童之家">
+      <!-- <van-tab title="学校儿童之家">
         <div class="gap"></div>
         <van-collapse v-model="selectedTown" accordion>
-          <!-- <van-collapse-item
-            :title="town.text"
-            :name="index+1"
-            v-for="(town,index) in townItems"
-            :key="index"
-            style="text-align: left;"
-            @click="collapseVillage(town)"
-          >
-          </van-collapse-item>-->
           <van-cell
             :value="item.Name"
             v-for="(item,index) in schoolChildrenHomeList"
@@ -155,7 +146,7 @@
             @click="viewChildhomeDetail(item)"
           />
         </van-collapse>
-      </van-tab>
+      </van-tab> -->
     </van-tabs>
 
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>

@@ -41,13 +41,13 @@
         </div>
         <div>儿童主任</div>
       </div>
-      <div class="item">
+      <!-- <div class="item">
         <div>
           <span class="green">{{totalCount.SocialStationCount}}</span>
           <span class="gray">个</span>
         </div>
         <div>社工站</div>
-      </div>
+      </div> -->
     </div>
     <div class="gap gapten"></div>
     <van-tabs class="careIndexTabs" v-model="activeTab">
@@ -166,11 +166,10 @@
           </template>
         </van-cell>
       </van-tab>
-      <van-tab title="社工站">
+      <!-- <van-tab title="社工站">
         <div class="gap gaptwo"></div>
         <div class="flex space-between">
           <div class="childrenMastertableHead">社工站</div>
-          <!-- <div class="childrenMastertableHead">社工管理员</div> -->
           <div class="childrenMastertableHead">活动数</div>
         </div>
         <div class="gap gapone"></div>
@@ -182,15 +181,13 @@
           v-for="(SocialStation,index) in topSocialStationList"
           :key="index"
         >
-          <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="flex space-between">
               <div class="custom-title">{{SocialStation.Name}}</div>
-              <!-- <div>{{SocialStation.ChildrenDirector}}</div> -->
             </div>
           </template>
         </van-cell>
-      </van-tab>
+      </van-tab> -->
     </van-tabs>
     <bottomNav :selectedNav.sync="selectedNav"></bottomNav>
     <van-overlay :show="showOverlay" @click="show = false">
