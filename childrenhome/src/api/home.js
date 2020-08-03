@@ -5,14 +5,14 @@ import config from '../libs/config.js';
 //获取轮播图
 export const getHomeImgList = function (cityId) {
   return axios.request({
-    url: `${config.hostApi}/list?cityId=${cityId}&type=${1}`,
+    url: `${config.hostApi}/news/list?cityId=${cityId}&type=${1}`,
     method: "get"
   });
 }
 //置顶
 export const getMenuList = function (cityId) {
   return axios.request({
-    url: `${config.hostApi}/list?cityId=${cityId}&type=${2}`,
+    url: `${config.hostApi}/news/list?cityId=${cityId}&type=${2}`,
     method: "get"
   });
 }
