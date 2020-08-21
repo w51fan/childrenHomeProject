@@ -108,7 +108,7 @@ export default {
                 this.$store.commit("common/SET_UserTpye", res.data.user.Type);
                 this.$store.commit("common/getUser", res.data.user);
                 this.showOverlay = false;
-                if (res.data.user.Type === 4 || res.data.user.Type === 11) {
+                if (res.data.user.Type === 4 || res.data.user.Type === 11|| res.data.user.Type === 14|| res.data.user.Type === 15) {
                   
                   this.$router.push({
                     name: "childrenHomePage",
