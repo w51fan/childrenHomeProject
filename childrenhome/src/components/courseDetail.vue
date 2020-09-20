@@ -36,7 +36,7 @@
           <div class="Intro">{{course.Professor.Intro}}</div>
         </div>
       </van-tab>
-      <van-tab title="答疑解惑">
+      <!-- <van-tab title="答疑解惑">
         <div class="answerContent">
           <div class="category">志愿者及领队联系方式</div>
           <div class="name">王群英(研究会会长)</div>
@@ -75,7 +75,7 @@
           <div class="name">陆小英</div>
           <div class="phone paddingBottomTen">邮箱:rabbit_lu@163.com</div>
         </div>
-      </van-tab>
+      </van-tab> -->
     </van-tabs>
   </div>
 </template>
