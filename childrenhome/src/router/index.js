@@ -245,8 +245,8 @@ router.beforeEach((to, from, next) => {
         getUserInfo(window.localStorage.getItem('Token'))
           .then(res => {
             console.log("getUserInfo", res);
-            //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户
-            if (res.data.user.Type === 4 || res.data.user.Type === 11) {
+            //type 4:儿童主任,显示儿童之家，type 社会救助服务管理员 显示社工服务   1. 市级管理员 2. 县级管理员  3. 镇级管理员 4. 村级管理员 5. 村级讲师 6. 助理 7. 志愿者 11. 家长用户 14.校儿童主任 15.校儿童督导员
+            if (res.data.user.Type === 4 || res.data.user.Type === 11 || res.data.user.Type === 14 || res.data.user.Type === 15) {
               next({
                 path: "/childrenHomePage",
                 // path: '/socialWorkstation',
