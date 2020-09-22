@@ -37,7 +37,7 @@
               @click="login"
             >立即登录</van-button>
           </div>
-          <div style="font-size:12px;">！请接收验证码登录</div>
+          <div style="font-size:12px;">请接收验证码登录</div>
         </van-tab>
         <van-tab title="账户密码登录">
           <van-field v-model="tel" type="tel" left-icon="phone" placeholder="请输入手机号" />
@@ -45,7 +45,7 @@
           <div style="padding: 20px 20px 10px;">
             <van-button style="width:100%" type="warning" color="#02437b">立即登录</van-button>
           </div>
-          <div style="font-size:12px;">！请输入密码登录</div>
+          <div style="font-size:12px;">请输入密码登录</div>
         </van-tab>
       </van-tabs>
       <div class="footer_init">
