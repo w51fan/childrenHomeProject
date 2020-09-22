@@ -7,7 +7,7 @@
     <div class="gap gapfive"></div>
     <div class="myChildrenHome">
       <div v-if="imageList.length>0" style="position: absolute;">
-        <img :src="ChildrenHomeImg" alt style="width: 100%;"/>
+        <img :src="ChildrenHomeImg" alt style="width: 100%;" />
       </div>
       <div class="myChildrenHometips">儿童之家形象照</div>
     </div>
@@ -320,7 +320,7 @@ export default {
 <style lang="less">
 .childrenHomeDetailPage {
   .myChildrenHome {
-    height: 160px;
+    height: 190px;
     background: #e6e6e6;
     position: relative;
     .myChildrenHometips {
@@ -346,6 +346,11 @@ export default {
     .childrenMastertableHead {
       font-size: 16px;
       font-weight: 600;
+    }
+    .position {
+      font-size: 12px;
+      color: #b9b8b8;
+      padding: 30px 0;
     }
   }
   .childrenHomeMember {
