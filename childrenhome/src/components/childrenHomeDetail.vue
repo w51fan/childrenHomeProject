@@ -281,6 +281,7 @@ export default {
       return `${year}年${month}月${day}日`;
     },
     viewDetail(row) {
+      console.log('row',row,this.$route.query.currentPath)
       if (this.$route.query.currentPath)
         this.$store.commit(
           "common/getPreCurrentPath",
@@ -289,7 +290,7 @@ export default {
       this.$router.push({
         name: "activityDetail",
         query: {
-          Id: row.Id,
+          activityId: row.Id,
           currentPath: "childrenHomeDetail"
         }
       });

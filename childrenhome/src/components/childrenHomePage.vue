@@ -20,7 +20,7 @@
             <div
               class="status will"
               style="width: 60px;margin: 0 16px;"
-            >{{User.Type===4?'儿童主任':User.Type===7?'志愿者':User.Type===3?'镇级管理员':User.Type===2?'县级管理员':User.Type===1?'市级管理员':User.Type===6?'助理':User.Type===11?'家长':User.Type===12?'社区工作服务管理员':User.Type===14?'校儿童主任':User.Type===15?'校儿童督导员':'村级讲师'}}</div>
+            >{{userIdentity}}</div>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ import assistantBottomNav from "./assistantBottomNav";
 export default {
   name: "childrenHomePage",
   components: {
-    assistantBottomNav
+    assistantBottomNav,
   },
   data() {
     return {
@@ -106,7 +106,8 @@ export default {
       // User: "",
       childrenHomeList: [],
       selectedNav: "childrenHomePage",
-      showOverlay: false
+      showOverlay: false,
+      userIdentity: "",
     };
   },
   computed: {
@@ -115,7 +116,7 @@ export default {
     },
     User() {
       return this.$store.state.common.User;
-    }
+    },
   },
   mounted() {
     if (this.$route.query.User && this.$route.query.UserTpye) {
@@ -131,9 +132,10 @@ export default {
     }
     // this.User = this.$store.state.common.User
     // this.token = this.$store.state.common.token
+    this.userIdentity = this.User.Type===4?'儿童主任':this.User.Type===7?'志愿者':this.User.Type===3?'镇级管理员':this.User.Type===2?'县级管理员':this.User.Type===1?'市级管理员':this.User.Type===6?'助理':this.User.Type===11?'家长':this.User.Type===12?'社区工作服务管理员':this.User.Type===14?'校儿童主任':this.User.Type===15?'校儿童督导员':'村级讲师'
     this.showOverlay = true;
     getChildrenHomeList(this.Token)
-      .then(result => {
+      .then((result) => {
         console.log("getChildrenHomeList", result);
         this.childrenHomeList = result.data.childrenHomeList;
         this.$refs.assistantBottomNav.init();
@@ -155,7 +157,7 @@ export default {
         }
         this.showOverlay = false;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("err", err);
         this.showOverlay = false;
       });
@@ -166,19 +168,19 @@ export default {
       this.$router.push({
         name: "assistantChildrenHomeDetail",
         query: {
-          currentPath: "childrenHomePage"
-        }
+          currentPath: "childrenHomePage",
+        },
       });
     },
     goSetting() {
       this.$router.push({
         name: "accountSetting",
         query: {
-          currentPath: "childrenHomePage"
-        }
+          currentPath: "childrenHomePage",
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

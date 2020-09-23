@@ -28,7 +28,7 @@
           <div
             class="status will"
             style="width: 80px;color: black;margin:0;"
-          >{{activity.User.Type===4?'村级管理员':activity.User.Type===7?'志愿者':activity.User.Type===3?'镇级管理员':activity.User.Type===2?'县级管理员':activity.User.Type===1?'市级管理员':activity.User.Type===6?'助理':activity.User.Type===11?'家长':activity.User.Type===12?'社区工作服务管理员':activity.User.Type===14?'校儿童主任':activity.User.Type===15?'校儿童督导员':'村级讲师'}}</div>
+          >{{userIdentity}}</div>
         </div>
       </div>
       <!-- <div class="activityImgTitle">活动图片（{{activityImageList.length}}/{{activityImageList.length}}）</div> -->
@@ -173,7 +173,8 @@ export default {
         4: "安全护卫",
         5: "微课"
       },
-      disabledBtn: false
+      disabledBtn: false,
+      userIdentity:'',
     };
   },
   computed: {
@@ -219,6 +220,7 @@ export default {
       getActivityDetail(this.$route.query.activityId).then(res => {
         console.log("getActivityDetail", res);
         this.activity = res.data.activity;
+        this.userIdentity = this.activity.User.Type===4?'儿童主任':this.activity.User.Type===7?'志愿者':this.activity.User.Type===3?'镇级管理员':this.activity.User.Type===2?'县级管理员':this.activity.User.Type===1?'市级管理员':this.activity.User.Type===6?'助理':this.activity.User.Type===11?'家长':this.activity.User.Type===12?'社区工作服务管理员':this.activity.User.Type===14?'校儿童主任':this.activity.User.Type===15?'校儿童督导员':'村级讲师'
         this.activityRecordList = res.data.activityRecordList;
         this.showOverlay = false;
         this.imgFileList = this.activityImageList;
