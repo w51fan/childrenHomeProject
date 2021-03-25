@@ -28,7 +28,7 @@
                 <div class="status ing" v-else-if="item.Status===2">进行中</div>
                 <div class="status finished" v-else>已结束</div>
               </div>
-              <div class="abbreviation">{{item.Name}}...</div>
+              <div class="abbreviation">{{item.ChildrenHome.Name}} 举办了 {{item.Name}}...</div>
               <div class="flex" @click="viewDetail(item)">
                 <img
                   :src="activityImg.Url"
@@ -85,7 +85,7 @@
                 <div class="status ing" v-else-if="item.Status===2">进行中</div>
                 <div class="status finished" v-else>已结束</div>
               </div>
-              <div class="abbreviation">{{item.Name}}...</div>
+              <div class="abbreviation">{{item.ChildrenHome.Name}} 举办了{{item.Name}}...</div>
               <div class="flex" @click="viewDetail(item)">
                 <img
                   :src="activityImg.Url"
